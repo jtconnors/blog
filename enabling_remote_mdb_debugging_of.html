@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Enabling Remote Console Debugging of Solaris x86 Boot/Install</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <big><b>Enabling Remote Console Debugging of Solaris x86
+        Boot/Install</b></big><br>
+    <small>By Jim Connors 14 April 2008<br>
+    </small><br>
+    <p>Our partners do a fair amount of business supplying ruggedized
+      Solaris-powered <a
+        href="http://business.panasonic.com/toughbook/laptop-computers.html">Panasonic
+
+
+
+        Toughbook</a> computers to their US government/military
+      customers.&nbsp; As a regular part of the product cycle, Sun
+      usually works with both the integrators and Panasonic to assure
+      that as new models become available, Solaris runs on these systems
+      properly.&nbsp; Furthermore, when we can get our grubby little
+      hands on the systems, we'll run them through our certification
+      suite of tests and formally place them on the Solaris <a
+        href="http://www.sun.com/bigadmin/hcl/">Hardware Compatibility
+        List</a>.&nbsp; As an example, here's the certification report
+      for one of the versions of the <a
+href="http://www.oracle.com/webfolder/technetwork/hcl/data/systems/details/panasonic/sol_10_01_06/1432.html">Panasonic
+
+
+
+        Toughbook CF-29</a>.</p>
+    <p>Panasonic recently introduced a new version of the <a
+href="http://catalog2.panasonic.com/webapp/wcs/stores/servlet/ModelDetail?displayTab=O&amp;storeId=11201&amp;catalogId=13051&amp;itemId=100537&amp;catGroupId=12871&amp;surfModel=Toughbook-30">Toughbook
+
+
+
+        CF-30</a> (referred to as revision F) which tweaks some of the
+      computer subsystems resulting in an all-too-familiar scenario:
+      namely, these differences cause the current version of Solaris to
+      fail to install.&nbsp; Note: Solaris is not alone here, all
+      Operating Systems must continually play this cat and mouse game to
+      support the latest hardware/firmware advances.</p>
+    <p>Our initial hypothesis lead us to believe that the problem was
+      related to the introduction of the Intel ICH8 SATA chipset.&nbsp;
+      So we called on some of our Solaris I/O experts, based out of
+      Sun's Beijing office, to take a peek at what was going on.&nbsp;
+      As the laptop is currently in New York, we needed a way for folks
+      half way around the world to have access to this system.&nbsp;
+      There are lots of mechanisms available to remotely diagnose
+      systems, what's somewhat unique here is the following: (1) the
+      diagnosis takes place very early in the boot stage, way before any
+      windowing or networking is set up and (2) The system in question
+      is a laptop, not a server, where things like Lights Out Management
+      (LOM) service processors are non-existent.</p>
+    <p>The solution here was to utilize decades old RS-232 technology
+      combined with some of features of the <a
+        href="resource/remote-console/BigAdmGRUB_Solaris_Bootloader.htm">GRUB
+
+
+
+        bootloader</a>.&nbsp; Here are two requirements needed:<br>
+    </p>
+    <ul>
+      <li>A serial connection must be established between the system to
+        be diagnosed, which will be referred to henceforth as the <em>target</em>,
+        and the system which accesses the target which we'll refer to as
+        the <em>remote host</em>. &nbsp; Unfortunately most laptop
+        manufacturers have seen fit to eliminate serial port connectors
+        in lieu of using USB to serial converters as a replacement
+        technology.&nbsp; At the early stages of boot, USB/serial
+        capability is not yet available, so these systems are not good
+        candidates for this type of diagnosis.&nbsp; Thankfully the
+        target in question here, the Panasonic CF-30 Toughbook, still
+        comes with a serial port.</li>
+    </ul>
+    <ul>
+      <li>A Jumpstart environment capable of installing Solaris on
+        x86/x64 systems is strongly recommended.&nbsp; As part of the
+        process described below, we'll be modifying the target's GRUB
+        environment&nbsp; (<font face="courier new,courier,monospace">menu.lst</font>).&nbsp;
+
+
+
+        If you chose to use a DVD boot/install environment instead,
+        you'd need to modify and burn a new DVD for each change made to
+        the target's boot environment.&nbsp; It took a bit of time to
+        find the right incantations in the <font face="courier
+          new,courier,monospace">menu.lst</font> file to get what was
+        needed here; continually re-burning DVDs would have been
+        excruciating.&nbsp; This exercise is left to the reader, <a
+href="http://www.oracle.com/technetwork/systems/articles/jumpstart-x86-x64-jsp-138116.html">here's
+
+
+
+          a good start</a> to understanding the jumpstart setup process.</li>
+    </ul>
+    <p>Here's how to set up the remote console environment:</p>
+    <p>1. A null modem cable must be physically connected between the <em>remote
+
+
+
+        host </em>and <em>target</em>.&nbsp; The most common cable
+      required will be a DB-9 female-to-female connector.&nbsp; Your
+      configuration may vary.</p>
+    <p>2. Check the BIOS of the <em>remote host</em> and <em>target</em>
+      and make sure serial ports are enabled.</p>
+    <p>3. Running Solaris on the <em>remote host</em>, we'll be using
+      the <a
+        href="https://docs.oracle.com/cd/E23823_01/html/816-5165/tip-1.html"><font
+          face="courier new,courier,monospace">tip(1)</font></a> command
+      to access the <em>target</em> via serial port.&nbsp; Edit the <font
+        face="courier new,courier,monospace">/etc/remote</font> file and
+      look for the <font face="courier new,courier,monospace">hardwire:</font>
+      entry.&nbsp; Modify it to look like this:</p>
+    <pre>hardwire:\\
+        :dv=/dev/term/a:br#9600:el=\^C\^S\^Q\^U\^D:ie=%$:oe=\^D:
+
+</pre>
+    <p>4. As part of setting up a jumpstart install for the <em>target</em>,
+      a series of files are created in the <font face="courier
+        new,courier,monospace">/tftpboot</font> directory of the
+      jumpstart server.&nbsp; Under <font face="courier
+        new,courier,monospace">/tftpboot</font>, there should be a
+      custom <font face="courier new,courier,monospace">menu.lst</font>
+      file for each managed install, suffixed by the unique network MAC
+      address of the system in question.&nbsp; For example, the network
+      MAC address for the CF-30 in question is 0:b:97:db:c0:97.&nbsp;
+      The related /tftpboot file for the CF-30 turns out to be <font
+        face="courier new,courier,monospace">/tftpboot/menu.lst.01000B97DBC097.</font>
+      As your target will have a different MAC address, it's <font
+        face="courier new,courier,monospace">menu.lst</font>&nbsp; file
+      will have a different suffix in the <font face="courier
+        new,courier,monospace">/tftpboot</font> directory.&nbsp; Edit
+      that custom menu.lst file (for example, <font face="courier
+        new,courier,monospace">/tftpboot/menu.lst.01000B97DBC097)</font>
+      to look as follows:</p>
+    <pre>default=0
+timeout=30
+serial --unit=0 --speed=9600
+terminal serial
+title Solaris_10 s10x_u5b10
+        kernel /I86PC.Solaris_10-1/multiboot kernel/unix -B console=ttya,install_media=192.168.1.5:/export/s10x_u5b10 -vkd
+        module /I86PC.Solaris_10-1/x86.miniroot
+
+</pre>
+    <p>The key modifications here involve (1) inclusion of the <font
+        face="courier new,courier,monospace">serial --unit=0
+        --speed=9600</font> and <font face="courier
+        new,courier,monospace">terminal serial</font> lines plus (2)
+      additional arguments added to the <font face="courier
+        new,courier,monospace">kernel</font> directive.&nbsp; Grub is
+      very fussy about the order and placement of arguments; playing
+      around with these will likely change grub's behavior.&nbsp;</p>
+    <p>5.&nbsp; From the <em>remote host</em>, access the serial
+      console of the <em>target</em> by issuing:</p>
+    <pre>$ tip hardwire</pre>
+    <p>6. Inside a terminal window, here's what the serial console looks
+      like, after the system has been power cycled and runs through the
+      <a href="http://en.wikipedia.org/wiki/Power-on_self-test">POST</a>
+      sequence:<br>
+    </p>
+    <p><img src="resource/remote-console/grub_console.jpg" vspace="0"
+        hspace="0" border="0" align="bottom"><br>
+    </p>
+    <p>After the miniroot is loaded, you'll be presented with an mdb
+      prompt and a screen which looks like this:</p>
+    <p><img src="resource/remote-console/mdb_prompt.jpg" vspace="0"
+        hspace="0" border="0" align="bottom"> </p>
+    <div> </div>
+    <p>You can now issue mdb commands to diagnose.&nbsp; In this
+      scenario you should also be able to reboot the&nbsp; system
+      without any other manual intervention, like this:</p>
+    <p><img src="resource/remote-console/mdb_reboot.jpg" vspace="0"
+        hspace="0" border="0" align="bottom"> </p>
+    <p>Here's what issuing the mdb commands '<font face="courier
+        new,courier,monospace">:c</font>' and '<font face="courier
+        new,courier,monospace">$c</font>' look like in this
+      environment.&nbsp;&nbsp; From this simple&nbsp; trace we can
+      ascertain that the SATA drivers were never even loaded.&nbsp;
+      Turns out this is likely a VM problem.&nbsp; Here's the filed <a
+        href="http://bugs.opensolaris.org/view_bug.do?bug_id=6687394">bug
+
+
+
+        report</a>.</p>
+    <p><img src="resource/remote-console/simple_mdb.jpg" vspace="0"
+        hspace="0" border="0" align="bottom"><br>
+    </p>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>

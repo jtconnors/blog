@@ -1,0 +1,1603 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Observations in Migrating from JavaFX Script to JavaFX 2.0</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p class="MsoNormal"><b><span style="font-size: 16pt; line-height:
+          115%;">Observations in Migrating from JavaFX Script to JavaFX
+          2.0</span></b><b><span style="font-size: 16pt; line-height:
+          115%;"></span></b><b><span style="font-size: 16pt;
+          line-height: 115%;"></span></b><small><small><br>
+          By Jim Connors 21 June 2011</small></small><br>
+    </p>
+    <p class="MsoNormal"><b>Introduction</b></p>
+    <p class="MsoNormal">Having been available for a few years now,
+      there is a decent body of work written for JavaFX using the JavaFX
+      Script language.<span> </span>With the general availability
+      announcement of JavaFX 2.0 Beta, the natural question arises about
+      converting the legacy code over to the new JavaFX 2.0 platform.<span>
+      </span>This article reflects on some of the observations
+      encountered while porting source code over from JavaFX Script to
+      the new JavaFX API paradigm.<span></span></p>
+    <p class="MsoNormal"><b>The Application</b></p>
+    <p class="MsoNormal">The program chosen for migration is an
+      implementation of the Sudoku game and serves as a reference
+      application for the book <i>JavaFX – Developing Rich Internet
+        Applications</i>. <span> </span>The design of the program can
+      be divided into two major components: (1) A user interface
+      (ideally suited for JavaFX design) and (2) the puzzle generator.<span>
+      </span>For the context of this article, our primary interest lies
+      in the user interface.<span> </span>The puzzle generator code was
+      lifted from a sourceforge.net project and is written entirely in
+      Java.<span> </span>Regardless which version of the UI we choose
+      (JavaFX Script vs. JavaFX 2.0), no code changes were required for
+      the puzzle generator code.</p>
+    <p class="MsoNormal">The original user interface for the JavaFX
+      Sudoku application was written exclusively in JavaFX Script, and
+      as such is a suitable candidate to convert over to the new JavaFX
+      2.0 <span style="font-style: italic;"></span> model.<span> </span><span>
+      </span>However, a few notable points are worth mentioning about
+      this program.<span> </span>First off, it was written in the
+      JavaFX 1.1 timeframe, where certain capabilities of the JavaFX
+      framework were as of yet unavailable.<span> </span>Citing two
+      examples, this program creates many of its own UI controls from
+      scratch because the built-in controls were yet to be introduced.<span>
+      </span>In addition, layout of graphical nodes is done in a very
+      manual manner, again because much of the automatic layout
+      capabilities were in flux at the time.<span> </span>It is worth
+      considering that this program was written at a time when most of
+      us were just coming up to speed on this technology.<span> </span>One
+
+      would think that having the opportunity to recreate this
+      application anew, it would look a lot different from the current
+      version.</p>
+    <p class="MsoNormal"><b>Comparing the Size of the Source Code</b></p>
+    <p class="MsoNormal">An attempt was made to convert each of the
+      original UI JavaFX Script source files (suffixed with .fx) over to
+      a Java counterpart.<span> </span>Due to language feature
+      differences, there are a small number of source files which only
+      exist in one version or the other. <span> </span>The table below
+      summarizes the size of each of the source files. </p>
+    <table style="border-collapse: collapse; border: medium none;"
+      class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0">
+      <tbody>
+        <tr>
+          <td style="width: 122.9pt; border: 1pt solid black; padding:
+            0in 5.4pt;" width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">JavaFX Script source file</span></b></p>
+          </td>
+          <td style="width: 49.25pt; border-width: 1pt 1pt 1pt medium;
+            border-style: solid solid solid none; border-color: black
+            black black -moz-use-text-color; padding: 0in 5.4pt;"
+            width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">Number of Lines</span></b></p>
+          </td>
+          <td style="width: 61.45pt; border-width: 1pt 1pt 1pt medium;
+            border-style: solid solid solid none; border-color: black
+            black black -moz-use-text-color; padding: 0in 5.4pt;"
+            width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">Number of Character</span></b></p>
+          </td>
+          <td style="width: 2.5in; border-width: 1pt 1pt 1pt medium;
+            border-style: solid solid solid none; border-color: black
+            black black -moz-use-text-color; padding: 0in 5.4pt;"
+            width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><i><span
+                    style="color: #c00000;"></span></i><span
+                  style="color: #c00000;"> JavaFX 2.0 Java source file</span></b></p>
+          </td>
+          <td style="width: 65.35pt; border-width: 1pt 1pt 1pt medium;
+            border-style: solid solid solid none; border-color: black
+            black black -moz-use-text-color; padding: 0in 5.4pt;"
+            width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">Number of Lines</span></b></p>
+          </td>
+          <td style="width: 61pt; border-width: 1pt 1pt 1pt medium;
+            border-style: solid solid solid none; border-color: black
+            black black -moz-use-text-color; padding: 0in 5.4pt;"
+            width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">Number of Characters</span></b></p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">ArrowKey.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">6</p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">72</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Board.fx</p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">221<br>
+            </p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">6831<br>
+            </p>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Board.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">205</p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">6508<br>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">BoardNode.fx</p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">446<br>
+            </p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">16054<br>
+            </p>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">BoardNode.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">723</p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">29356<br>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">ChooseNumberNode.fx</p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">168</p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">5267</p>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">ChooseNumberNode.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">302<br>
+            </p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">10235</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">CloseButtonNode.fx</p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">115</p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">3408<br>
+            </p>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">CloseButton.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">99<br>
+            </p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">2883<br>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">ParentWithKeyTraversal.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">111<br>
+            </p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">3276</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">FunctionPtr.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">6</p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">80</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Globals.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">20<br>
+            </p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">554</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Grouping.fx</p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">8<br>
+            </p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">140<br>
+            </p>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">HowToPlayNode.fx</p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">121</p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">3632</p>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">HowToPlayNode.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">136</p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">4849</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">IconButtonNode.fx</p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">196<br>
+            </p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">5748<br>
+            </p>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">IconButtonNode.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">183</p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">5865</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Main.fx</p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">98</p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">3466<br>
+            </p>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Main.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">64<br>
+            </p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">2118<br>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">SliderNode.fx</p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">288</p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">10349<br>
+            </p>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">SliderNode.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">350</p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">13048</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Space.fx</p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">78<br>
+            </p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">1696<br>
+            </p>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Space.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">106</p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">2095<br>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">SpaceNode.fx</p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">227<br>
+            </p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">6703<br>
+            </p>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">SpaceNode.java</p>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">220</p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">6861<br>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">TraversalHelper.fx</p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">111<br>
+            </p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <div align="center"> 3095<br>
+            </div>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 122.9pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="164" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"><b><span style="color: #c00000;">Total</span></b></p>
+          </td>
+          <td style="width: 49.25pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">2,077</span></b></p>
+          </td>
+          <td style="width: 61.45pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="82" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">79,127</span></b></p>
+          </td>
+          <td style="width: 2.5in; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="240" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"><b><span style="color: #c00000;"> </span></b></p>
+            <br>
+          </td>
+          <td style="width: 65.35pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="87" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">2531</span></b></p>
+          </td>
+          <td style="width: 61pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="81" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">87,800<br>
+                </span></b></p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="MsoNormal"> </p>
+    <p class="MsoNormal">A few notes about this table are in order:</p>
+    <ul>
+      <li><span style="font-family: Symbol;"><span><span style="font:
+              7pt &quot;Times New Roman&quot;;"></span></span></span>The
+        number of lines in each file was determined by running the Unix
+        ‘wc –l’ command over each file.<span></span></li>
+      <li><span style="font-family: Symbol;"><span><span style="font:
+              7pt &quot;Times New Roman&quot;;"></span></span></span>The
+        number of characters in each file was determined by running the
+        Unix ‘ls –l’ command over each file.</li>
+      <li><span style="font-family: Symbol;"><span><span style="font:
+              7pt &quot;Times New Roman&quot;;"></span></span></span>The
+        examination of the code could certainly be much more rigorous.
+        No standard formatting was performed on these files.&nbsp; All
+        comments however were deleted.</li>
+    </ul>
+    <p class="MsoNormal">There was a certain expectation that the new
+      Java version would require more lines of code than the original
+      JavaFX script version.<span> </span>As evidenced by a count of
+      the total number of lines, the Java version has about 22% more
+      lines than its FX Script counterpart.<span></span></p>
+    <p class="MsoNormal"><span> </span><span> </span>Furthermore,
+      there was an additional expectation that the Java version would be
+      more verbose in terms of the total number of characters.&nbsp; In
+      fact the preceding data shows that on average the Java source
+      files contain fewer characters per line than the FX files.&nbsp;
+      But that's not the whole story.&nbsp; Upon further examination,
+      the FX Script source files had a disproportionate number of blank
+      characters.&nbsp; Why?&nbsp; Because of the nature of how one
+      develops JavaFX Script code.&nbsp; The object literal dominates FX
+      Script code.&nbsp; Its not uncommon to see object literals
+      indented halfway across the page, consuming lots of meaningless
+      space characters.</p>
+    <p class="MsoNormal"><b>RAM consumption</b></p>
+    <p class="MsoNormal">Not the most scientific analysis, memory usage
+      for the application was examined on a Windows Vista system by
+      running the Windows Task Manager and viewing how much memory was
+      being consumed by the Sudoku version in question.<span> </span>Roughly
+
+      speaking, the FX script version, after startup, had a RAM
+      footprint of about 90MB and remained pretty much the same size.<span>
+      </span>The Java version started out at about 55MB and maintained
+      that size throughout its execution.</p>
+    <p class="MsoNormal"><b>What About Binding?</b></p>
+    <p class="MsoNormal">Arguably, the most striking observation about
+      the conversion from JavaFX Script to JavaFX 2.0 concerned the need
+      for data synchronization, or lack thereof.<span> </span>In JavaFX
+      Script, the primary means to synchronize data is via the bind
+      expression (using the “bind” keyword), and perhaps to a lesser
+      extent it’s “on replace” cousin.<span> </span>The bind keyword
+      does not exist in Java, so for JavaFX 2.0 a Data Binding API has
+      been introduced as a replacement.</p>
+    <p class="MsoNormal">To give a feel for the difference between the
+      two versions of the Sudoku program, the table that follows
+      indicates how many binds were required for each source file.<span>
+      </span>For JavaFX Script files, this was ascertained by simply
+      counting the number of occurrences of the <i>bind</i> keyword.<span>
+      </span>As can be seen, binding had been used frequently in the
+      JavaFX Script version (and does not take into consideration an
+      additional half dozen or so “<i>on replace”</i> triggers). The
+      JavaFX 2.0 program achieves the same functionality as the original
+      JavaFX Script version, yet the equivalent of binding was only
+      needed twice throughout the Java version of the source code. <span></span></p>
+    <table style="border-collapse: collapse; border: medium none;"
+      class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0">
+      <tbody>
+        <tr>
+          <td style="width: 125.6pt; border: 1pt solid black; padding:
+            0in 5.4pt;" width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">JavaFX Script source file</span></b></p>
+          </td>
+          <td style="width: 49.5pt; border-width: 1pt 1pt 1pt medium;
+            border-style: solid solid solid none; border-color: black
+            black black -moz-use-text-color; padding: 0in 5.4pt;"
+            width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">Number of Binds</span></b></p>
+          </td>
+          <td style="width: 175.5pt; border-width: 1pt 1pt 1pt medium;
+            border-style: solid solid solid none; border-color: black
+            black black -moz-use-text-color; padding: 0in 5.4pt;"
+            width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><i><span
+                    style="color: #c00000;">JavaFX Next</span></i><span
+                  style="color: #c00000;"> Java source file</span></b></p>
+          </td>
+          <td style="width: 58.5pt; border-width: 1pt 1pt 1pt medium;
+            border-style: solid solid solid none; border-color: black
+            black black -moz-use-text-color; padding: 0in 5.4pt;"
+            width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">Number of “Binds”</span></b></p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">ArrowKey.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Board.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">1</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Board.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">BoardNode.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">7</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">BoardNode.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">ChooseNumberNode.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">11</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">ChooseNumberNode.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">CloseButtonNode.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">6</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">CloseButton.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">CustomNodeWithKeyTraversal.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">FunctionPtr.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Globals.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Grouping.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">HowToPlayNode.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">7</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">HowToPlayNode.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">IconButtonNode.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">9</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">IconButtonNode.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Main.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">1</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Main.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Main_Mobile.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">1</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">SliderNode.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">6</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">SliderNode.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">1</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Space.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">Space.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">SpaceNode.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">9</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">SpaceNode.java</p>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">1</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal">TraversalHelper.fx</p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center">0</p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"> </p>
+            <br>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"> </p>
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 125.6pt; border-width: medium 1pt 1pt;
+            border-style: none solid solid; border-color:
+            -moz-use-text-color black black; padding: 0in 5.4pt;"
+            width="167" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"><b><span style="color: #c00000;">Total</span></b></p>
+          </td>
+          <td style="width: 49.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="66" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">58</span></b></p>
+          </td>
+          <td style="width: 175.5pt; border-width: medium 1pt 1pt
+            medium; border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="234" valign="top">
+            <p style="margin-bottom: 0.0001pt; line-height: normal;"
+              class="MsoNormal"><b><span style="color: #c00000;"> </span></b></p>
+            <br>
+          </td>
+          <td style="width: 58.5pt; border-width: medium 1pt 1pt medium;
+            border-style: none solid solid none; border-color:
+            -moz-use-text-color black black -moz-use-text-color;
+            padding: 0in 5.4pt;" width="78" valign="top">
+            <p style="margin-bottom: 0.0001pt; text-align: center;
+              line-height: normal;" class="MsoNormal" align="center"><b><span
+                  style="color: #c00000;">2</span></b></p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="MsoNormal"><b> </b></p>
+    <p style="margin-bottom: 0.0001pt; line-height: normal;"
+      class="MsoNormal"><span style="font-family: &quot;Courier
+        New&quot;;"> </span></p>
+    <p style="margin-bottom: 0.0001pt; line-height: normal;"
+      class="MsoNormal"><b><span>Conclusions</span></b></p>
+    <p style="margin-bottom: 0.0001pt; line-height: normal;"
+      class="MsoNormal"><span> </span></p>
+    <p style="margin-bottom: 0.0001pt; line-height: normal;"
+      class="MsoNormal"><span>As the JavaFX 2.0 technology is so new,
+        and experience with the platform is the same, it is possible and
+        indeed probable that some of the observations noted in the
+        preceding article may not apply across other attempts at
+        migrating applications.<span> </span>That being said, this
+        first experience indicates that the migrated Java code will
+        likely be larger, though not extensively so, than the original
+        Java FX Script source.<span> </span>Furthermore, although very
+        important, it appears that the requirements for data
+        synchronization via binding, may be significantly less with the
+        new platform.</span></p>
+    <p style="margin-bottom: 0.0001pt; line-height: normal;"
+      class="MsoNormal"><span> </span></p>
+    <span></span><span></span>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>

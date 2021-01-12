@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Are Solaris RAM Disks Swappable?</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p>As memory access is typically orders of magnitude faster than
+      disk access, the idea of using a part of RAM as an in-memory
+      storage device has been one of the earliest performance
+      optimizations realized by the computer science community.&nbsp;
+      Even though today this type of optimization takes place
+      transparently inside modern operating systems (via mechanisms like
+      the disk buffer cache),&nbsp; there are still circumstances where
+      manually creating a <a
+        href="http://en.wikipedia.org/wiki/RAM_disk">RAM disk</a> might
+      still be quite useful.<br>
+      <br>
+      A Solaris customer using the <a
+href="https://docs.oracle.com/cd/E26502_01/html/E29031/ramdiskadm-1m.html">ramdiskadm(1m)</a>
+      utility to create a Ram disk device for a real-time application
+      posed the following question: "Are RAM disks swappable?". From a
+      real-time perspective, a RAM disk not only yields significantly
+      better seek performance but also provides for more deterministic
+      behavior compared to the traditional rotating disk platter.&nbsp;
+      The customer's concern here is that, under dire circumstances, is
+      it possible for operating system swap out the RAM disk
+      memory?&nbsp; Needless to say, if a swap out occurred it would put
+      a big crimp in the real-time application's predictability.<br>
+    </p>
+    <p>To get an idea of what's going on when a RAM disk is created,
+      let's use the Solaris <a
+        href="https://docs.oracle.com/cd/E18752_01/html/816-5166/kstat-1m.html">kstat(1m)</a>
+      kernel statitics utility to see how memory is being
+      allocated.&nbsp; First let's see what memory looks like before
+      creating a RAM disk:</p>
+    <pre># <b>pagesize</b><br>4096<br># <b>kstat -n system_pages | grep pagesfree</b><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pagesfree&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 96334<br># <b>kstat -n system_pages | grep pageslocke</b>
+&nbsp;&nbsp;&nbsp;&nbsp;   pageslocked&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 26170
+</pre>
+    <p>So, on this particular system, where a page is 4096 bytes,&nbsp;
+      there are currently 96334 pages free, and 26170 pages that are
+      locked.&nbsp; Now let's create a 50MB RAM disk:</p>
+    <pre># <b>ramdiskadm -a rd 50m</b><br>/dev/ramdisk/rd<br># <b>ramdiskadm</b><br>Block Device&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Size&nbsp; <br>Removable<br>/dev/ramdisk/rd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 52428800&nbsp;&nbsp;&nbsp; Yes&nbsp;<br># <b>kstat -n system_pages | grep pagesfree</b><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pagesfree&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 83507<br># <b>kstat -n system_pages | grep pageslocked</b><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pageslocked&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 38988<br></pre>
+    <p>Let's subtract the original number of <i>pageslocked</i> from
+      the latest value and multiply by the pagesize: </p>
+    <pre># <b>pagesize</b><br>4096<br># <b>bc</b><br><b>(38988-26170)\*4096</b><br>52502528<br><b>\^D</b><br></pre>
+    <p> The increase in locked pages can be attributed to the creation
+      of the RAM disk (50m + a small amount of overhead).&nbsp; So yes,
+      these pages are locked into memory.&nbsp; But it would be nice to
+      get a definitive statement on what <i>pageslocked</i> actually
+      means.&nbsp; According to McDougal, Mauro and Gregg's <a
+href="http://www.amazon.com/Solaris-Performance-Tools-Techniques-OpenSolaris/dp/0131568191/ref=sr_1_1?ie=UTF8&amp;s=books&amp;qid=1212008613&amp;sr=8-1"><i>Performance
+
+          and Tools: DTrace and MDB Techniques for Solaris 10 and
+          OpenSolaris</i></a>, p<i>ageslocked</i> is "Total number of
+      pages locked into memory by the kernel and user processes".&nbsp;
+      Furthermore, the man page for <a
+href="https://docs.oracle.com/cd/E23824_01/html/821-1465/plock-3c.html#scrolltoc">plock(3C)</a>,
+      a related library routine which enables programmers to lock memory
+      segments, states that "Locked segments are immune to all routine
+      swapping".&nbsp; What's routine swapping?</p>
+    <p> Hmm.&nbsp; Anybody care to shed some light on this?<br>
+    </p>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>

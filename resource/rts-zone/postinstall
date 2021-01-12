@@ -1,0 +1,255 @@
+#!/sbin/sh
+#
+# Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# ident	"@(#)postinstall	1.3	06/02/17 SMI"
+#
+
+thiszone=`zonename`
+
+JAVA_RTS_PROFILE="${SUNW_PRODNAME} User"
+
+# Execute with the the least set of privileges, when supported by the OS.
+if [ "$thiszone" = "global" ]
+then
+JAVA_RTS_PRIV="privs=sys_res_config,proc_priocntl,proc_lock_memory,proc_clock_highres"
+PSRADM=/usr/bin/psradm 
+PSRADM_PRIV=sys_res_config
+else
+JAVA_RTS_PRIV="privs=proc_priocntl,proc_lock_memory,proc_clock_highres"
+fi
+
+# Execute as root otherwise.
+JAVA_RTS_NOPRIV="euid=0;uid=0"
+
+JAVA_RTS_PROFILE_HELP=${PKG_INSTALL_ROOT}/usr/lib/help/profiles/locale/C/RtJavaRTSUser.html
+
+PROF_ATTR=${PKG_INSTALL_ROOT}/etc/security/prof_attr
+
+EXEC_ATTR=${PKG_INSTALL_ROOT}/etc/security/exec_attr
+
+SYSTEM=${PKG_INSTALL_ROOT}/etc/system
+
+
+# Create the rights profile, if requested.
+if [ "${MKPROFILE}" = "yes" ]
+then
+
+    echo "Creating the '${JAVA_RTS_PROFILE}' rights profile."
+
+    if [ ! -w ${PROF_ATTR} ]
+    then
+	echo "Can't access ${PROF_ATTR}."
+	exit 1
+    fi
+
+    if [ ! -w ${EXEC_ATTR} ]
+    then
+	echo "Can't access ${EXEC_ATTR}."
+	exit 1
+    fi
+
+    help_dir=`/usr/bin/dirname ${JAVA_RTS_PROFILE_HELP}`
+
+    if [ ! -d ${help_dir} ]
+    then
+	echo "Can't access ${help_dir} directory."
+	exit 1
+    fi
+
+    # Create the profile's help file for the Solaris Management Console.
+if [ "$thiszone" = "global" ]
+then
+    /usr/bin/rm -f ${JAVA_RTS_PROFILE_HELP}
+    /usr/bin/cat > ${JAVA_RTS_PROFILE_HELP} << HELP_EOF
+<HTML>
+<HEAD>
+<TITLE> </TITLE>
+</HEAD>
+<BODY>
+<!-- Created by ${PKGINST}. -->
+
+When ${JAVA_RTS_PROFILE} is in the Rights Included column,
+it grants the right to run the ${SUNW_PRODNAME}
+with the privileges required
+to achieve predictable temporal performances.
+<p>
+If ${JAVA_RTS_PROFILE} is grayed,
+then you are not entitled to Add or Remove this right.
+<p>
+</BODY>
+</HTML>
+HELP_EOF
+
+    if [ $? -ne 0 ]
+    then
+	echo "Unable to create ${JAVA_RTS_PROFILE_HELP}; giving up."
+	exit 1
+    fi
+
+fi # global zone
+
+    # Update the profile description database.
+    prof_line="${JAVA_RTS_PROFILE}:::User of the ${DESC}:help=RtJavaRTSUser.html"
+
+    # This could be done using smprofile(1M), but a package install script
+    # shouldn't rely on an app that doesn't live in /usr/bin.
+    /usr/bin/ed - ${PROF_ATTR} >/dev/null 2>&1 << ED_EOF
+g/^.*${JAVA_RTS_PROFILE}/d
+\$
+a
+${prof_line}
+.
+w
+q
+ED_EOF
+
+    if [ $? -ne 0 ]
+    then
+	echo "Unable to update ${PROF_ATTR}; giving up."
+	exit 1
+    fi
+
+    # Update the execution profiles database.
+
+    # Remove existing entries, if any, before appending new ones.
+    /usr/bin/ed - ${EXEC_ATTR} >/dev/null 2>&1 << ED_EOF
+g/^${JAVA_RTS_PROFILE}/d
+w
+q
+ED_EOF
+
+    if [ $? -ne 0 ]
+    then
+	echo "Unable to update ${EXEC_ATTR}; giving up."
+	exit 1
+    fi
+
+    # The next line triggers the following (false positive) warning from 'pkgmk':
+    # 'WARNING: script <postinstall> may require user interaction at line <xx>'.
+    while read cmd priv
+    do
+        # in local zone, psradm privlege is not allowed
+        if [ "$cmd" = "" ]
+        then
+            break
+        fi
+
+        # Are privileges supported?
+	if [ -x /usr/bin/ppriv ]
+	then
+	    attr=${priv}
+	else
+	    attr=${JAVA_RTS_NOPRIV}
+	fi
+
+	# Is it an absolute pathname?
+	if [ -z "`echo ${cmd} | /usr/bin/grep '^/'`" ]
+	then
+	    path=${BASEDIR}/${PKGINST}/${cmd}
+	else
+	    path=${cmd}
+	fi
+
+	priv_line="${JAVA_RTS_PROFILE}:solaris:cmd:::${path}:${attr}"
+
+	echo ${priv_line} >> ${EXEC_ATTR}
+
+# New privileged commands should be appended to the list below.
+# Format is <pathname_relative_to_pkg_top_dir>/<command> or
+# <absolute pathname>/<command> followed by <set of privileges>.
+    done << PRIV_EOF
+bin/java          ${JAVA_RTS_PRIV}
+bin/java_g        ${JAVA_RTS_PRIV}
+scripts/nhrtpset  ${JAVA_RTS_PRIV}
+/usr/bin/psrset   ${JAVA_RTS_PRIV}
+${PSRADM}         ${PSRADM_PRIV}
+PRIV_EOF
+
+    echo "\nRefer to the 'System Administration Guide: Security Services'"
+    echo "documentation for further information regarding the way to assign the"
+    echo "'${SUNW_PRODNAME} User' rights profile to users, groups, or"
+    echo "administrative roles using the Solaris Management Console, smc(1M) or"
+    echo "the usermod(1M), groupmod(1M) and rolemod(1M) commands.\n"
+fi
+
+# Set OS tunables.
+
+force=0
+
+
+if [ "$thiszone" = "global" ]
+then
+
+if [ ! -w "${SYSTEM}" ]
+then
+    echo "Can't access ${SYSTEM}."
+    exit 1
+fi
+
+# The next line triggers the following (false positive) warning from 'pkgmk':
+# 'WARNING: script <postinstall> may require user interaction at line <xx>'.
+while read tunable_name tunable_value
+do
+    tunable_line="set ${tunable_name}=${tunable_value}  # ${PKGINST} setting"
+
+    if [ -n "`/usr/bin/grep ${tunable_name} ${SYSTEM} | /usr/bin/grep set`" ]
+    then
+	echo "Tunable '${tunable_name}' already set: \c"
+
+	if [ ${force} -eq 0 ]
+	then
+	    echo "keeping current value."
+	    continue
+	else
+	    echo "overwriting current value."
+	fi
+    fi
+
+    echo "Setting kernel tunable '${tunable_name}' to '${tunable_value}'."
+
+    /usr/bin/ed - ${SYSTEM} >/dev/null 2>&1 << ED_EOF
+g/^.*${tunable_name}/d
+\$
+a
+${tunable_line}
+.
+w
+q
+ED_EOF
+
+    if [ $? -ne 0 ]
+    then
+	echo "Unable to update ${SYSTEM}; giving up."
+	exit 1
+    fi
+
+    /usr/bin/touch /tmp/reboot.$$
+
+# New tunables should be appended to the list below.
+# Format is <tunable_name> <tunable_value>.
+done << TUNABLE_EOF
+timer_max	4096
+TUNABLE_EOF
+
+if [ -f /tmp/reboot.$$ ]
+then
+    if [ -x /usr/sbin/bootadm ]
+    then
+	# Make sure the boot archive reflects our changes.
+	/usr/sbin/bootadm update-archive
+
+	if [ $? -ne 0 ]
+	then
+	    echo "Unable to update boot archive."
+	    exit 1
+	fi
+    fi
+
+    /usr/bin/rm /tmp/reboot.$$
+    echo "\nPlease reboot your system for changes to take effect."
+fi
+
+fi  # thiszone
+exit 0

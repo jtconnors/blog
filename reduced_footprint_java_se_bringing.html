@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Reduced Footprint Java SE: Bringing Java Standard Edition
+      Down to Size</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p> <big><b>Reduced Footprint Java SE: Bringing Java Standard
+          Edition Down to Size</b></big><br>
+      <small>By Jim Connors 26 March 2008</small><br>
+    </p>
+    <p>A <a href="reducing_your_java_se_runtime.html">previous blog
+        post</a> demonstrated how you can, with minimal effort, lessen
+      the disk footprint of a typical Java SE 5.0 runtime environment by
+      about a third without violating the <a
+href="http://www.oracle.com/technetwork/java/javase/terms/license/index.html">Java
+
+
+        Standard Edition Licensing agreement</a>. That post focused
+      primarily on removing optional files and compressing class library
+      jar files.&nbsp; It turns out that with a little more
+      engineering,&nbsp; there is significant opportunity for further
+      space optimization.</p>
+    <p>These additional savings involve more intimate knowledge of the
+      inner workings of Java SE.&nbsp; Sun performs this engineering
+      work and provides a series of <a
+href="http://www.oracle.com/technetwork/java/embedded/embedded-se/overview/index.html">reduced
+
+
+        footprint versions of Java SE</a>, in binary form, for some of
+      the most common embedded platforms.&nbsp; They include some of
+      these enhancements:<sup>1</sup></p>
+    <ul>
+      <li><b>Headless configuration</b> - The inclusion of graphics
+        subsystems like AWT and Swing comprise a large chunk of the Java
+        SE footprint.&nbsp; If your device has no graphics capability
+        (i.e. is headless) why would you need to include this
+        functionality?&nbsp; Headless configurations:</li>
+    </ul>
+    <blockquote>
+      <ol>
+        <li>Do not support keyboard or mouse input</li>
+        <li>Cannot create windows or display graphics</li>
+        <li>Throw a <font face="courier new,courier,monospace">HeadlessException</font>
+          when a graphics API is called</li>
+        <li>Still support a functional Java 2D API for printing and
+          off-screen rendering</li>
+        <li>Are still 100% Java SE compatible<br>
+        </li>
+      </ol>
+    </blockquote>
+    <ul>
+      <li><b>Eliminate client or server compiler</b> - Sun's Java SE
+        implementations include two HotSpot compilers, tuned and
+        designed for specific environments.&nbsp; The client compiler
+        focuses on things like fast user interactivity and quick
+        startup, while the server compiler's priority is on optimizing
+        large, long-lived server applications.&nbsp; The Java SE VM can
+        only use one of these compilers at a time, so removing the
+        unused one can save considerable space.</li>
+    </ul>
+    <ul>
+      <li><b>Minimizes memory consumption</b> - Standard Java SE
+        allocates RAM to house things like the JIT code cache and the
+        object heap.&nbsp; By default, each one of these areas (and
+        others) can be assigned 64 MB.&nbsp; In an embedded platform
+        where the total amount of RAM might only be 64MB, Java SE will
+        simply not have enough memory to run.&nbsp; Java SE Embedded on
+        the other hand, will automatically adapt memory usage to the
+        amount of available RAM.&nbsp; Consequently, 64MB is a
+        reasonable amount of RAM for a large set of embedded Java
+        applications.</li>
+    </ul>
+    <ul>
+      <li><b>Space vs. speed tradeoffs</b> - (1) Java SE implements a
+        thread lookup table, which in layman's terms, helps save a few
+        instructions when switching between Java threads.&nbsp; By
+        eliminating this table, a couple of MBs of RAM can be spared
+        from your application's working set. (2) Java SE also sets aside
+        an area (mmap'ed) for loading jar files into random access
+        memory, which as was explained to me, may help performance, but
+        may also result in duplicate copies of jar files in
+        memory.&nbsp; Removal of this area further reduces the Resident
+        Set Size.</li>
+    </ul>
+    <p><b>An Example</b></p>
+    <p>Following through with the exmaple in the last post., let's start
+      with an unmodified version of <a
+href="http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase5-419410.html#jre-1.5.0_13-oth-JPR">Java
+
+
+        SE 5.0 Update 13 for Linux/x86</a>.&nbsp; By default, the static
+      footprint is approximately 88MB.<br>
+    </p>
+    <pre><font face="courier new,courier,monospace">   jimc@jalopy:/tmp&gt; <b>du -sk ./jre1.5.0_13/</b><br>   88185&nbsp;&nbsp; ./jre1.5.0_13/</font><br></pre>
+    After following the directions in the <a
+      href="reducing_your_java_se_runtime.html">previous post</a>, we
+    can pare it down to roughly 60MB.<br>
+    <pre>   jimc@jalopy:/tmp&gt; <b>du -sk /tmp/jre1.5.0_13/</b><br>   59358   /tmp/jre1.5.0_13/ <br></pre>
+    <p>Downloading <a
+href="http://www.oracle.com/technetwork/java/embedded/embedded-se/downloads/java-se-embedded-archive-1862184.html">Sun's
+
+        reduced footprint version of Java SE for x86/Linux</a> yields:<br>
+    </p>
+    <pre>&nbsp;&nbsp; jimc@jalopy:/tmp&gt; <b>du -sk /tmp/jre1.5.0_10/</b><br>   31003   /tmp/jre1.5.0_10/<br></pre>
+    <p>This version of the JRE is about one-third it's original size,
+      and furthermore has been modified to use significantly less memory
+      than the standard Java SE offerings.&nbsp; Note: we are comparing
+      slightly different updates of Java SE 1.5 (update 13 vs. update
+      10).&nbsp; They are indeed not identical but their differences
+      should be considered, for the sake of argument, negligible.&nbsp;</p>
+    <p><font size="1">[1] Many thanks to Bob Vandette, who though
+        presentation and conversation, supplied this information.&nbsp;
+        One of many sources comes from Bob's Java ONE 2007 session
+        called, <a
+title="http://developers.sun.com/learning/javaoneonline/2007/pdf/TS-2602.pdf"><i>Deploying
+
+            Java Platform Standard Edition (Java SE Platform) in Today's
+            Embedded Devices</i> (TS-2602)</a></font> <br>
+    </p>
+    <p><a href="index.html">Index</a> </p>
+  </body>
+</html>

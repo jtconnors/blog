@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>The Unofficial Java SE Embedded SDK</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p> <big><b>The Unofficial Java SE Embedded SDK</b></big><br>
+      <small><small>By Jim Connors 15 March 2011</small></small><br>
+    </p>
+    <p>Developing applications for embedded platforms gets simpler all
+      the time, thanks in part to the tremendous advances in
+      microprocessor design and software tools.&nbsp; And in particular,
+      with the availability of Java SE compatible Virtual Machines for
+      the popular embedded platforms, development has never been more
+      straightforward.<br>
+    </p>
+    <p>The real beauty behind Java SE Embedded development lies in the
+      fact that you can use your favorite IDE (Eclipse, NetBeans,
+      JDeveloper ...) to create, test and debug code in the <strong><em>identical</em></strong>
+      fashion in which you'd develop a standard desktop or server
+      application.&nbsp; When the time comes to try it out on a Java SE
+      Embedded capable device, it's just a matter of shipping the
+      bytecodes over to the device and letting it run.&nbsp; There is no
+      need for complicated emulators, toolchains and
+      cross-compilers.&nbsp; The exact same bytecodes that ran on your
+      PC, run <em><strong>unmodified</strong></em> on the embedded
+      device.</p>
+    <p>In fact, because all versions of Java SE (embedded or not) share
+      a considerable amount of common code, we have plenty of anecdotal
+      evidence which supports the notion that behavior -- correct or
+      incorrect -- manifests itself identically across platforms.&nbsp;
+      We refer specifically here to bugs.&nbsp; Now no one wants bugs,
+      but believe it or not, our customers like the fact that behavior
+      is consistent across platforms whether it's right or not. "Bug for
+      bug compatibility" has actually become a strong selling point!</p>
+    <p>Having espoused the virtues of transparently developing off
+      device, many still wish to test and debug on-device regularly as
+      part of their development cycle.&nbsp; If you're the touchy/feely
+      type, there are ample examples of affordable and supported
+      off-the-shelf devices that could fit the bill for an <em>Unofficial
+
+
+
+        Java SE Embedded SDK</em>.&nbsp; One such platform is the <a
+        href="https://en.wikipedia.org/wiki/Plug_computer">Plug Computer</a>.</p>
+    <p><img src="resource/java_se-e/plug.jpg" width="106" height="94"><img
+        src="resource/java_se-e/plug2.jpg" width="130" height="74"> The
+      reference platform for the Plug Computer is supplied by <a
+        href="http://www.marvell.com/company/news/pressDetail.do?releaseID=1321">Marvell
+
+
+
+        Technology Group</a>. Manufacturers then license the technology
+      from Marvell to create their own specific implementations.&nbsp;
+      Two such vendors are <a
+        href="http://www.globalscaletechnologies.com/">GlobalScale</a>
+      and <a href="http://www.ionicsgroup.com/">Ionics</a>.&nbsp; These
+      are incredibly capable devices that include Arm processors in the
+      1.2GHz to 2.0GHz range, and sport 512MB of RAM and flash.&nbsp;
+      There are a host of external port and interface options including
+      USB, µUSB, SATA, GBE, SD, WiFi, ZigBee, Z-Wave and soon
+      HDMI.&nbsp; Additionally, several Linux distros are available for
+      these systems too.&nbsp; The typical cost for a base model is $99,
+      and perhaps the most disruptive aspect of these systems,<em> they
+        consume on average about 5 watts of power</em>.</p>
+    <p>Alongside developing in the traditional manner, the ability to
+      step through and examine state on these devices via remote
+      debugging comes as a standard feature with the Java SE-E VM.&nbsp;
+      Furthermore, you can use the JConsole application from your
+      desktop to remotely monitor performance and resource consumption
+      on the device.<br>
+    </p>
+    <p>So what would a bill of materials look like for <em>The
+        Unofficial Java SE Embedded SDK</em>?&nbsp; Pretty simple
+      actually:</p>
+    <ul>
+      <li><a href="http://netbeans.org/downloads/index.html">Latest
+          NetBeans Java SE IDE</a> (or any other of your favorite Java
+        IDEs)&nbsp;</li>
+      <li><a
+href="http://www.oracle.com/technetwork/java/embedded/downloads/javase/java-se-embedded-archive-1862184.html">Java
+
+
+
+          SE Embedded ARMv5 Linux - Headless</a></li>
+      <li> <a href="http://www.ionicsgroup.com/">Ionics Nimbus 100</a>
+        or <a
+href="http://www.globalscaletechnologies.com/p-22-sheevaplug-dev-kit-us.aspx">GlobalScale
+
+
+
+          SheevaPlug Dev Kit</a></li>
+    </ul>
+    That's about it.&nbsp; Of course, for higher level functionality,
+    you can add additional packages.&nbsp; For example, <a
+      href="http://tomcat.apache.org/">Apache Tomcat</a> runs
+    beautifully here.&nbsp; Could anyone imagine a large number of these
+    devices acting as a parallel web server?<br>
+    <br>
+    <a href="index.html">Index</a>
+  </body>
+</html>

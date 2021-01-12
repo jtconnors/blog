@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Reducing Your Java SE Runtime Environment Footprint (Legally)</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <b><big>Reducing Your Java SE Runtime Environment Footprint
+        (Legally)</big></b><br>
+    <small>By Jim Connors 14 Feburary 2008</small><br>
+    <br>
+    <style title="XinhaInternalCSS" type="text/css">.htmtableborders, .htmtableborders td, .htmtableborders th {border : 1px dashed lightgrey ! important;}
+html, body { border: 0px; } 
+body { background-color: #ffffff; } 
+img, hr { cursor: default } 
+</style>
+    <p>Because the resource requirements for <a
+        href="http://www.oracle.com/technetwork/java/javase/overview/index.html">Java
+
+
+        Standard Edition</a> are by no means insignificant, developers
+      interested in utilizing Java on smaller platforms have
+      traditionally opted for one of the <a
+        href="http://www.oracle.com/technetwork/java/embedded/javame/index.html">Java
+
+
+        Micro Edition</a> configurations.&nbsp;&nbsp; It should
+      therefore come as no surprise that some of the Standard Edition
+      functionality has to be sacrificed in these constrained Java ME
+      environments.&nbsp; However, as the trend towards more capable
+      devices continues, it becomes reasonable to once again consider
+      the advantages of utilizing Java SE.&nbsp; Unfortunately, with a
+      static footprint that could easily exceed 100MB, Java SE may still
+      be too large to swallow for a lot of applications.<br>
+      <br>
+      It is duly noted that the criticism leveled at Sun for exacting
+      too much control over the Java platform has been widespread.&nbsp;
+      Like it or not though, one benefit of Sun's initial stewardship
+      has been that Java SE has remained a standard platform, and
+      threats to splinter it have thus far been reasonably
+      thwarted.&nbsp; Accordingly, in order to avoid incompatibilities,
+      there are restrictions spelled out in the <a
+href="http://www.oracle.com/technetwork/java/javase/terms/license/index.html">Java
+
+
+        SE Licensing Agreement</a> which prohibit modification of the
+      Java SE binary distribution.</p>
+    <p>That&nbsp; being said, there are a list of optional files,
+      specified by the Java Runtime Environment's <a
+        href="resource/java_se/JRE_SAMPLE_README.txt"><font
+          face="courier new,courier,monospace">README</font></a> file
+      which can be removed, without ramification, to lessen the
+      footprint.&nbsp; They include:<br>
+    </p>
+    <ul>
+      <li>Deployment tools (e.g. Java Web Start, Java plugin)</li>
+      <li>IDL and RMI tools (e.g. rmid, tnameserv)<br>
+      </li>
+      <li>Security tools (e.g. policytool, keytool)</li>
+      <li>orbd</li>
+      <li>Localization (charsets.jar)</li>
+    </ul>
+    <p>In addition, further space optimization can be achieved by
+      compressing the class library files contained in the <font
+        face="courier new,courier,monospace">rt.jar</font> file.&nbsp;
+      By default, Java SE ships this jar file uncompressed.&nbsp; The
+      tradeoff here is space vs. performance, i.e. the classloader must
+      expend cycles to uncompress the Java classes as they are being
+      loaded.</p>
+    <p><b>An Example</b></p>
+    <p>So let's download a sample JRE from<a href="http://oracle.com">
+        java.sun.com</a> and see how it's footprint can be
+      minimized.&nbsp;&nbsp; For this example, we'll use <a
+href="http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase5-419410.html#jre-1.5.0_13-oth-JPR">Java
+
+
+        SE 1.5.0 Update 13 for Linux x86</a>.</p>
+    <p>After installation, the JRE is approximately 88MB</p>
+    <pre><font face="courier new,courier,monospace">   jimc@jalopy:/tmp&gt; <b>du -sk ./jre1.5.0_13/</b><br>   88185&nbsp;&nbsp; ./jre1.5.0_13/</font><br></pre>
+    <p>Here's what it looks like after removal of the optional files<br>
+    </p>
+    <pre>   jimc@jalopy:/tmp&gt; <b>cd jre1.5.0_13/</b><br><br>   jimc@jalopy:/tmp/jre1.5.0_13&gt; <b>/bin/rm -rf lib/charsets.jar lib/ext/sunjce_provider.jar \\</b><br><b>   lib/ext/localedata.jar lib/ext/ldapsec.jar </b><b>lib/ext/dnsns.jar bin/rmid \\</b><br><b>   bin/rmiregistry bin/tnameserv bin/keytool bin/kinit bin/klist bin/ktab \\</b><br><b>   bin/policytool bin/orbd bin/servertool bin/javaws, lib/javaws/ and lib/javaws.jar</b><br><br>   jimc@jalopy:/tmp/jre1.5.0_13&gt; <b>cd ..</b><br>   jimc@jalopy:/tmp&gt; <b>du -sk ./jre1.5.0_13/</b><br>   77227   ./jre1.5.0_13/<br></pre>
+    <p>And after rt.jar has been compressed</p>
+    <pre>   jimc@jalopy:/tmp&gt; <b>mkdir rtjar</b><br>   jimc@jalopy:/tmp&gt; <b>cd rtjar/</b><br><br>   jimc@jalopy:/tmp/rtjar&gt; <b>jar -xf /tmp/jre1.5.0_13/lib/rt.jar</b><br>   jimc@jalopy:/tmp/rtjar&gt; <b>zip -q -r /tmp/rt .</b><br>   jimc@jalopy:/tmp/rtjar&gt; <b>mv /tmp/rt.zip /tmp/jre1.5.0_13/lib/rt.jar</b><br><br>   jimc@jalopy:/tmp/rtjar&gt; <b>du -sk /tmp/jre1.5.0_13/</b><br>   59358   /tmp/jre1.5.0_13/  </pre>
+    <p><b>Conclusion</b></p>
+    <p>In many cases, you can lop off about a third of the Java Runtime
+      Environment footprint with no ill effects.&nbsp; In a future post,
+      we'll discuss how Sun has further reduced Java SE significantly,
+      not only from the point of view of static footprint, but also from
+      a RAM usage perspective too.&nbsp; For a preview you can check out
+      Sun's <a
+href="http://www.oracle.com/technetwork/java/embedded/embedded-se/overview/index.html">Java
+
+        SE Embedded</a> technology.<br>
+      <br>
+      <a href="index.html">Index</a> </p>
+  </body>
+</html>

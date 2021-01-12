@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Registering Multiple Actions (or Handlers) in JavaFX</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <b><big>Registering Multiple Actions (or Handlers) in JavaFX</big></b><br>
+    <small><small>By Jim Connors 24 February 2009</small></small><br>
+    <p>Java developers, especially those performing any type of GUI
+      work, will ultimately encounter Java's event-driven programming
+      paradigm.&nbsp; In short, if programmers want to act upon some
+      kind of event they bundle up a chunk of code into a Java method,
+      typically referred to as a handler, and register the handler with
+      that event.&nbsp; Whenever that event occurs, the handler code
+      will automatically be executed.<br>
+    </p>
+    <p>JavaFX provides a similar mechanism.&nbsp; For a straightforward
+      example, the code below defines a simple timer in JavaFX with a
+      resolution of 1 second.&nbsp; Each time a second expires, the
+      function specified by the <font face="courier
+        new,courier,monospace">action</font> instance variable will be
+      executed.&nbsp; Here's what it looks like:</p>
+    <pre>import javafx.animation.*;
+
+public class SimpleTimer {
+    public def timeline = Timeline {
+        repeatCount: 5
+        interpolate: false
+        keyFrames: [
+            KeyFrame {
+                time: 1s
+                <b>action: function () : Void {
+                    println("tick");
+                }</b>
+            }
+        ]
+    }
+}
+
+</pre>
+    <p>Adding a <font face="courier new,courier,monospace">run()</font>
+      function, as follows, to the bottom of this source will enable you
+      run an instance of this timer:</p>
+    <pre>function run() : Void {
+&nbsp;&nbsp;&nbsp; var s = SimpleTimer{};
+&nbsp;&nbsp;&nbsp; s.timeline.playFromStart();
+} 
+</pre>
+    <p>The output from this run looks like this:<br>
+    </p>
+    <pre>tick
+tick
+tick
+tick
+tick 
+</pre>
+    <p>It's all well and good if you only need a single action.&nbsp;
+      What if you wanted to perform multiple actions and/or dynamically
+      add or subtract a number of actions?&nbsp; We can enhance our
+      previous <font face="courier new,courier,monospace">SimpleTimer</font>
+      class to dynamically register and unregister handlers by taking
+      advantage of two of JavaFX's features: <i>sequences</i> and <i>function
+
+
+        pointers</i>.</p>
+    <p>Our new class provides more flexibility:</p>
+    <ul>
+      <li>It defines an instance variable called <font face="courier
+          new,courier,monospace">duration</font>, which enables the user
+        to specify the resolution of a clock tick at object
+        instantiation.<br>
+      </li>
+      <li>It defines two additional public functions called <font
+          face="courier new,courier,monospace">registerHandler()</font>
+        and <font face="courier new,courier,monospace">unRegisterHandler()</font>
+        which take a function pointer (a handler) as an argument.&nbsp;
+        By registering a handler, the function will be included in the
+        list of handlers to be executed each time the specified duration
+        expires.</li>
+      <li>A handler is registered by inserting it's function pointer
+        argument into an internal sequence of function pointers called <font
+          face="courier new,courier,monospace">handlers[]</font>.</li>
+      <li>A handler is similarly unregistered by deleting it's function
+        pointer argument from the <font face="courier
+          new,courier,monospace">handlers[]</font> sequence.</li>
+      <li>The action instance variable, which is part of the <font
+          face="courier new,courier,monospace">KeyFrame</font> instance,
+        now calls an internal function called <font face="courier
+          new,courier,monospace">runHandlers()</font>.&nbsp; <font
+          face="courier new,courier,monospace">runHandlers()</font>
+        sequentially executes the functions found in the <font
+          face="courier new,courier,monospace">handlers[]</font>
+        sequence.</li>
+    </ul>
+    Here's the new class:<br>
+    <pre>import javafx.animation.*;
+
+public class Timer {
+&nbsp;&nbsp;&nbsp; /**
+&nbsp;&nbsp;&nbsp;&nbsp; * User-definable:&nbsp; specifies the length of time for one cycle.
+&nbsp;&nbsp;&nbsp;&nbsp; */
+&nbsp;&nbsp;&nbsp; public var duration = 100ms;
+
+&nbsp;&nbsp;&nbsp; public def timeline = Timeline {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; repeatCount: Timeline.INDEFINITE
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; interpolate: false
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; keyFrames: [
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; KeyFrame {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; time: duration
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>action: runHandlers</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]
+&nbsp;&nbsp;&nbsp; }
+
+&nbsp;&nbsp;&nbsp; // Holds the list of handlers to run
+&nbsp;&nbsp;&nbsp; protected var handlers: function() [];
+
+&nbsp;&nbsp;&nbsp; /**
+&nbsp;&nbsp;&nbsp;&nbsp; * Add the function, represented by the handler argument, to the list
+&nbsp;&nbsp;&nbsp;&nbsp; * of handlers.&nbsp; These will run when the elapsed time, specified
+&nbsp;&nbsp;&nbsp;&nbsp; * by the duration instance variable, expires.
+&nbsp;&nbsp;&nbsp;&nbsp; */
+&nbsp;&nbsp;&nbsp; public function registerHandler(handler : function()) : Void {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (func in handlers) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (handler == func) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return;&nbsp; // handler already registered -- skip
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; insert handler into handlers;
+&nbsp;&nbsp;&nbsp; }
+
+&nbsp;&nbsp;&nbsp; /**
+&nbsp;&nbsp;&nbsp;&nbsp; * Remove the function, represented by the handler argument, from
+&nbsp;&nbsp;&nbsp;  * the list of handlers.
+&nbsp;&nbsp;&nbsp;&nbsp; */
+&nbsp;&nbsp;&nbsp; public function unRegisterHandler(handler : function()) : Void {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delete handler from handlers;
+&nbsp;&nbsp;&nbsp; }
+
+&nbsp;&nbsp;&nbsp; protected function runHandlers() : Void {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (handler in handlers) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; handler();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }
+} 
+</pre>
+    <p>To test this class out, we'll add a <font face="courier
+        new,courier,monospace">run()</font> function at the script
+      level.&nbsp; The <font face="courier new,courier,monospace">run()</font>
+      function creates a <font face="courier new,courier,monospace">Timer</font>
+      instance and registers two handler functions, <font face="courier
+        new,courier,monospace">decrementTenthsRemaining()</font> and <font
+        face="courier new,courier,monospace">processTicks()</font>.&nbsp;
+
+
+      Here's the code:</p>
+    <pre>function run() : Void {
+&nbsp;&nbsp;&nbsp; var t = Timer {};
+&nbsp;&nbsp;&nbsp; var tenthsRemaining = 100;
+&nbsp;&nbsp;&nbsp; var decrementTenthsRemaining = function() : Void {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tenthsRemaining -= 1;
+&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; var processTick = function() : Void {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (tenthsRemaining mod 10 == 0) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; println("seconds left: {tenthsRemaining / 10}");
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (tenthsRemaining == 0) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t.timeline.stop();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; };
+&nbsp;&nbsp;&nbsp; t.registerHandler(decrementTenthsRemaining);
+&nbsp;&nbsp;&nbsp; t.registerHandler(processTick);
+&nbsp;&nbsp;&nbsp; t.timeline.play();
+}</pre>
+    <p>And this is the output from the run:<br>
+    </p>
+    <pre>seconds left: 9
+seconds left: 8
+seconds left: 7
+seconds left: 6
+seconds left: 5
+seconds left: 4
+seconds left: 3
+seconds left: 2
+seconds left: 1
+seconds left: 0</pre>
+    <p> Shameless Promotion:&nbsp; Keep up to date with the latest
+      status of our upcoming JavaFX Book entitled<a
+href="http://www.amazon.com/JavaFX-Developing-Rich-Internet-Applications/dp/013701287X">
+        <i><b>JavaFX: Developing Rich Internet Applications</b></i></a>
+      at <a href="http://jfxbook.com">jfxbook.com</a>.<br>
+    </p>
+    <p><a href="index.html">Index</a> </p>
+  </body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Why I like the New JavaFX</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <m:smallfrac m:val="off"><m:dispdef><m:lmargin m:val="0"><m:rmargin
+            m:val="0"><m:defjc m:val="centerGroup"><m:wrapindent
+                m:val="1440"><m:intlim m:val="subSup"><m:narylim
+                    m:val="undOvr"></m:narylim></m:intlim></m:wrapindent></m:defjc></m:rmargin></m:lmargin></m:dispdef></m:smallfrac><big><b>Why
+
+
+        I like the New JavaFX</b></big><br>
+    <small><small>By Jim Connors 28 November 2010</small></small><br>
+    <m:smallfrac m:val="off"><m:dispdef><m:lmargin m:val="0"><m:rmargin
+            m:val="0"><m:defjc m:val="centerGroup">
+              <p class="MsoNormal">I have a vested interest in seeing
+                the original JavaFX Script based platform prosper. <span>
+                </span>As an early adopter of this technology, a good
+                portion of my life these past few years has been spent
+                developing, blogging and even co-authoring a book on the
+                subject.<span> </span>So when the inevitable demise of
+                JavaFX Script was formally announced, those of us
+                intimately involved did not take it lightly.</p>
+              <p class="MsoNormal"><span></span>Perhaps not unlike
+                yourselves, I’ve viewed the plans to morph JavaFX into a
+                Java API with a bit of skepticism. <span> </span>The
+                new resulting coding paradigm is unquestionably less
+                stylish than its predecessor and can be downright
+                verbose. <span> </span>But the new way grows on you. <span>
+                </span>Having the privilege to experiment with early
+                versions, I’ve come to like the new platform.<span> </span>In
+
+
+                fact I like it a lot.<span> </span>Here’s why I think
+                the new JavaFX platform is more attractive:</p>
+              <p class="MsoNormal"><b>The community has spoken and it
+                  doesn’t feel the need for yet another scripting
+                  language.</b><span> </span>The attempt to lure
+                graphics designers into the Java camp by offering a
+                simplified Rich Internet Application environment never
+                really panned out.<span> </span>Why? <span> </span>First,
+
+
+                there already exists a wealth of mature, established RIA
+                scripting alternatives.<span> </span>These address much
+                of what designers need and JavaFX Script is not
+                sufficiently different enough.<span> </span>Second, the
+                clamor to provide RIA capabilities in Java comes from
+                the Java community proper, not the graphics artists. <span>
+                </span><span> </span>These developers have a lot
+                invested in Java and are not interested in learning a
+                new language.<span> </span>What they want is a Java API
+                with RIA capabilities.<span> </span>By making JavaFX a
+                first class citizen of the Java platform, it goes a long
+                way towards meeting these desires.</p>
+              <p class="MsoNormal"><b>The JavaFX API is a more universal
+                  solution.</b><span> </span>By building an API in
+                Java, the opportunity for developers of other dynamic
+                languages (like JRuby and JavaScript) to access JavaFX
+                has been made much easier.<span> </span>Moreover, as
+                the trend to host other languages atop the Java Virtual
+                Machine accelerates, these too will profit from this
+                move.</p>
+              <p class="MsoNormal"><b>No more mapping between JavaFX
+                  Script and Java</b>.<span> </span>A derivative of
+                Java, one of the touted advantages of JavaFX Script is
+                its ability to seamlessly integrate and leverage the
+                wealth of Java code written already.<span> </span>Indeed
+
+                a very important benefit, Java/JavaFX Script integration
+                is mostly straightforward; however there are subtle
+                differences between both languages that the developer
+                must take into consideration.<span> </span>Mapping
+                primitive Java data types to JavaFX basic types can be
+                an issue.<span> </span>The original JavaFX classes can
+                only extend Java classes that contain a default (no
+                arguments) constructor.<span> </span>Features familiar
+                to Java programmers, like multidimensional arrays,
+                generics, annotations, and multi-threading have no real
+                equivalent in JavaFX Script.<span> </span>Bringing the
+                JavaFX class libraries directly onto the Java platform
+                eliminates all of these concerns. <span> </span>If you
+                want to use some external Java code, just use it.</p>
+              <p class="MsoNormal"><b>Superior Development Environment</b>.<span>
+                </span>Attempting to debug JavaFX Script within an
+                Integrated Development Environment is at best a tricky
+                endeavor and at worst a waste of time. <span> </span>Additionally
+only
+
+
+                NetBeans, and to a lesser extent Eclipse, are the only
+                viable JavaFX Script capable IDEs.<span> </span>As the
+                new JavaFX platform is entirely based on Java, not only
+                is debugging support first rate, the option of choosing
+                other Java IDEs opens up considerably.</p>
+              <p class="MsoNormal"><b>The new JavaFX results in, for
+                  lack of a better term, more predictability</b>. <span>
+                </span>One of the primary JavaFX Script mechanisms used
+                to define and place graphical assets (Nodes) into the
+                scenegraph is the object literal notation.<span> </span>Being
+
+
+                static in nature, the notion of a sequential flow of
+                events inside an object literal may not make much sense.<span>
+                </span>To compensate, JavaFX Script introduces the
+                powerful concept of binding.<span> </span>Without
+                question, binding is very elegant, but it comes with a
+                price.<span> </span>It is not uncommon to see liberal
+                and arguably unnecessary use of binding throughout
+                JavaFX script code.<span> </span></p>
+              <p class="MsoNormal">One can argue that bringing JavaFX to
+                Java should lessen, but certainly not eliminate, the
+                need for binding.<span> </span>Rather than defining
+                objects inside a static initializer, JavaFX API objects
+                are created and defined sequentially by constructor and
+                method calls respectively.<span> </span>By defining
+                objects in an order that makes sense, there is potential
+                to eliminate a certain class of dependencies that were
+                previously resolved with binding. </p>
+              <p class="MsoNormal"><b>Improved performance.</b><span> </span>Although
+
+
+                by default the JavaFX compiler generates Java bytes
+                codes from JavaFX Script source, there is a command-line
+                option which can be invoked to save the intermediate
+                Java code that is produced as part of the process.<span>
+                </span>A brief perusal of this source shows that even
+                the most humble of JavaFX Script constructs churns out a
+                lot of complicated Java code.<span> </span>Eliminating
+                this overhead is bound to improve performance in many
+                instances.<span> </span>Furthermore, significant
+                optimizations to memory and static footprint as well as
+                startup time are underway.<span> </span>Finally a new
+                lightweight, fast graphics subsystem, dubbed project
+                prism, will obviate the need to utilize older Java
+                graphics windowing systems. </p>
+              <p class="MsoNormal"><b>It’s not how you feel, it’s how
+                  you look. </b><span> </span>A superficial
+                difference, but nonetheless one that should not be
+                underestimated, lies in what your code looks like.<span>
+                </span>In JavaFX Script, graphical Nodes are typically
+                placed in the scenegraph via the definition of object
+                literals.<span> </span><span> </span>Even the least
+                sophisticated of object literal scenegraphs can be
+                grouped and nested several levels deep, each nesting
+                moving the source code further to the right.<span> </span>Some
+
+
+                JavaFX Script code is so indented it leaves little room
+                to write anything of consequence without having to split
+                a line of code into two or more lines.</p>
+              <p class="MsoNormal">It didn’t take very long to come up
+                with these talking points.<span> </span>No doubt, as
+                development progresses and more folks jump on board,
+                additional benefits will become apparent. </p>
+            </m:defjc></m:rmargin></m:lmargin></m:dispdef></m:smallfrac>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>And Now for Something Completely Different...</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <style title="table borders">.htmtableborders, .htmtableborders td, .htmtableborders th {border : 1px dashed lightgrey ! important;} 
+</style>
+    <p><font size="1"><b><big><big>And Now for Something Completely
+              Different...</big></big></b><br>
+        By Jim Connors 5 September 2017</font></p>
+    <p>To steal a phrase from <u><a
+          href="https://en.wikipedia.org/wiki/Monty_Python%27s_Flying_Circus"
+data-cke-saved-href="https://en.wikipedia.org/wiki/Monty_Python%27s_Flying_Circus">Monty
+
+
+
+
+
+
+          Python's Flying Circus</a></u>, this article represents a
+      departure from the&nbsp;standard fare.&nbsp; Today, I'd like to
+      discuss my foray into the <u><a href="https://bitcoin.org/en/"
+          data-cke-saved-href="https://bitcoin.org/en/">Bitcoin</a></u>
+      world, and in particular, how contributing (in an infinitesimally
+      small but meaningful way)&nbsp;strengthens the decentralized
+      Bitcoin network.&nbsp; In short, I have become a Bitcoin
+      miner.&nbsp; Before going any further, let me be perfectly clear:
+      there is no gold in them thar' hills. Unless you plan
+      on&nbsp;mining on an industrial scale where electricity is
+      plentiful and more importantly, cheap, you will&nbsp;likely
+      achieve&nbsp;a negative return on your investment.&nbsp; But it's
+      still fun to do.<br>
+    </p>
+    <p><a href="#overview">Overview</a><br>
+      <a href="#rig">My Humble Bitcoin Mining Rig</a><br>
+      <a href="#config">Creating and Configuring a Bitcoin Mining Rig</a><br>
+      <a href="#return">Return on Investment?</a><br>
+    </p>
+    <a name="overview" class=" cke_anchor_empty"
+      data-cke-saved-name="overview"></a>
+    <p><b>Overview</b></p>
+    <p>The revolutionary idea behind Bitcoin is the fact that&nbsp;its
+      transactions are verified in a decentralized fashion free from
+      manipulation by&nbsp;governments and banks.&nbsp; The more systems
+      on the network that participate in the verification, the less
+      likely any one entity has the ability to take a majority stake and
+      threaten the ecosystem.&nbsp; To encourage participation,
+      verifiers,&nbsp;otherwise known as
+      miners,&nbsp;are&nbsp;periodically rewarded with Bitcoins.&nbsp;
+      Bitcoin mining draws parallels to precious metal mining in that
+      (1) the resource is scarce and finite (only 21 million will ever
+      be issued) and (2) mining is labor intensive.</p>
+    <p>Miners compete for winning Bitcoins that are periodically
+      released by both verifying transactions and solving complicated
+      mathematical hashing calculations.&nbsp; Obviously grossly
+      oversimplified, you can begin&nbsp;to better understand the
+      concept of mining <u><a href="https://bitcoin.org/en/faq#mining"
+          data-cke-saved-href="https://bitcoin.org/en/faq#mining">here</a></u>.&nbsp;&nbsp;The
+
+
+
+
+
+
+      organizations with the most computing power have the best odds at
+      winning the&nbsp;Bitcoin lottery.&nbsp; You can, of course,
+      attempt to go it alone and compete with the rest of the world in
+      trying to win Bitcoins, but the odds of doing so are very, very
+      slim.&nbsp; Instead nowadays it probably makes more sense&nbsp;to
+      join one of a number of large mining pools that share resources
+      and consequently share in the overall pool's success.&nbsp;
+      In&nbsp;a pool you receive a payout commensurate with your
+      percentage contribution to that pool.</p>
+    <a name="rig" class=" cke_anchor_empty" data-cke-saved-name="rig"></a>
+    <p><b>My Humble Bitcoin Mining Rig</b></p>
+    <p>The image that follows, along with the subsequent description of
+      the component parts,&nbsp;describes the&nbsp;rig.</p>
+    <p><img style="width: 865px; height: 854px;"
+        src="resource/bitcoin/Rig-100GH.jpg" width="865" height="854"></p>
+    <ol>
+      <li><b>Raspberry Pi 3</b>:&nbsp; The venerable <u><a
+            href="https://www.raspberrypi.org/"
+            data-cke-saved-href="https://www.raspberrypi.org/">Raspberry
+            Pi</a></u> serves as the overall controller for the Bitcoin
+        mining rig and uses the <u><a
+            href="https://en.bitcoin.it/wiki/CGMiner"
+            data-cke-saved-href="https://en.bitcoin.it/wiki/CGMiner">cgminer</a></u>
+        software to manage our mining devices.&nbsp;&nbsp;The Pi has
+        more than adequate&nbsp;compute power for this project and
+        consumes a minimum amount of electricity.</li>
+      <li><b>GekkoScience 2-Pac (BM1384x2) USB Bitcoin miners</b>: There
+        was a time when hashing calculations were performed on
+        CPUs,&nbsp;however&nbsp;it quickly became apparent that
+        specialized hardware would perform these tasks far more
+        efficiently.&nbsp; The first leap was to utilize a system's GPU
+        (which is still&nbsp;an ideal way of mining other digital
+        currencies).&nbsp; Nowadays for Bitcoin, any mining hardware
+        worth using is based upon specialized ASICs (Application
+        Specific Integrated Circuits)&nbsp;that are far more efficient
+        than GPUs.&nbsp; The GekkoScience 2-Pac (BM1384x2) USB Bitcoin
+        miners are state-of-the-art (September 2017) when it comes to
+        the engineering&nbsp;trade off between performance and power
+        efficiency.&nbsp; These devices can be run at different
+        frequencies; the default (100MHz) yields a device which can
+        perform about 15 billion hashes a second (usually written
+        as&nbsp;15 Gh/s).&nbsp; By upping the clock frequency, you
+        increase the hash rate and also&nbsp;consequently, power
+        consumption.&nbsp; <i>These 4 devices are running at 225 MHz
+          and combined, execute approximately 100Gh/s.&nbsp; The power
+          consumption for this rig is approximately 50 Watts</i>.</li>
+      <li><b>HooToo 60W 7-port powered USB hubs</b>: One of the
+        challenges with setting up this rig was finding USB hubs that
+        could power the 2-Pac USB mining devices, as each easily
+        consumes 10 Watts or more.&nbsp; Powered USB hubs are an
+        absolute necessity, and most powered hubs can only support the
+        power requirements for one of these devices.&nbsp; The HooToo
+        hub, rated at 60W, can support two devices at 225MHz (plus a USB
+        fan).&nbsp; I was hoping to add at least one more miner to each
+        USB hub, but that appears to be a bit unstable.&nbsp; Not being
+        an electrical engineer, I don't understand why.</li>
+      <li><b>Artic Breeze USB Fan</b>: The USB mining devices run hot,
+        especially when overclocked.&nbsp; A fan is essential&nbsp;to
+        keep things cool and extend the life of the mining devices.</li>
+    </ol>
+    <a name="config" class=" cke_anchor_empty"
+      data-cke-saved-name="config"></a>
+    <p><b>Creating and Configuring a Bitcoin Mining Rig</b></p>
+    <p>Once the requisite hardware is gathered, there are a few general
+      steps required to get up and running:</p>
+    <ul>
+      <li>Configure the Raspberry Pi as a mining controller by
+        downloading and building the <u><a
+            href="https://en.bitcoin.it/wiki/CGMiner"
+            data-cke-saved-href="https://en.bitcoin.it/wiki/CGMiner">cgminer</a></u>
+        software</li>
+      <li><u><a href="https://bitcoin.org/en/choose-your-wallet"
+            data-cke-saved-href="https://bitcoin.org/en/choose-your-wallet">Choosing
+
+
+
+
+
+
+            a Bitcoin wallet</a></u> and setting up your payout address</li>
+      <li><u><a
+href="https://blog.slushpool.com/https-medium-com-slush-pool-6-key-points-to-evaluate-before-choosing-a-bitcoin-mining-pool-f4cc23395e65"
+data-cke-saved-href="https://blog.slushpool.com/https-medium-com-slush-pool-6-key-points-to-evaluate-before-choosing-a-bitcoin-mining-pool-f4cc23395e65">Choosing
+
+
+
+
+
+
+            a mining pool</a></u></li>
+    </ul>
+    <p><u><a href="resource/bitcoin/Bitcoin_Mining_Pi.txt">This text
+          file</a></u> describes the steps needed to set up the rig
+      described in this article.&nbsp; In terms of choosing a Bitcoin
+      wallet and mining pool there are a multitude of choices.&nbsp; <u><a
+          href="https://electrum.org/"
+          data-cke-saved-href="https://electrum.org/">Electrum</a></u>
+      and <u><a href="https://slushpool.com/home/"
+          data-cke-saved-href="https://slushpool.com/home/">Slush Pool</a></u>
+      were chosen respectively for the rig you see here.</p>
+    <a name="return" class=" cke_anchor_empty"
+      data-cke-saved-name="return"></a>
+    <p><b>Return on Investment?</b></p>
+    <p>Is&nbsp;mining a money making enterprise?&nbsp; At this
+      small&nbsp;scale, absolutely not.&nbsp; Ignoring the
+      non-trivial&nbsp;upfront&nbsp;capital cost of the hardware
+      required to run this rig, you're likely to spend more in
+      electricity than you could accrue in Bitcoin.&nbsp; The price of
+      Bitcoin is so volatile, and the amount of hashing power that
+      contributes to the network changes (generally increasing over
+      time) that any metrics provided here would only be relevant for
+      one point in time.&nbsp; But what the heck.&nbsp; At the current
+      time, based upon my contribution to the Slush Pool mining pool, my
+      rig is rewarded approximately .000035 Bitcoins a day.&nbsp; As of
+      the writing of this article, <u><a
+          href="https://www.coindesk.com/price/"
+          data-cke-saved-href="https://www.coindesk.com/price/">the
+          current price of Bitcoin</a></u> is about $4300 US.&nbsp;
+      Doing the arithmetic yields a reward of about $0.15 US&nbsp;a
+      day.&nbsp; It costs more in electricity each day (especially in
+      New York) to power a 50 Watt rig.</p>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>

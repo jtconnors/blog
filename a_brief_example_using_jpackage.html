@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>A Brief Example Using the Early Access jpackage Utility</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p class="p2"><span class="s1"><b>A Brief Example Using the Early
+          Access jpackage Utility<br>
+        </b><small>by Jim Connors - 4 March 2019</small><b><br>
+        </b></span></p>
+    <p class="p2"><span class="s1"><a
+          href="https://openjdk.java.net/jeps/343"><span class="s2">JEP-343</span></a>
+        (Java Enhancement Proposal 343) specifies the introduction and
+        formal inclusion of an application packaging utility called <tt>jpackage</tt>
+        into a future JDK.<span>&nbsp; </span></span><span class="s1"><span
+          class="s1">Based on an earlier version of the JavaFX <tt>javapackager</tt>
+          program, </span>the goal of this tool is to provide native
+        packaging options for Java applications on Windows, MacOS and
+        Linux. From an end-user perspective, once Java applications have
+        been packaged up with <tt>jpackage</tt>, installation
+        experience should be no different than installing any other
+        native app.<span>&nbsp; </span>An early access, (and admittedly
+        incomplete) build of </span><span class="s3">OpenJDK 13</span><span
+        class="s1"> is now available for those who wish to experiment
+        with this new feature.</span></p>
+    <p class="p2"><span class="s1">As examples of this new utility are
+        currently in scant supply, the video that follows walks through
+        the process of taking a sample Java application and creating a
+        native installer on MacOS for that program.</span></p>
+    <p class="p2"><iframe allow="accelerometer; autoplay;
+        encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen=""
+        src="https://www.youtube.com/embed/f8ytBeCEepU" width="560"
+        height="315" frameborder="0"></iframe></p>
+    <p class="p2"><span class="s1">In a few short steps, the application
+        source code is pulled from GitHub, built and packaged.<span>&nbsp;
+
+
+        </span>For those that wish to duplicate this demonstration, they
+        can do so with the following prerequisites:</span></p>
+    <ol class="ol1">
+      <li class="li2"><span class="s1">Have a version of JDK 11 or later
+          (either <a
+href="https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html"><span
+              class="s5">Oracle JDK</span></a> or <a
+            href="https://jdk.java.net/11/"><span class="s5">OpenJDK</span></a>)
+          installed and situated in your PATH such that it will be the
+          first Java version found.</span></li>
+      <li class="li2"><span class="s1">If not already available,
+          download and install <a href="https://maven.apache.org"><span
+              class="s5">Apache Maven</span></a> and have it placed in
+          your PATH also</span></li>
+      <li class="li2"><span class="s1">Likewise, if not already
+          installed, download and install <a href="https://git-scm.com"><span
+              class="s5">git</span></a> and have it in your PATH too</span></li>
+      <li class="li2"><span class="s1">Download and install an early
+          access version of OpenJDK that includes the <tt>jpackage</tt>
+          utility.<span>&nbsp; </span>You can find a version <a
+            href="https://jdk.java.net/jpackage/"><span class="s5">here</span></a>.<span>&nbsp;
+
+
+          </span>Note, you currently must have both Java versions
+          available.<span>&nbsp; </span>You cannot attempt to take the
+          <tt>jpacakage</tt> utility from the EA version of OpenJDK 13
+          and move it into JDK 11.<span>&nbsp; </span>It won’t work. </span></li>
+    </ol>
+    Assuming your environment is set up correctly, there's only a few
+    steps needed to get to the point of creating an application image,
+    via <tt>jpackage</tt>, for our sample application:
+    <ul>
+      <li><tt>git clone https://github.com/jtconnors/SocketClientFX.git</tt></li>
+      <li><tt>cd SocketClientFX</tt></li>
+      <li><tt>mvn package</tt></li>
+      <li><tt>sh/link.sh -e </tt> (on MacOS) or <tt>powershell
+          ps1\link.ps1 -e </tt>(on Windows) - this creates a runtime
+        image via the <tt>jlink</tt> utility in the <tt>image/</tt>
+        directory.</li>
+    </ul>
+    With this done you can run either version of the script below which
+    invokes <tt>jpackage</tt> to create a native application installer:
+    <ul>
+      <li>MacOS: <tt>sh/create-appimage.sh -e</tt></li>
+      <li>Windows: <tt>powershell ps1\create-appimage.ps1 -e</tt></li>
+    </ul>
+    Here's what a sample <tt>jpackage</tt> incantation on MacOS looks
+    like:<br>
+    <br>
+    <tt>&nbsp;&nbsp;&nbsp;
+      /Users/jtconnor/Downloads/jdk-13.jdk/Contents/Home/bin/jpackage
+      create-image --runtime-image image --input target --output
+      appimage --name SocketClientFX --main-jar SocketClientFX-11.0.jar</tt><br>
+    <br>
+    Lets take a look at each individual component of the command:
+    <ul>
+      <li><tt>/Users/jtconnor/Downloads/jdk-13.jdk/Contents/Home/bin/jpackage</tt>
+        - The <tt>jpackage</tt> utility is not part of the latest (JDK
+        11) distribution.&nbsp; Currently an early access version of
+        Open JDK 13 is available which contains this utility.&nbsp; So
+        we need this version of Open JDK just to run <tt>jpackage</tt>.&nbsp;
+
+
+        Note: if attempting to recreate this demonstration, you may need
+        to edit the <tt>sh/env.sh</tt> or <tt>ps1/env.ps1</tt> file
+        and change the value of the <tt>JPACKAGE_HOME</tt>
+        variable.&nbsp; It is, by default, set to reside under user's <tt>Downloads</tt>
+        directory.</li>
+      <li><tt>create-image</tt> - one of three different modes that must
+        be supplied on the command-line (<tt>create-image</tt>, <tt>create-installer</tt>
+        or <tt>create-jre-installer</tt>), <tt>create-image</tt>
+        instructs <tt>jpackage</tt> to create a platform-specific
+        application image for our program.</li>
+      <li><tt>--runtime-image image</tt> - directory containing the <tt>jlink</tt>'ed
+
+
+        runtime image created by the <tt>sh/link.sh</tt> script.</li>
+      <li><tt>--input target</tt> - this points to the directory
+        containing the modules(s) comprising this application.&nbsp; As
+        this application is built by Apache maven, that directory is, by
+        default, <tt>target/</tt>.</li>
+      <li><tt>--output appimage</tt> - this is the directory under which
+        the generated application image will be placed.</li>
+      <li><tt>--name SocketClientFX</tt> - this is what the application
+        image will be named.</li>
+      <li><tt>--main-jar SocketClientFX-11.0.jar</tt> - this is the main
+        jar file containing the main class.&nbsp; It is located inside
+        the directory specified by the <tt>--input</tt> option (in this
+        case <tt>target/</tt>).</li>
+    </ul>
+    When complete, the single <tt>appimage/</tt> directory contains the
+    platform-specifc application directory.&nbsp; In the video, the
+    MacOS-genertated <tt>appimage/</tt> directory has a <tt>SocketClientFX.app</tt>
+    icon which is in reality a directory with multiple
+    subdirectories.&nbsp; To the MacOS finder application though, it
+    looks like a properly formatted application and by simply dragging
+    the <tt>SocketClientFX.app</tt> icon to the <tt>Applications</tt>
+    folder, the <tt>SocketClientFX</tt> application is formally
+    installed.<br>
+    <br>
+    For the final step, you can convert the application image into a
+    proper platform-specific installer using the <tt>jpackage
+      create-installer</tt> directive.&nbsp; The SocketClientFX project
+    contains the following scripts which aid in the creation of
+    installers:
+    <ul>
+      <li><tt>sh/create-dmg-installer.sh</tt> - creates a native MacOS
+        dmg installer of this application using JEP-343 jpackage tool</li>
+      <li><tt>ps1\create-exe-installer.ps1</tt> - creates a native
+        Windows EXE installer of this application using JEP-343 jpackage
+        tool</li>
+      <li><tt>ps1\create-msi-installer.ps1</tt> - creates a native
+        Windows MSI installer of this application using JEP-343 jpackage
+        tool</li>
+    </ul>
+    <p>As an example invocation on Windows, issuing</p>
+    <p><tt>&nbsp;&nbsp;&nbsp; powershell ps1\create-exe-installer.ps1 -e</tt></p>
+    <p>would have a <tt>jpackage</tt> command-line which looks
+      something like this:<br>
+      <br>
+      <tt>&nbsp;&nbsp;&nbsp; ~\Downloads\jdk-13\bin\jpackage.exe
+        create-installer --installer-type exe --output "installer"
+        --app-image "appimage/SocketClientFX" --name "SocketClientFX"</tt><br>
+      <br>
+      Please note, to create either an <tt>EXE</tt> or <tt>MSI</tt>
+      installer on Windows does require third party applications (like,
+      for example Inno or WiX toolkit respectively) to&nbsp; be
+      installed and available on your command-line <tt>PATH</tt>.<br>
+      <br>
+      <b>Conclusion</b><br>
+      This article barely scratches the surface of the proposed <tt>jpackage</tt>
+      tool.&nbsp; For example, there are literally dozens of additional
+      command options to provide image and installation
+      customizations.&nbsp; But it does at least provide one working
+      example, which at this point is a bit of a rarity.&nbsp; Expect
+      more information to become available the this technology matures.</p>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>
