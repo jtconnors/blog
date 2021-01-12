@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Node Count and JavaFX Performance</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p> </p>
+    <p> </p>
+    <p><big><b>Node Count and JavaFX Performance</b></big><br>
+      <small><small>By Jim Connors 4 April 2009</small></small><br>
+    </p>
+    <p>In a recent blog entry entitled <a
+href="https://blogs.oracle.com/michaelheinrichs/entry/best_practices_for_javafx_mobile1">Best
+
+
+
+
+        Practices for JavaFX Mobile Applications (Part 2)</a>, Michael
+      Heinrichs espouses that keeping the scenegraph as small as
+      possible helps JavaFX applications perform optimally. Regardless
+      what version of JavaFX you're using, this is sage advice.&nbsp;
+      Having spent some time trying to create components for a
+      scoreboard-like application, I was concerned over the amount of
+      CPU time being consumed by the clock component pictured directly
+      below.</p>
+    <p><img alt="" src="resource/javafx-node-perf/BulbClockNode.jpg"
+        width="400" height="160"><br>
+    </p>
+    <p> </p>
+    <p> </p>
+    <p> </p>
+    <p> </p>
+    <p> </p>
+    <p>You can click on the preceding image to run this mini application
+      via Java WebStart.&nbsp;&nbsp; By placing your mouse over any of
+      the digits and typing in, via keyboard input, a valid number, you
+      can set the clock.&nbsp; Clicking on the "START/STOP" text will
+      toggle the clock on and off.&nbsp; Like many scoreboard clocks,
+      when the time remaining is less than one minute, 10ths of seconds
+      are displayed.&nbsp; It is during this phase, when digits are
+      being updated every tenth of a second, that this application can
+      be especially taxing.&nbsp; You can imagine how troublesome this
+      clock might be if it were to be part of say a hockey scoreboard
+      which could have an additional 4 penalty clocks ticking
+      simultaneously.</p>
+    <p>The major factor affecting performance appears to be the sheer
+      number of nodes in the scenegraph that require recalculation for
+      every clock tick.&nbsp; For this first implementation, each of the
+      five clock digits is comprised of 27 <font face="courier
+        new,courier,monospace">BulbNode</font>s, (my naming) which are
+      switched on or off depending upon what value needs to be
+      displayed.</p>
+    <p>In an effort to see how decreasing the node count might effect
+      performance, this second implementation of the clock component
+      uses the same underlying framework, except that each digit is now
+      composed of 7 LED <font face="courier new,courier,monospace">SegmentNode</font>s
+      (my naming again) instead of 27 <font face="courier
+        new,courier,monospace">BulbNode</font>s. &nbsp; You can run this
+      version of the clock component by clicking on the image that
+      follows.</p>
+    <p><img alt="" src="resource/javafx-node-perf/LEDClockNode.jpg"
+        width="400" height="160"><br>
+    </p>
+    <p> </p>
+    <p> </p>
+    <p>For our final example, in order to truly minimize node count,
+      each digit is represented by a single <font face="courier
+        new,courier,monospace">ImageView</font> node. When the value of
+      a digit changes, a new <font face="courier new,courier,monospace">Image</font>
+      is displayed.&nbsp; By caching all of the possible digit values
+      (blank, 0-9) you can very quickly switch images.&nbsp; No doubt,
+      prettier images can be created, but I think you get the
+      point.&nbsp; Click on the image that follows to try this version.<br>
+    </p>
+    <img alt="" src="resource/javafx-node-perf/ImageClockNode.jpg"
+      width="400" height="160"><br>
+    <p><font size="3"><strong>The Results</strong></font></p>
+    <p>The slower the compute platform, the more pronounced the
+      differences in performance should be.&nbsp; Thinking along those
+      lines, a very modest 1.4 GHz Pentium M laptop was chosen as the
+      test environment to compare CPU utilization for these
+      applications.&nbsp; OpenSolaris provides an easy-to-use well-known
+      command-line tool called <a
+href="https://docs.oracle.com/cd/E23823_01/html/816-5166/vmstat-1m.html#scrolltoc">vmstat(1M)</a>,
+      which was chosen as the mechanism to analyze the individual
+      applications. In contrast, the Performance Tab which is part of
+      the Windows Task Manager, seemed to produce wild performance
+      variations.<br>
+    </p>
+    <p>For each run,&nbsp; the clocks were set to one minute, and run
+      until the time expired.&nbsp; The data shown below represents the
+      average CPU utilization, after startup, for each of the three
+      implementations.&nbsp; In particular we'll look at the following
+      fields returned by <font face="courier new,courier,monospace">vmstat</font>:<br>
+    </p>
+    <ul>
+      <li><strong>us</strong> - percentage usage of CPU time in <em>user</em>
+        space<br>
+      </li>
+      <li><strong>sy</strong> - percentage usage of CPU time in <em>system</em>
+        space<br>
+      </li>
+      <li><strong>id</strong> - percentage usage of CPU time idling</li>
+    </ul>
+    The sum of (us + sy + id) should approximate 100%.
+    <p> </p>
+    <table width="739" height="139" border="1" cellspacing="1"
+      cellpadding="1">
+      <tbody>
+        <tr>
+          <td style="width: 33%;"> <br>
+          </td>
+          <td style="width: 33%;" align="center"> <strong>Number of
+              Nodes per Digit</strong><br>
+          </td>
+          <td style="width: 33%;" align="center"> <strong>CPU
+              Utilization </strong><br>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 33%;"> <strong>Implementation 1: </strong><font
+              face="courier new,courier,monospace">BulbClockNode</font><br>
+          </td>
+          <td style="width: 33%;">&nbsp;27 <font face="courier
+              new,courier,monospace">BulbNode</font>s<br>
+          </td>
+          <td style="width: 33%;">&nbsp;us: 22%&nbsp; sy: 2%&nbsp; id:
+            76%<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 33%;"> <strong>Implementation 2: </strong><font
+              face="courier new,courier,monospace">LEDClockNode</font><br>
+          </td>
+          <td style="width: 33%;">&nbsp;7 <font face="courier
+              new,courier,monospace">SegmentNod</font>es<br>
+          </td>
+          <td style="width: 33%;">&nbsp;us: 9%&nbsp;&nbsp;&nbsp; sy:
+            2%&nbsp; id: 89%<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="width: 33%;"> <strong>Implementation 3: </strong><font
+              face="courier new,courier,monospace">ImageClockNode</font><br>
+          </td>
+          <td style="width: 33%;">&nbsp;1 <font face="courier
+              new,courier,monospace">ImageNode</font><br>
+          </td>
+          <td style="width: 33%;">&nbsp;us: 3%&nbsp;&nbsp;&nbsp; sy:
+            2%&nbsp; id: 95%<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><br>
+      The JavaFX engineering team is well aware of this limitation, and
+      hopes to redesign the underlying scenegraph plumbing in the
+      future.&nbsp; Regardless, it's still a good idea to take into
+      consideration the size of your scenegraph.</p>
+    <p>JavaFX book status:&nbsp; Our upcoming book, <a
+href="https://www.amazon.com/JavaFX-Developing-Rich-Internet-Applications/dp/013701287X"><em>JavaFX:
+
+
+
+          Developing Rich Internet Applications</em></a>, is in copy
+      edit.&nbsp; Coming soon: Rough cuts of certain chapters will be
+      available on <a
+        href="http://safaribooksonline.com/Corporate/Index/">Safari</a>.<br>
+    </p>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>

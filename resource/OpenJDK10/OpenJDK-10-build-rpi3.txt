@@ -1,0 +1,185 @@
+
+
+Building OpenJDK 10 Locally on a Raspberry Pi 3
+
+With the formal relase of JDK 9, Oracle no longer provides Java binaries for
+the Linux/armhf (Raspberry Pi) platform.  Instead of waiting for your
+Linux distribution (i.e. Raspbian) to build, certify and ultimately offer Java
+binaries, it is possible (and relatively straightforward) to build the latest
+Java update from source right on your device.  The following instructions
+should guide you through that process.
+
+Reference:
+http://hg.openjdk.java.net/jdk9/jdk9/raw-file/tip/common/doc/building.html
+
+Hardware:
+At this juncture, the only reasonble Raspberry Pi device that can be used to
+build OpenJDK 10 is the Raspberry Pi 3. The earlier models (and the  Raspberry
+Pi Zero), with 512MB RAM, do not have enough memory to support the build. 
+Even with the 1GB RAM available to the Raspberry Pi 3, additional swap space
+must be configured.
+
+Platform Requirements:
+  - Recent version of the Raspbian Linux distribution.  In this instance
+    we used the latest version of Raspbian (Debian Stretch with 4.9 Linux
+    kernel)
+  - 10 GB free disk space required for the source code and build binaries.
+    HIGHLY RECOMMENDED: Use a modern high speed SD card.  It will help 
+    decrease build time, which, on this platform is substantial enough.
+
+
+Step 0: Configure in an additional 1GB SWAP file
+
+   Assumption: /var filesystem has at least 1GB contiguous free space
+
+   $ sudo apt-get install pv
+   $ sudo dd if=/dev/zero bs=1M count=1024 | pv | sudo dd of=/var/SWAPFILE
+   $ sudo mkswap /var/SWAPFILE
+   $ sudo vi /etc/dphys-swapfile
+
+     Edit the following CONF_ lines:
+
+     CONF_SWAPFILE=/var/SWAPFILE
+
+     CONF_SWAPSIZE=1024
+
+   $ sudo reboot
+
+   Confirm swap is configured:
+
+   $ swapon -s 
+   Filename                        Type            Size    Used    Priority
+   /var/SWAPFILE                   file            1048572 19724   -1
+ 
+
+Step 1: Install an appropriate JDK.  The rule of thumb is to install a version
+        of Java one major release earlier than the version you wish to build.
+        In this case, as we're building JDK 10, we'll install a version of
+        JDK 9.
+
+   $ sudo apt-get install openjdk-9-jdk
+
+
+Step 2: Install the necessary prerequisite packages:
+    
+   $ sudo apt-get install build-essential
+   $ sudo apt-get install libx11-dev libxext-dev libxrender-dev \ 
+        libxtst-dev libxt-dev
+   $ sudo apt-get install libcups2-dev
+   $ sudo apt-get install libasound2-dev
+   $ sudo apt-get install libfontconfig1-dev
+   $ sudo apt-get install zip
+
+
+Step 3: Get the source code
+
+   If it isn't there already, install the mercurial source code management
+   package:
+
+   $ sudo apt-get install mercurial
+
+   Execute the following code to pull down the entire source
+
+   $ hg clone http://hg.openjdk.java.net/jdk/jdk10
+   $ cd jdk10
+
+   For the GA OpenJDK 10 build, the following command was not required,
+   however, depending on what you build, you may need to issue the following:
+
+      $ bash get_source.sh
+   
+vi 
+Step 4: Run the configure command as follows:
+
+   $ cd jdk10
+   $ bash configure --disable-warnings-as-errors \
+        --with-native-debug-symbols=none \
+        --with-version-pre="armhf" \
+        --with-version-build=46 \
+        --with-version-opt=""
+   
+
+   NOTE 1: The "--disable-warnings-as-error" directive is required because
+           by default, the version of GNU C++ compiler will regard
+           deprecated system calls, that still remain in the OpenJDK
+           source code, as errors.
+
+   NOTE 2: The '--with-native-debug-symbols=none' will make a substantially
+           smaller runtime image.  This is how Java is usually shipped.
+           Additionally, there is further opportunity to strip the executables
+           and shared objects of symbol table information to save more space.
+           That exercise is left to the reader.
+
+   NOTE 3: The '--with-version-pre="armhf" --with-version-build=46 
+           --with-version-opt=""' directives enable you to
+           customize the version string that is output when you run 
+           `java --version` on the built image.
+
+   For this example, after the build is complete, issuing 
+  `java --version` yields:
+   
+   $ java --version
+   openJDK version "10-armhf" 2018-03-20
+   OpenJDK Runtime Environment (build 10-armhf+46)
+   OpenJDK 64-bit Server VM (build 10-armhf+46, mixed mode)
+
+
+Step 5: Build openJDK 10
+
+   $ make LOG=cmdlines images
+
+   NOTE 1: The "LOG=cmdlines" directive will log the commands that are used to
+           build the images.  This could be useful in the event you need to
+           debug a build failure.
+
+   NOTE 2: Even though the Raspberry Pi 3 has 4 cores, do not use the "JOBS="
+           directive to run multiple compiles simultaneously.  Increasing the
+           job count requires more memory, which is in too short supply already.
+
+Step 6: Try the newly built JDK
+
+   $ cd jdk10/build/linux-arm-normal-server-release/jdk/
+   $ bin/java -version
+
+
+
+Postscript
+
+   Since the creation of this document, JDK 10.0.1 has been released. In order
+   to build this version, the same general steps apply with a few slight
+   exceptions:
+
+   A. The latest jdk10 update source code can be pulled down as follows.
+
+      hg clone http://hg.openjdk.java.net/jdk-updates/jdk10u
+
+      So, instead of jdk10/, a jdk10u/ directory is created
+
+   B. You can visit http://hg.openjdk.java.net/jdk-updates/jdk10u/tags to see
+      what the latest build number is associated with the jdk update and
+      apply that to the configure command.
+
+      For example, the build number associated with the release of jdk 10.0.1
+      is 10.
+
+      Accordingly, you can customize the configure string as follows:
+      
+      $ cd jdk10u
+      $ bash configure --disable-warnings-as-errors \
+        --with-native-debug-symbols=none \
+        --with-version-pre="armhf" \
+        --with-version-build=10 \
+        --with-version-opt=""
+
+      When built, java --version will look something like this:
+
+      $ cd src/jdk10u/build/linux-arm-normal-server-release/images
+      $ jdk/bin/java --version
+      openjdk 10.0.1-armhf 2018-04-17
+      OpenJDK Runtime Environment (build 10.0.1-armhf+10)
+      OpenJDK Server VM (build 10.0.1-armhf+10, mixed mode)
+
+      
+
+   
+

@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Framework to Help Create Small Footprint RAM Resident Solaris
+      Configurations</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <b><big>Framework to Help Create Small Footprint RAM Resident
+        Solaris Configurations</big></b><br>
+    <small>By Jim Connors 07 Feb 2007 </small>
+    <p>As Sun continues to avail more of its intellectual property to
+      the community, the advantages Sun employees have regarding access
+      to internal resources almost disappear.&nbsp; In fact now when
+      attempting to post questions to internal Sun mail aliases, I am
+      often times redirected to the community.&nbsp; The ramifications
+      of this change hit me square in the gut this summer.</p>
+    <p>Having stumbled upon an internal project investigating how
+      Solaris might be minimized for embedded use, I thought an
+      interesting offshoot of this effort might be to create a ZFS
+      appliance.&nbsp; This device would boot from flash entirely into
+      RAM, and all state would be maintained by the ZFS volumes.&nbsp;
+      Turns out this may be a little more tricky than anticipated, and
+      future ZFS enhancements to Solaris (ZFS boot) may make this idea
+      moot.</p>
+    <p>Based on an <a title="OpenSolaris ZFS discussion"
+href="http://www.opensolaris.org/jive/thread.jspa;jsessionid=59EB539300ABA51B51E57225AF3F5245?messageID=50448&amp;#50448">OpenSolaris
+
+
+
+
+
+
+        ZFS discussion</a> I initiated, observers went off and wrote
+      about this topic elsewhere, some predicting that Sun would be
+      releasing embedded ZFS appliances.&nbsp; Whoa, hold on there, not
+      so fast.&nbsp; We have no plans (at least that I know of) to do
+      any such thing.&nbsp; This was nothing more than a pet project of
+      mine.&nbsp; Serves me right for announcing that I was a Sun
+      employee.</p>
+    <p> But there was some good that came out of this dialog.&nbsp; In
+      addition to learning the valuable lesson of being careful what you
+      write, interest in the notion of using Solaris as an "embedded" OS
+      was quite apparent.&nbsp;&nbsp; As a consequence,&nbsp; I thought
+      it might make sense to publish the basic framework used to create
+      a custom Solaris miniroot.&nbsp; Included below is the
+      introduction section of the <a title="README"
+        href="resource/embedded_solaris/README.txt">README</a>
+      file:&nbsp;<br>
+    </p>
+    <blockquote><em>1.0 Introduction</em><br>
+      <br>
+      <em>With the advent of Solaris 10 Update 1 and its migration to
+        the grub(5) bootloader, it becomes quite feasible and
+        straightforward to consider creating small footprint "embedded"
+        versions of Solaris which boot directly into RAM. This project
+        is based upon work done by Shudong Zhou to create a minimized
+        Solaris for embedded use.&nbsp; The doc/ directory contains some
+        of the original documentation and scripts used to build such an
+        environment.</em><br>
+      <br>
+      <em>It is expected that entities may want to provide further
+        functionality and customizations to this environment. In order
+        to assist in this endeavor, the original work has been enhanced
+        to utilize the Java-based ant(1) build tool. For a further
+        description on how a miniroot image is created, see the section
+        on "Understanding the ant(1) build process".</em></blockquote>
+    <p>You can download the framework <a title="here"
+        href="resource/embedded_solaris/eos_framework.zip">here</a></p>
+    <p>Miscellaneous notes:</p>
+    <ul>
+      <li>This framework assumes availability of a standard Solaris
+        distribution.&nbsp; Although not confirmed, I suspect it may not
+        be real hard to augment for OpenSolaris.</li>
+      <li>The current framework produces a RAM resident version of
+        Solaris that is about 60MB in size.&nbsp; Note: there is no
+        windowing included.<br>
+      </li>
+      <li>These configs are system specific.&nbsp; The reference
+        implementation for the included framework is an iGoLogic i84810
+        motherboard.&nbsp; Some key specs are:</li>
+      <ul>
+        <li>1 GHz Celeron Processor</li>
+        <li>512 MB RAM on board</li>
+        <li>Compact Flash slot on bottom of motherboard</li>
+        <li>146mm x 104mm<br>
+        </li>
+        <li>Runs Solaris 10 U3 out of the box<br>
+        </li>
+        <li>For more info contact iGoLogic an <a
+            title="http://www.igologic.com"
+            href="http://www.igologic.com/">http://www.igologic.com</a></li>
+      </ul>
+      <li>Once an image is created, you'll need to set up grub(5) on
+        your media.&nbsp; Here's a pointer to a URL explaining <a
+          title="Grub on a stick"
+          href="http://uadmin.blogspot.com/2005/11/grub-on-stick.html">Grub
+
+
+
+
+
+
+          on a stick</a>.&nbsp; A copy of this URL is also included in
+        the framework under the doc/ directory.<br>
+      </li>
+      <li>Here's a picture of the motherboard with ruler included to
+        give you a feel for its size.&nbsp; <br>
+      </li>
+    </ul>
+    <blockquote><br>
+      <img src="resource/embedded_solaris/i84810.jpg" vspace="0"
+        hspace="0" border="0" align="bottom"></blockquote>
+    <br>
+    <br>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>

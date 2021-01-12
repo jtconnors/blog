@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>The Changing Landscape of Laptop Disk Storage</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <big><b>The Changing Landscape of Laptop Solid State Storage</b></big><br>
+    <small><small>By Jim Connors 30 July 2018<br>
+        <br>
+      </small></small> In the hopes that those encountering the
+    challenge of adding additional SSD storage to modern laptops may
+    benefit from this learning experience...<br>
+    <br>
+    Among the more popular standard-issue corporate laptops, the Dell
+    Latitude E-Series product line has proven to contain a good mix of
+    the qualities many look for: a reasonably small footprint, powerful
+    CPU options, full HD graphics and room to expand both RAM and
+    disk.&nbsp; Of note, I've used a <a
+href="https://www.dell.com/en-us/work/shop/cty/latitude-14-7000-series-ultrabook-e7440/spd/latitude-e7440-ultrabook">Dell
+
+
+
+
+
+
+
+      E7440</a> laptop for three years and liked it enough that once the
+    corporate lease was up, I looked to buy a used one for personal
+    consumption.&nbsp; As the E7440 is a bit long in the tooth now, I
+    instead opted for the slightly newer, faster version -- the <a
+href="https://www.dell.com/en-us/work/shop/cty/latitude-14-7000-series-ultrabook-e7450/spd/latitude-e7450-ultrabook">E7450</a>.&nbsp;
+
+
+
+
+
+
+    At the time of this publishing, these can be had on eBay for about
+    $350 US.<br>
+    <br>
+    What at first seemed to be a simple upgrade from the previous
+    generation turned out to have one rather important difference: <i>there
+
+
+
+
+
+
+      is no supported secondary storage option on the Dell E7450</i>.<br>
+    <br>
+    <br>
+    <img alt="" src="resource/laptop-ssd/E7440vsE7450.jpg" width="594"
+      height="349"><br>
+    <br>
+    As the image above demonstrates, the Dell E7440 on the left contains
+    an expansion slot suitable for <a
+      href="https://en.wikipedia.org/wiki/Serial_ATA#Mini-SATA_.28mSATA.29">mSATA</a>
+    Solid State Drives whereas the connector on the right for the Dell
+    E7450 instead includes a more generic (and more modern) <a
+      href="https://en.wikipedia.org/wiki/PCI_Express#PCI_Express_Mini_Card">mini
+
+
+
+
+
+
+      PCIe</a> slot.&nbsp; Cards for both, although somewhat similar at
+    first glance, are not the same, do not have the same connectors and
+    are incompatible.&nbsp; Here's what an mSata card looks like next to
+    a 42mm mini PCIe card:<br>
+    <br>
+    <img alt="" src="resource/laptop-ssd/mSATA_vs_miniPCIE.jpg"
+      width="450" height="297"><br>
+    <br>
+    <b>The Solution (for the impatient)<br>
+      <br>
+    </b>Not all mini PCIe cards are alike (more on this later).&nbsp; If
+    you really don't feel like reading the rest of this article, one
+    card has finally made it to market that does work in the Dell E7450
+    mini PCIe slot.&nbsp; That card is the <i>Toshiba RC100 M.2 2242
+      240GB PCIe SSD</i>, pictured directly below.<br>
+    <br>
+    <img alt="" src="resource/laptop-ssd/ToshibaRC100.jpg" width="134"
+      height="225"><br>
+    <br>
+    Note:&nbsp; The SSD may not automagically appear once installed in,
+    say a Windows 10 environment.&nbsp; It may need to be partitioned
+    and formatted first.&nbsp; And of course, as to whether it's
+    officially supported by Dell is another question entirely.<br>
+    <br>
+    <b>More on Mini PCIe<br>
+      <br>
+    </b>Its arguable Dell was ahead of the game with respect to SSD
+    connectivity for the E7450.&nbsp; The PCIe standard, and in
+    particular the M.2 connector, is rapidly becoming more and more
+    common, slowly but surely rendering mSATA obsolete.&nbsp; In
+    addition to being available in many form factors, M.2 SSDs come with
+    slightly different edge connectors or keys (which ultimately
+    determine read/write speed) and can follow the <a
+      href="https://en.wikipedia.org/wiki/Serial_ATA">SATA</a> or <a
+      href="https://en.wikipedia.org/wiki/NVM_Express">NVMe</a>
+    (Non-Volatile Memory express) protocols.&nbsp; Let's examine these
+    briefly now.<br>
+    <br>
+    <b>M.2 Form Factors<br>
+    </b><br>
+    M.2 cards come in many different widths (12, 16, 22 and 30 mm) and
+    lengths (16, 26, 30, 38, 42, 60, 80 and 110 mm). Some of these
+    combinations occur far more regularly than others.&nbsp; The most
+    common M.2 SSDs use 22 mm width cards with lengths of 30, 42, 60, 80
+    or 110 mm.&nbsp; A large majority of the M.2 SSDs currently
+    available prefer the longer length form factors over the shorter
+    ones, especially when considering larger capacity drives.<br>
+    <br>
+    Often times the M.2 card will specify the dimensions as part of the
+    model number.&nbsp; For example, the working module for the Dell
+    E7450 (mentioned above) is the <i>Toshiba RC100 M.2 <b>2242</b>
+      240GB PCIe SSD.</i>&nbsp; The highlighted <i><b>2242</b></i>
+    number indicates this card is 22 mm wide and 42 mm long.&nbsp; This
+    form factor is not nearly as common as the longer types, and
+    capacity is currently limited to no more than 256GB.&nbsp; No doubt
+    as densities improve, this will change.&nbsp; The bottom line here
+    is, the <b><i>Dell E7450 PCIe slot is made for a 22 mm wide 42 mm
+        long M.2 cards</i></b>.&nbsp; The market for these types of SSDs
+    are quite limited today.<br>
+    <br>
+    <b>M.2 Protocol for SSDs<br>
+      <br>
+    </b>M.2 SSDs are available as either supporting the <a
+      href="https://en.wikipedia.org/wiki/Serial_ATA">SATA</a> or the <a
+      href="https://en.wikipedia.org/wiki/NVM_Express">PCIe NVMe</a>
+    protocols.&nbsp; It is important to understand which of these
+    protocols your laptop motherboard supports.&nbsp; Unfortunately, I
+    was unaware of these differences, and in my ignorance initially
+    purchased a Transcend 256GB SATA III MTS400 42 mm SSD.&nbsp; In the
+    limited world of 42 mm M.2 SSDs, the SATA variety is by far and away
+    the most prevalent and in fact until recently was the only
+    option.&nbsp; Unfortunately the Dell E7450 does not support SATA on
+    its PCIe interface.&nbsp; The picture that follows includes both
+    PCIe M.2 SSDs.&nbsp; They both look the same.&nbsp; The Transcend
+    device on the left won't work; the Toshiba device on the right does.<br>
+    <br>
+    <img alt="" src="resource/laptop-ssd/Transcend_and_Toshiba.jpg"
+      width="319" height="216"><br>
+    <br>
+    <b><br>
+      M.2 Connectors<br>
+      <br>
+    </b>We won't get into much detail here, suffice it to say the M.2
+    edge connector can have different <a
+      href="https://en.wikipedia.org/wiki/M.2#Form_factors_and_keying">keying
+
+
+
+
+
+
+      and notch configurations</a> signifying among others,&nbsp;
+    interfaces and transfer speeds.&nbsp; The cards in the image above
+    are of the "B &amp; M key" edge connector variety.<br>
+    <br>
+    <b>Conclusion<br>
+      <br>
+    </b>Here's the Dell Latitude E7450 with the Toshiba SSD installed.<br>
+    <br>
+    <img alt="" src="resource/laptop-ssd/ssd_installed.jpg" width="486"
+      height="509"><br>
+    <br>
+    And here's how in appears in the Windows 10 Device Manager<br>
+    <br>
+    <img alt="" src="resource/laptop-ssd/devicemgr.jpg" width="632"
+      height="462"><br>
+    <br>
+    <em></em><span class="mark" style="font-weight: bold; color:
+      rgb(163, 35, 142); font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px; font-variant-ligatures: normal;
+      font-variant-caps: normal; letter-spacing: normal; orphans: 2;
+      text-align: left; text-indent: 0px; text-transform: none;
+      white-space: normal; widows: 2; word-spacing: 0px;
+      -webkit-text-stroke-width: 0px; background-color: rgb(255, 255,
+      255); text-decoration-style: initial; text-decoration-color:
+      initial;"><font color="#000000"> </font></span>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>

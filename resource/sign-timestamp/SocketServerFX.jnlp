@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com"
+      href="https://blogs.oracle.com/jtc/resource/sign-timestamp/SocketServerFX.jnlp">
+  <information>
+    <title>SocketServerFX</title>
+    <vendor>jtconnor</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="https://blogs.oracle.com/jtc/resource/sign-timestamp/SocketServerFX.signedjar"
+         size="25690" download="eager" />
+  </resources>
+<security>
+  <all-permissions/>
+</security>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="SocketServerFX" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="socketserverfx.SocketServerFX"  name="SocketServerFX" />
+  <update check="always"/>
+</jnlp>

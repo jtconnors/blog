@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>An Embedded Java 8 Lambda Expression Microbenchmark</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <b><big>An Embedded Java 8 Lambda Expression Microbenchmark</big></b><br>
+    <small><small>By Jim Connors 17 March 2014</small></small><br>
+    <p> It's been a long road, but Java 8 has finally arrived.&nbsp;
+      Much has been written and said about all the new features
+      contained in this release, perhaps the most important of these is
+      the introduction of <a
+href="https://blogs.oracle.com/thejavatutorials/entry/javaone_2013_lambda_expressions">Lambda
+
+
+
+        Expressions</a>.&nbsp; Lambdas are now intimately integrated
+      into the Java platform and they have the potential to aid
+      developers in the traditionally tricky realm of parallel
+      programming.</p>
+    <p>Following closely behind, <a href="a_first_look_at_compact.html">Compact
+
+
+
+        Profiles</a> promise to open up the tremendous benefits of Java
+      Standard Edition compatibility to embedded platforms previously
+      thought to be too small.&nbsp; Can you see where this is
+      heading?&nbsp; It might be interesting to use these two
+      technologies simultaneously and see how well they work
+      together.&nbsp; What follows is the description of a small program
+      and its performance measurements -- a microbenchmark if you will
+      -- that aims to highlight how programming with the new Lambda
+      Expression paradigm can be beneficial not only for typical
+      desktops and servers, but also for a growing number of embedded
+      platforms too.</p>
+    <p><b>The Hardware/OS Platform(s)</b></p>
+    <p>Of primary interest for this article is the <a
+        href="http://boundarydevices.com/products/sabre-lite-imx6-sbc/">Boundary
+
+
+
+        Devices BD-SL-i.MX6</a> single board computer.&nbsp; It is a
+      quad-core ARM® Cortex™-A9 based system with 1GB RAM running an <i>armhf</i>&nbsp;
+
+
+
+      Debian Linux distribution.&nbsp; At the time of this article's
+      publication, its list price is US $199.<br>
+    </p>
+    <img alt="" src="resource/lambda-microbench/BD-SL-i.mx6.jpg"
+      width="300" height="225">
+    <p> </p>
+    <p>What makes it more interesting is that we'll not only run Java 8
+      Lambda Expressions on device, we'll do it within the confines of
+      the new Java 8 Compact1 profile.&nbsp; <i><b>The static footprint
+          of this Java runtime environment is 10½ MB.</b></i></p>
+    <p>A second system, altogether different in capability and capacity
+      from our embedded device will be used as a means to compare and
+      contrast execution behavior across disparate hardware and OS
+      environments.&nbsp; The system in question is a <a
+        href="http://www.toshiba.com/us/computers/laptops/tecra/R840/">Toshiba
+
+
+
+        Tecra R840</a> laptop running Windows 7/64-bit.&nbsp; It has a
+      dual-core Intel® Core™ i5-2520M processor with 8GB RAM and will
+      use the standard Java 8 Runtime Environment (JRE) for Windows
+      64-bit.<br>
+    </p>
+    <p><b>The Application</b></p>
+    <p>Looking for a sample dataset as the basis for our rudimentary
+      application, <a href="https://github.com/datacharmer/test_db">this
+
+
+
+        link</a> provides an ideal (and fictional) database of employee
+      records.&nbsp; Among the available formats, a comma-delimited CSV
+      file is supplied with approximately 300,000 entries.&nbsp; Our
+      sample application will read this file and store the employee
+      records into a <tt>LinkedList&lt;EmployeeRec&gt;.&nbsp;</tt> The
+      <tt>EmployeeRec</tt> has the following&nbsp; fields:</p>
+    <blockquote>
+      <p><tt>public class EmployeeRec {<br>
+          &nbsp;&nbsp;&nbsp; private String id;<br>
+        </tt><tt>&nbsp;&nbsp;&nbsp; private String birthDate;</tt><br>
+        <tt>&nbsp;&nbsp;&nbsp; private String lastName;<br>
+          &nbsp;&nbsp;&nbsp; private String firstName;<br>
+          &nbsp;&nbsp;&nbsp; private String gender;<br>
+          &nbsp;&nbsp;&nbsp; private String hireDate;<br>
+          &nbsp;&nbsp;&nbsp; ...<br>
+          }</tt></p>
+    </blockquote>
+    <p>With this data structure initialized, our application is asked to
+      perform one simple task:&nbsp; <b><i>calculate the average age of
+          all male employees</i></b>.</p>
+    <p><b>Old School</b></p>
+    <p>First off let's perform this calculation in a way that predates
+      the availability of Lambda Expressions.&nbsp; We'll call this
+      version <b>OldSchool</b>.&nbsp; The code performing the "average
+      age of all male employees" calculation looks like this:</p>
+    <blockquote>
+      <p><tt>double sumAge = 0;<br>
+          long numMales = 0;<br>
+          for (EmployeeRec emp : employeeList) {<br>
+          &nbsp;&nbsp;&nbsp; if (emp.getGender().equals("M")) {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sumAge +=
+          emp.getAge();<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; numMales += 1;<br>
+          &nbsp;&nbsp;&nbsp; }<br>
+          }<br>
+          double avgAge = sumAge / numMales;</tt> </p>
+    </blockquote>
+    <p><b>Lamba Expression Version 1<br>
+      </b></p>
+    <p>Our second variation will use a Lambda expression to perform the
+      identical calculation.&nbsp; We'll call this version <b>Lamba
+        stream()</b>.&nbsp; The key statement in Java 8 looks like this:</p>
+    <blockquote>
+      <p> <tt>double avgAge = employeeList.stream()<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+          .filter(s -&gt; s.getGender().equals("M"))<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+          .mapToDouble(s -&gt; s.getAge())<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+          .average()<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+          .getAsDouble();</tt></p>
+    </blockquote>
+    <p><b>Lambda Expression Version 2</b><br>
+    </p>
+    <p>Our final variation uses the preceding Lambda Expression with one
+      slight modification: it replaces the <tt>stream()</tt> method
+      call with the <tt>parallelStream()</tt> method, offering the
+      potential to split the task into smaller units running on separate
+      threads.&nbsp; We'll call this version <b>Lambda parallelStream()</b>.
+      The Java 8 statement looks as follows:</p>
+    <blockquote>
+      <p><tt>double avgAge = employeeList.<b><span style="color:
+              #ff0000;">parallelStream()</span></b><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+          .filter(s -&gt; s.getGender().equals("M"))<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+          .mapToDouble(s -&gt; s.getAge())<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+          .average()<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+          .getAsDouble();</tt> <br>
+      </p>
+    </blockquote>
+    <p><b>Initial Test Results</b></p>
+    <p>The charts that follow display execution times of the sample
+      problem solved via our three aforementioned variations.&nbsp; The
+      left chart represents times recorded on the ARM Cortex-A9
+      processor while the right chart shows recorded times for the Intel
+      Core-i5.&nbsp; The smaller the result, the faster, both examples
+      indicate that there is some overhead to utilizing a serial Lambda
+      <tt>stream()</tt> over and above the old school pre-Lambda
+      solution.&nbsp; As far as <tt>parallelStream()</tt> goes, it's a
+      mixed bag.&nbsp; For the Cortex-A9, the <tt>parallelStream()</tt>
+      operation is negligibly faster than the old school solution,
+      whereas for the Core-i5, the overhead incurred by <tt>parallelStream()</tt>
+      actually makes the solution slower.</p>
+    <p> </p>
+    <img alt="" src="resource/lambda-microbench/ComputeAvgChart.jpg"
+      width="576" height="200">
+    <p> </p>
+    <p>Without any further investigation, one might conclude that
+      parallel streams may not be worth the effort. But what if
+      performing a trivial calculation on a list of 300,000 employees
+      simply isn't enough work to show the benefits of
+      parallelization?&nbsp; For this next series of tests, we'll
+      increase the computational load to see how performance might be
+      effected.<br>
+    </p>
+    <p> </p>
+    <p><b>Adding More Work to the Test<br>
+      </b></p>
+    <p>For this version of the test, we'll solve the same problem, that
+      is to say, calculate the average age of all males, but add a
+      varying amount of intermediate computation.&nbsp; We can variably
+      increase the number of required compute cycles by introducing the
+      following identity method to our programs:<br>
+    </p>
+    <blockquote>
+      <p><tt>/* <br>
+          &nbsp;* Rube Goldberg way of calculating identity of 'val',<br>
+          &nbsp;* assuming number is positive<br>
+          &nbsp;*/<br>
+          private static double identity(double val) {<br>
+          &nbsp;&nbsp;&nbsp; double result = 0;<br>
+          &nbsp;&nbsp;&nbsp; for (int i=0; i &lt; <span style="color:
+            #ff0000;"><b>loopCount</b></span>; i++) {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; result +=
+          Math.sqrt(Math.abs(Math.pow(val, 2)));&nbsp;&nbsp; &nbsp;<br>
+          &nbsp;&nbsp;&nbsp; }<br>
+          &nbsp;&nbsp;&nbsp; return result / loopCount;</tt><br>
+        }</p>
+    </blockquote>
+    <p>As this method takes the square root of the square of a number,
+      it is in essence an expensive identity function. By changing the
+      value of <tt>loopCount</tt> (this is done via command-line
+      option), we can change the number of times this loop executes per
+      <tt>identity()</tt> invocation.&nbsp; This method is inserted into
+      our code, for example with the Lambda ParallelStream() version, as
+      follows:</p>
+    <blockquote>
+      <p><tt>double avgAge = employeeList.parallelStream()<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+          .filter(s -&gt; s.getGender().equals("M"))<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+          .mapToDouble(<span style="color: #ff0000;"><b>s -&gt;
+              identity(s.getAge())</b></span>)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+          .average()<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+          .getAsDouble();</tt></p>
+    </blockquote>
+    <p>A modification identical to what is highlighted in red above is
+      also applied to both Old School and Lambda Stream()
+      variations.&nbsp; The charts that follow display execution times
+      for three separate runs of our microbenchmark, each with a
+      different value assigned to the internal <tt>loopCount</tt>
+      variable in our Rube Goldberg <tt>identity()</tt> function.<br>
+    </p>
+    <p> </p>
+    <p> </p>
+    <p> </p>
+    <img alt=""
+      src="resource/lambda-microbench/ComputeAvgExtraChart.jpg"
+      width="576" height="224">
+    <p>For the Cortex-A9, you can clearly see the performance advantage
+      of <tt>parallelStream()</tt> when the loop count is set to 100,
+      and it becomes even more striking when the loop count is increased
+      to 500.&nbsp; For the Core-i5, it takes a lot more work to realize
+      the benefits of <tt>parallelStream()</tt>.&nbsp; Not until the
+      loop count is set to 50,000 do the performance advantages become
+      apparent.&nbsp; The Core-i5 is so much faster and only has two
+      cores; consequently the amount of effort needed to overcome the
+      initial overhead of <tt>parallelStream()</tt> is much more
+      significant.</p>
+    <p><b>Downloads<br>
+      </b></p>
+    <p> The sample code used in this article is available as a NetBeans
+      project.&nbsp; As the project includes a CSV file with over
+      300,000 entries, it is larger than one might expect.&nbsp; The <a
+        href="http://blogs.oracle.com">blogs.oracle.com</a>&nbsp; site
+      prohibits storing files larger than 2MB in size so this project
+      source has been compressed and split into three parts.&nbsp; Here
+      are the links:</p>
+    <ul>
+      <li><a
+          href="resource/lambda-microbench/LambdaMicrobench.zip.part1">LambdaMicrobench.zip.part1</a></li>
+      <li><a
+          href="resource/lambda-microbench/LambdaMicrobench.zip.part2">LambdaMicrobench.zip.part2</a></li>
+      <li><a
+          href="resource/lambda-microbench/LambdaMicrobench.zip.part3">LambdaMicrobench.zip.part3</a></li>
+    </ul>
+    <p>Just concatenate the three downloaded files together to recreate
+      the original LambdaMicrobench.zip file.&nbsp; In Linux, the
+      command would look something like this:</p>
+    <blockquote>
+      <p> <tt>$ cat LambdaMicrobench.zip.part? &gt;
+          LambdaMicrobench.zip</tt><br>
+      </p>
+    </blockquote>
+    <b>Conclusion</b><br>
+    <p>A great deal of effort has been put into making Java 8 a much
+      more universal platform.&nbsp; Our simple example here
+      demonstrates that even an embedded Java runtime environment as
+      small as 10½ MB can take advantage of the latest advances to the
+      platform.&nbsp; This is just the beginning.&nbsp; There is lots
+      more work to be done to further enhance the performance
+      characteristics of parallel stream Lambda Expressions.&nbsp; We
+      look forward to future enhancements.<br>
+    </p>
+    <p> </p>
+    <p> </p>
+    <br>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>

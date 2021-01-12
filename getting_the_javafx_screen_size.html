@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Getting the JavaFX Screen Size</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <big><b>Getting the JavaFX Screen Size</b></big><br>
+    <small><small>By Jim Connors 24 July 2009</small></small><br>
+    <p>In a <a href="avoiding_unnecessary_bindstorms.html">previous
+        post</a>, I showed one way in which you could size the nodes in
+      your scenegraph relative to the screen size without having to use
+      binding, thus eliminating the potential for a <a
+        href="avoiding_unnecessary_bindstorms.html">bindstorm</a>.&nbsp;
+      At the time, the suggestion was to get the screen coordiantes via
+      a call to AWT (Advanced Windowing Toolkit) as follows:</p>
+    <pre>&nbsp;<span style="color: rgb(0, 3, 255);">var AWTtoolkit = java.awt.Toolkit.getDefaultToolkit ();</span><br style="color: rgb(0, 3, 255);"><span style="color: rgb(0, 3, 255);"> var screenSizeFromAWT = AWTtoolkit.getScreenSize ();</span>
+</pre>
+    <p> This currently works for JavaFX Desktop deployments but is far
+      from an optimal solution primarily because it is
+      non-portable.&nbsp; There is no guarantee that AWT will exist-- in
+      fact I'm pretty sure it will not exist -- in the JavaFX Mobile and
+      JavaFX TV space.&nbsp; So attempting to utilize the code snippet
+      above in a JavaFX Mobile or TV context will result in an
+      error.&nbsp; Unfortunately at the time of the original post (Java
+      FX 1.1), I didn't know of a better alternative.</p>
+    <p>With the advent of JavaFX 1.2, this problem is
+      solved.&nbsp;&nbsp; A new class called <font face="courier
+        new,courier,monospace">javafx.Stage.Screen</font>&nbsp; is
+      provided which describes the characteristics of the display.&nbsp;
+      The API definition of the class can be found <a
+href="https://docs.oracle.com/cd/E17802_01/javafx/javafx/1.2/docs/api/javafx.stage/javafx.stage.Screen.html">here</a><a>.</a>&nbsp;
+
+
+      So now you can query the JavaFX runtime in a portable fashion to
+      get the screen coordinates as follows:</p>
+    <pre>&nbsp;<code style="color: rgb(0, 3, 255);"><b>import</b> javafx.stage.\*;
+ //set Stage boundaries to consume entire screen
+ Stage {</code><p><code style="color: rgb(0, 3, 255);">     fullscreen: true
+     width: <a href="http://Screen.primary.bounds.minX">Screen.primary.bounds.minX</a>  as Integer
+     height: <a href="http://Screen.primary.bounds.minY">Screen.primary.bounds.minY</a>  as Integer
+     <span style="font-weight: bold;">...</span></code><code style="color: rgb(0, 3, 255);">
+ }</code>
+
+</p></pre>
+    <p>&nbsp;Cheers.
+    </p>
+    <p>&nbsp;<a href="index.html">Index</a> </p>
+  </body>
+</html>

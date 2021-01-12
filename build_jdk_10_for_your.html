@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Build JDK 10 for your Raspberry Pi Right on your Device</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <font size="-1"><b>Build JDK 10 for your Raspberry Pi Right on your
+        Device</b></font><br>
+    <small><small>By Jim Connors 30-May-2018</small></small><br>
+    <p>Starting with the release of JDK 9, Oracle's list of&nbsp;<a
+href="http://www.oracle.com/technetwork/java/javase/documentation/jdk10certconfig-4417031.html"
+data-cke-saved-href="http://www.oracle.com/technetwork/java/javase/documentation/jdk10certconfig-4417031.html">supported
+
+
+
+
+
+
+
+
+
+
+
+
+        hardware architecture / operating system platforms for its Java
+        SE implementation</a>&nbsp;has been trimmed.&nbsp; No longer are
+      32-bit versions being provided, nor are binaries for the Arm
+      architecture, including those for the wildly popular Raspberry
+      Pi.&nbsp; However, work supporting the 32-bit armhf architecture
+      is incorporated in the OpenJDK source including that for OpenJDK
+      10.&nbsp; So for all the Raspberry Pi / Java aficionados out
+      there, you effectively have two options if you want the latest
+      Java release for your device:</p>
+    <ol style="padding: 0px 40px; color: rgb(51, 51, 51); font-family:
+      sans-serif, Arial, Verdana, &quot;Trebuchet MS&quot;; font-size:
+      13px;">
+      <li>Wait for someone to build and provide an installable package
+        for your desired update.</li>
+      <li>Build it yourself.</li>
+    </ol>
+    <p style="color: rgb(51, 51, 51); font-family: sans-serif, Arial,
+      Verdana, &quot;Trebuchet MS&quot;; font-size: 13px;">We'll discuss
+      option (2) today, and with the resources available on the latest
+      models of the Raspberry Pi, show that it is feasible to build Java
+      from source right on your device.</p>
+    <p style="color: rgb(51, 51, 51); font-family: sans-serif, Arial,
+      Verdana, &quot;Trebuchet MS&quot;; font-size: 13px;">For the
+      impatient (which definitely includes this author), here are
+      the&nbsp;<a style="color: rgb(7, 130, 193);"
+        href="resource/OpenJDK10/OpenJDK-10-build-rpi3.txt"
+data-cke-saved-href="https://app.compendium.com/api/post_attachments/50ef516e-ef11-487b-96e7-bb77d23b23e7/view">instructions</a>&nbsp;to
+
+
+
+
+
+
+
+
+
+
+
+
+      get you going.</p>
+    <p style="color: rgb(51, 51, 51); font-family: sans-serif, Arial,
+      Verdana, &quot;Trebuchet MS&quot;; font-size: 13px;">The
+      aforementioned&nbsp;<a style="color: rgb(7, 130, 193);"
+        href="resource/OpenJDK10/OpenJDK-10-build-rpi3.txt"
+data-cke-saved-href="https://app.compendium.com/api/post_attachments/50ef516e-ef11-487b-96e7-bb77d23b23e7/view">howto</a>&nbsp;is
+
+
+
+
+
+
+
+
+
+
+
+
+      divided into 7 relatively straightforward steps.&nbsp; Here are
+      some of the more important considerations:</p>
+    <ul style="padding: 0px 40px; color: rgb(51, 51, 51); font-family:
+      sans-serif, Arial, Verdana, &quot;Trebuchet MS&quot;; font-size:
+      13px;">
+      <li>Do not use any Raspberry Pi hardware with less than 1GB
+        RAM.&nbsp; OpenJDK build machines have a bare minimum build
+        environment, and the less capable Raspberry Pi devices will be
+        inadequate.&nbsp; The example build system here uses the
+        Raspberry Pi 3+.&nbsp; As of this article's posting, it
+        represents the latest and most capable Raspberry Pi to date.</li>
+      <li>You'll need to configure at least 1GB additional swap
+        space.&nbsp; This is explained in the instructions.</li>
+      <li>You should have at least 10GB free disk space to accommodate
+        the source code and resulting built binaries.</li>
+      <li>As many Raspberry Pi versions are equipped with multiple
+        cores, don't be tempted to take advantage of those cores by
+        issuing the&nbsp;<tt>make</tt>&nbsp;command with a&nbsp;<tt>JOBS</tt>&nbsp;number
+
+
+
+
+
+
+
+
+
+
+
+
+        greater than 1.&nbsp; Increasing the&nbsp;<tt>JOBS</tt>&nbsp;count
+
+
+
+
+
+
+
+
+
+
+
+
+        requires more RAM, a precious resource the Raspberry Pi doesn't
+        have enough of, which will ultimately cause the build to fail.</li>
+    </ul>
+    <p style="color: rgb(51, 51, 51); font-family: sans-serif, Arial,
+      Verdana, &quot;Trebuchet MS&quot;; font-size: 13px;"><b>How long
+        does it take to build?</b></p>
+    <p style="color: rgb(51, 51, 51); font-family: sans-serif, Arial,
+      Verdana, &quot;Trebuchet MS&quot;; font-size: 13px;">Depending
+      upon the quality of the SD card you use, your mileage will
+      vary.&nbsp; In this instance, A 32GB SanDisk Extreme U3 SD card
+      was used.&nbsp; The total time reuired to issue the&nbsp;<tt>make</tt>&nbsp;command
+
+
+
+
+
+
+
+
+
+
+
+
+      was approximately 216 minutes, or a little more than
+      3&nbsp;½&nbsp;hours.</p>
+    <p style="color: rgb(51, 51, 51); font-family: sans-serif, Arial,
+      Verdana, &quot;Trebuchet MS&quot;; font-size: 13px;"><b>And what
+        about JavaFX?</b></p>
+    <p style="color: rgb(51, 51, 51); font-family: sans-serif, Arial,
+      Verdana, &quot;Trebuchet MS&quot;; font-size: 13px;">As of Java
+      10's GA release, JavaFX is no longer part of the JDK
+      distribution.&nbsp; To add this platform, you can either&nbsp;<a
+        style="color: rgb(7, 130, 193);"
+        href="https://wiki.openjdk.java.net/display/OpenJFX/Community+Builds"
+data-cke-saved-href="https://wiki.openjdk.java.net/display/OpenJFX/Community+Builds">download
+
+
+
+
+
+
+
+
+
+
+
+
+        a build of JavaFX that has been completed by the community</a>,
+      or build it yourself by&nbsp;<a style="color: rgb(7, 130, 193);"
+        href="https://wiki.openjdk.java.net/display/OpenJFX/Building+OpenJFX"
+data-cke-saved-href="https://wiki.openjdk.java.net/display/OpenJFX/Building+OpenJFX">following
+
+
+
+
+
+
+
+
+
+
+
+
+        these instructions</a>.&nbsp; Unfortunately at this time you
+      cannot build OpenJFX natively on the Raspberry Pi device.&nbsp;
+      You'll need to cross-compile the source from a supported
+      development platfom, like for example, a Linux x64 system.</p>
+    <p style="color: rgb(51, 51, 51); font-family: sans-serif, Arial,
+      Verdana, &quot;Trebuchet MS&quot;; font-size: 13px;"><b>Postscript</b></p>
+    <p style="color: rgb(51, 51, 51); font-family: sans-serif, Arial,
+      Verdana, &quot;Trebuchet MS&quot;; font-size: 13px;">Since&nbsp;the
+
+
+
+
+
+
+
+
+
+
+
+
+      creation of this article's original build instructions, JDK 10.0.1
+      has been released.&nbsp; You can build this version of Java in a
+      very similar manner, but a few small changes need to be made,
+      including locating and pulling down the appropriate JDK 10.0.1
+      update source code.&nbsp; The&nbsp;<a style="color: rgb(7, 130,
+        193);" href="resource/OpenJDK10/OpenJDK-10-build-rpi3.txt"
+data-cke-saved-href="https://app.compendium.com/api/post_attachments/50ef516e-ef11-487b-96e7-bb77d23b23e7/view">instructions</a>&nbsp;contain
+
+
+
+
+
+
+
+
+
+
+
+
+      a&nbsp;<b><i>Postscript</i></b>&nbsp;section which should aid in
+      this endeavor.</p>
+    <div><br>
+    </div>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="http://blogs.sun.com/jtc/resource/socket/" href="SocketClient.jnlp">
+    <information>
+        <title>SocketClient</title>
+        <vendor>jimc</vendor>
+        <homepage href="http://blogs.sun.com/jtc/resource/socket/"/>
+        <description>SocketClient</description>
+        <offline-allowed/>
+        <shortcut>
+            <desktop/>
+        </shortcut>
+    </information>
+    <resources>
+        <j2se version="1.5+"/>
+        <extension name="JavaFX Runtime" href="http://dl.javafx.com/1.2/javafx-rt.jnlp"/>
+        <jar href="SocketClient.jar" main="true"/>
+        <jar href="GenericSocket.jar"/>
+    </resources>
+    <application-desc main-class="com.sun.javafx.runtime.main.Main">
+        <argument>MainJavaFXScript=com.sun.oss.widget.socketclient.Main_run</argument>
+    </application-desc>
+    <update check="background">
+</jnlp>

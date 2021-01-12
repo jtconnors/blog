@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Raspberry Pi and Java SE: A Platform for the Masses </title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <big><b>Raspberry Pi and Java SE:&nbsp; A Platform for the Masses </b></big><br>
+    <small><small>By Jim Connors 10 September 2012</small></small><br>
+    <br>
+    One of the more exciting developments in the embedded systems world
+    has been the announcement and availability of the <a
+      href="http://www.raspberrypi.org/">Raspberry Pi</a>, a very
+    capable computer that is no bigger than a credit card.&nbsp; At $35
+    US, initial demand for the device was so significant, that very long
+    back orders quickly ensued. After months of patiently waiting, mine
+    finally arrived.&nbsp;
+    <p><img src="resource/raspberry-pi/raspberry-pi.jpg" width="604"
+        height="403"></p>
+    <p>Those initial growing pains appear to have been fixed, so
+      availability now should be much more reasonable. At a very high
+      level, here are some of the important specs:</p>
+    <ul>
+      <li>Broadcom BCM2835 System on a chip (SoC)</li>
+      <li>ARM1176JZFS, with floating point, running at 700MHz</li>
+      <li>Videocore 4 GPU capable of BluRay quality playback</li>
+      <li>256Mb RAM</li>
+      <li>2 USB ports and Ethernet</li>
+      <li>Boots from SD card</li>
+      <li>Linux distributions (e.g. Debian) available</li>
+    </ul>
+    <p> So what's taking place taking place with respect to the Java
+      platform and Raspberry Pi?</p>
+    <ul>
+      <li>A Java SE Embedded binary suitable for the Raspberry Pi is
+        available for download (Arm v6/7) <a
+href="http://www.oracle.com/technetwork/java/embedded/downloads/javase/index.html">here</a>.&nbsp;
+
+
+
+        Note, this is based on the <i>armel</i> architecture, a variety
+        of Arm designed to support floating point through a
+        compatibility library that operates on more platforms, but can
+        hamper performance.&nbsp; In order to use this Java SE binary,
+        select the available <a
+href="http://downloads.raspberrypi.org/images/debian/7/2012-08-08-wheezy-armel/2012-08-08-wheezy-armel.zip">Debian
+
+
+
+          distribution for your Raspberry Pi</a>.</li>
+      <li>The more recent <a href="http://www.raspbian.org/">Raspbian
+          distribution</a> is based on the <i>armhf</i> (hard float)
+        architecture, which provides for more efficient hardware-based
+        floating point operations.&nbsp; However armhf is not binary
+        compatible with armel.&nbsp; As of the writing of this blog,
+        Java SE Embedded binaries are not yet publicly available for the
+        armhf-based Raspbian distro, but as mentioned in <a
+href="https://blogs.oracle.com/henrik/entry/oracle_releases_jdk_for_linux">Henrik
+
+
+
+          Stahl's blog</a>, an armhf release is in the works.</li>
+      <li>As demonstrated at the just-completed <a
+          href="http://www.oracle.com/javaone/index.html">JavaOne 2012
+          San Francisco</a> event, the graphics processing unit inside
+        the Raspberry Pi is very capable indeed, and makes for an
+        excellent candidate for JavaFX.&nbsp; As such, plans also call
+        for a Pi-optimized version of JavaFX in a future release too.</li>
+    </ul>
+    A thriving community around the Raspberry Pi has developed at light
+    speed, and as evidenced by the packed attendance at Pi-specific
+    sessions at Java One 2012, the interest in Java for this platform is
+    following suit. So stay tuned for more developments...<br>
+    <p><a href="index.html">Index</a> </p>
+  </body>
+</html>

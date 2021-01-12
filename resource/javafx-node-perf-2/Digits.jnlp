@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="http://blogs.sun.com/jtc/resource/javafx-node-perf-2/" href="Digits.jnlp">
+    <information>
+        <title>Digits</title>
+        <vendor>jimc</vendor>
+        <homepage href="http://blogs.sun.com/jtc/resource/javafx-node-perf-2/"/>
+        <description>Digits</description>
+        <offline-allowed/>
+        <shortcut>
+            <desktop/>
+        </shortcut>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <j2se version="1.5+"/>
+        <property name="jnlp.packEnabled" value="true"/>
+        <property name="jnlp.versionEnabled" value="true"/>
+        <extension name="JavaFX Runtime" href="http://dl.javafx.com/1.2/javafx-rt.jnlp"/>
+        <jar href="Digits.jar" main="true"/>
+    </resources>
+    <application-desc main-class="com.sun.javafx.runtime.main.Main">
+        <argument>MainJavaFXScript=digits.BulbClockNode</argument>
+    </application-desc>
+    <update check="background">
+</jnlp>

@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Bitcoin Mining: Six Months Later</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p><b>Bitcoin Mining: Six Months Later</b><small><small><br>
+          By Jim Connors 28 February 2018<br>
+        </small></small></p>
+    <p>About six months have passed since first setting up a personal
+      Bitcoin mining rig.&nbsp; As a follow up to that&nbsp;<u><a
+          href="and_now_for_something_comletely.html">original post</a></u>,&nbsp;I
+
+
+
+
+
+
+
+
+
+      thought it make make sense to return to see what's transpired
+      during this brief -- and tumultuous -- period, and to discuss
+      adjustments made to the rig.</p>
+    <p><u><a href="#whatschanged">What's Changed in the Bitcoin
+          Universe?</a><br>
+        <a href="#rig20">My Humble Bitcoin Mining Rig (version 2.0)</a><br>
+        <a href="#config">Configuration Changes</a><br>
+        <a href="#return">Return on Investment? Really?</a></u></p>
+    <a name="whatschanged"></a>
+    <p><strong>What's Changed in the Bitcoin Universe?</strong></p>
+    <p>In a word, a lot (actually that's two words, but who's counting).
+      Here are just a few trends:</p>
+    <ul>
+      <li><i>Bitcoin price volatility shows no signs of slowing down
+          even as its market cap grows dramatically</i>.&nbsp; After the
+        price of Bitcoin had nearly qunitupled from September to
+        December 2017, it has since lost half its value in the
+        subsequent two months.</li>
+      <li><em>Mining is taking place on an even more massive scale</em>.&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+        Take a look at <u><a
+            href="https://www.youtube.com/watch?v=K8kua5B5K3I">this</a></u>,
+        and <u><a
+href="https://www.slavorum.org/largest-bitcoin-farm-in-russia-earns-millions-of-dollars-each-month-on-a-secret-location/">this</a></u>.
+        In Russia, <u><a
+href="https://www.express.co.uk/finance/city/917305/cryptocurrency-news-bitcoin-news-russia-arrest-sarov-nuclear">scientists
+
+
+
+
+
+
+
+
+
+
+
+
+            were arrested for using top secret nuclear supercomputer
+            facilities to mine cryptocurrencies</a></u>.</li>
+      <li><em>The worldwide Bitcoin hash rate has tripled in the last
+          six months,&nbsp;</em>meaning the competition for mining
+        Bitcoins is getting more and more intense. Here's a<a
+          href="https://bitinfocharts.com/comparison/bitcoin-hashrate.html#6m">
+        </a><u><a
+            href="https://bitinfocharts.com/comparison/bitcoin-hashrate.html#6m">nice
+
+
+
+
+
+
+
+
+
+
+
+
+            website with lots of&nbsp;charts</a></u><a
+          href="https://bitinfocharts.com/comparison/bitcoin-hashrate.html#6m"><u>&nbsp;visualizing
+
+
+
+
+
+
+
+
+
+
+
+
+            the growth</u></a>.</li>
+      <li><em>My mining pool, <u><a href="https://slushpool.com/home/">slushpool</a></u>,
+          has increased its Bitcoin hash rate capacity by ten fold</em>,
+        meaning without any increase in hash rate capacity on my end, my
+        take of slushpool's winnings would be 1/10th what it originally
+        was.</li>
+      <li>China is <u><a
+href="https://www.bloomberg.com/news/articles/2018-01-15/china-is-said-to-escalate-crackdown-on-cryptocurrency-trading">escalating
+
+
+
+
+
+
+
+
+
+
+
+
+            its crackdown on cryptocurrency trading</a></u>. As it and
+        other countries consider regulating this industry, further
+        uncertainties surrounding Bitcoin are sure to arise.</li>
+    </ul>
+    <a name="rig20"></a>
+    <p><strong>My Humble Bitcoin Mining Rig (version 2.0)</strong></p>
+    <p>Here's what the new version of the rig looks like.&nbsp; The
+      original rig can be viewed <u><a
+          href="and_now_for_something_comletely.html#rig">here</a></u>.&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+      Following is a description of the modifications.</p>
+    <p><img alt="" src="resource/bitcoin/Rig2.jpg" style="width: 850px;
+        height: 685px;" height="2970"></p>
+    <ol>
+      <li><strong>Raspberry Pi 3</strong>: Even with the new and
+        improved hash rate this rig provides, the Raspberry Pi 3 still
+        has more than enough horsepower to serve as the overall
+        controller.&nbsp; The big change to the controller involves the
+        addition of the <a
+          href="http://www.xtronix.co.uk/raspberry-pi-poe.htm"><u>Xtronix
+
+
+
+
+
+
+
+
+
+
+
+
+            Power over Ethernet (PoE) Adapter for the Raspberry Pi</u></a>.&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+        With PoE, it's now possible to remotely reset the power on this
+        rig.&nbsp; In the <em>Configuration Changes</em> section of
+        this article, software modifications have been made which make
+        this platform much more reliable.&nbsp; Nonetheless, the ability
+        to remotely hard reset the rig does come in handy occasionally.</li>
+      <li><strong>GekkoScience 2-pac (BM 1348x2) USB Bitcoin Miners</strong>:&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+        The number of USB ASIC miners has been doubled from 4 to
+        8.&nbsp; Running at 225Mhz, this rig now averages about 200 Gh/s
+        (200 Billion hashes per second).&nbsp; The power consumption
+        stands at about 100 Watts, roughly equivalent to an old school
+        incandescent light bulb.</li>
+      <li><strong>HooToo 60W 7-port powered USB hubs</strong>: To
+        accommodate the additional USB ASIC miners, two USB hubs have
+        been added.&nbsp; All four USB ports on the Raspberry Pi 3 are
+        now occupied.</li>
+      <li><strong>Artic Breeze USB fans</strong>: An extra USB fan was
+        added to assure all miners are cooled adequately.</li>
+    </ol>
+    <a name="config"></a>
+    <p><strong>Configuration Changes</strong></p>
+    <p>After running without incident for weeks, the Raspberry Pi began
+      occasionally locking up, rendering it unusable until a hard reset
+      was performed.&nbsp; A search yielded this <a
+        href="https://www.raspberrypi.org/forums/viewtopic.php?t=55370"><u>thread</u></a>,
+      where it appears others were experiencing similar problems.&nbsp;
+      Related to kernel memory corruption, a two-fold solution was
+      employed to minimize the downtime associated with this tricky
+      problem:</p>
+    <ol>
+      <li>Enable&nbsp;<u><a
+            href="https://www.kernel.org/doc/Documentation/vm/slub.txt">SLUB
+
+
+
+
+
+
+
+
+
+
+
+
+            debugging</a></u> in the Raspian kernel.&nbsp; Although this
+        requires the Linux kernel to consume more CPU cycles, a large
+        number of these intermittent memory allocation errors will be
+        caught.&nbsp; In order to configure and enable SLUB debugging,
+        as <tt>root</tt> add the following line to the <tt>/boot/cmdline.txt</tt>
+        file: <strong><tt>slub_debug=FPUZ</tt></strong> and reboot.</li>
+      <li>Configure in a watchhdog daemon.&nbsp; Many processors come
+        equipped with a watchdog timer which simply counts down from
+        some set value to zero.&nbsp; In order to prevent it from
+        reaching zero, the system must periodically reset the watchdog
+        timer.&nbsp;&nbsp;If the timer reaches zero, it is assumed the
+        system has hung.&nbsp; The watchdog daemon detects this
+        condition and can be configured to reboot when this occurs,
+        lessening the need for manual intervention.&nbsp; This procedure
+        is typically hardware, Operating System and version
+        dependent.&nbsp; One way to enable the watchdog reset feature
+        for a Raspberry Pi 3 running Raspbian Jessie is to&nbsp;<u><a
+            href="resource/bitcoin/watchdog-reset-jessie.txt">follow
+            these instructions</a></u>.</li>
+    </ol>
+    <a name="return"></a>
+    <p><strong>Return on Investment?&nbsp; Really?</strong></p>
+    <p>Even though the price of Bitcoin has risen by about 2<span>½</span>
+      times its September 2017 value and my mining rig has doubled in
+      capacity, those substantial gains cannot offset the tremendous
+      increase in worldwide mining capacity.&nbsp; Taking this
+      point-in-time analysis with a grain of salt, the average current
+      daily yield in Bitcoins for my rig (as of 26-Feb-2018) is
+      .00001677.&nbsp; Multiplied by the current price ($10,158 US)
+      results in a daily reward of $0.17 US a day.&nbsp; That's two
+      cents a day more than the original setup but with double the power
+      requirements (100 Watts vs. 50 Watts), not to mention the capital
+      costs of the additional equipment. So to repurpose the punchline
+      from an old joke: "<em>we're losing money on every transaction and
+        making it up in volume</em>".</p>
+    <p>&nbsp;</p>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>

@@ -1,0 +1,153 @@
+#!/sbin/sh
+#
+# Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+# ident	"@(#)postremove	1.2	06/02/17 SMI"
+#
+
+thiszone=`zonename`
+
+JAVA_RTS_PROFILE="${SUNW_PRODNAME} User"
+
+JAVA_RTS_PROFILE_HELP=${PKG_INSTALL_ROOT}/usr/lib/help/profiles/locale/C/RtJavaRTSUser.html
+
+PROF_ATTR=${PKG_INSTALL_ROOT}/etc/security/prof_attr
+
+EXEC_ATTR=${PKG_INSTALL_ROOT}/etc/security/exec_attr
+
+SYSTEM=${PKG_INSTALL_ROOT}/etc/system
+
+
+# Create the rights profile, if requested.
+if [ "${MKPROFILE}" = "yes" ]
+then
+
+    echo "Deleting the '${JAVA_RTS_PROFILE}' rights profile."
+
+    if [ ! -w ${PROF_ATTR} ]
+    then
+	echo "Can't access ${PROF_ATTR}."
+	exit 1
+    fi
+
+    if [ ! -w ${EXEC_ATTR} ]
+    then
+	echo "Can't access ${EXEC_ATTR}."
+	exit 1
+    fi
+
+if [ "$thiszone" = "global" ]
+then
+    help_dir=`/usr/bin/dirname ${JAVA_RTS_PROFILE_HELP}`
+
+    if [ ! -d ${help_dir} ]
+    then
+	echo "Can't access ${help_dir} directory."
+	exit 1
+    fi
+
+    # Delete the profile's help file.
+    /usr/bin/rm -f ${JAVA_RTS_PROFILE_HELP}
+
+    if [ -f ${JAVA_RTS_PROFILE_HELP}  ]
+    then
+	echo "Unable to delete ${JAVA_RTS_PROFILE_HELP}; giving up."
+	exit 1
+    fi
+fi # global zone
+    # Update the profile description database.
+    /usr/bin/ed - ${PROF_ATTR} >/dev/null 2>&1 << ED_EOF
+g/^${JAVA_RTS_PROFILE}/d
+w
+q
+ED_EOF
+
+    if [ $? -ne 0 ]
+    then
+        echo "Unable to update ${PROF_ATTR}; giving up."
+        exit 1
+    fi
+
+    # Update the execution profiles database.
+    /usr/bin/ed - ${EXEC_ATTR} >/dev/null 2>&1 << ED_EOF
+g/^${JAVA_RTS_PROFILE}/d
+w
+q
+ED_EOF
+
+    if [ $? -ne 0 ]
+    then
+        echo "Unable to update ${EXEC_ATTR}; giving up."
+        exit 1
+    fi
+fi
+
+
+
+if [ "$thiszone" = "global" ]
+then
+
+if [ ! -w "${SYSTEM}" ]
+then
+    echo "Can't access ${SYSTEM}."
+    exit 1
+fi
+
+# The next line triggers the following (false positive) warning from 'pkgmk':
+# 'WARNING: script <postremove> may require user interaction at line <xx>'.
+while read tunable_name tunable_value
+do
+    tunable_line="set ${tunable_name}=${tunable_value}  # ${PKGINST} setting"
+
+    if [ -z "`/usr/bin/grep "${tunable_line}" ${SYSTEM}`" ]
+    then
+	echo "'${tunable_name}' entry not found. Probably this tunable"
+        echo "was edited or removed from ${SYSTEM}."
+	continue
+    fi
+
+    echo "Removing kernel tunable '${tunable_name}' setting."
+
+    /usr/bin/ed - ${SYSTEM} >/dev/null 2>&1 << ED_EOF
+g/${tunable_line}/d
+\$
+w
+q
+ED_EOF
+
+    if [ $? -ne 0 ]
+    then
+	echo "Unable to update ${SYSTEM}; giving up."
+	exit 1
+    fi
+
+    /usr/bin/touch /tmp/reboot.$$
+
+# New tunables should be appended to the list below.
+# Format is <tunable_name> <tunable_value>.
+done << TUNABLE_EOF
+timer_max	4096
+TUNABLE_EOF
+
+if [ -f /tmp/reboot.$$ ]
+then
+    if [ -x /usr/sbin/bootadm ]
+    then
+	# Make sure the boot archive reflects our changes.
+	/usr/sbin/bootadm update-archive
+
+	if [ $? -ne 0 ]
+	then
+	    echo "Unable to update boot archive."
+	    exit 1
+	fi
+    fi
+
+    /usr/bin/rm /tmp/reboot.$$
+    echo "\nPlease reboot your system for changes to take effect."
+fi
+
+fi  # thiszone
+
+exit 0

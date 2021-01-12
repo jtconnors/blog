@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Help for Signing Deployment Rule Sets</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p><b>Help for Signing Deployment Rule Sets</b><small><small><br>
+          By Jim Connors 14 December 2017</small></small></p>
+    <p>Among other benefits, the <a
+href="http://www.oracle.com/technetwork/java/javaseproducts/overview/index.html"
+data-cke-saved-href="http://www.oracle.com/technetwork/java/javaseproducts/overview/index.html">Java
+
+
+
+
+
+
+
+        SE Advanced</a> offering&nbsp;provides customers&nbsp;with
+      access to&nbsp;security&nbsp;patches for Java releases that are no
+      longer publicly updated.&nbsp; And as a result, many
+      of&nbsp;these&nbsp;organizations have become diligent --
+      deservedly so --&nbsp;in keeping up to date with&nbsp;Oracle's
+      quarterly cadence.&nbsp; If you are one of those customers who
+      falls into this category, you may have&nbsp;noticed that&nbsp;<strong><em>the
+
+
+
+
+
+
+
+          most recent&nbsp;October </em>2017&nbsp;updates for
+        Java&nbsp;6 (6u171) and Java 7 (7u161) will no longer include a
+        Java Plugin.</strong></p>
+    <p>Does that mean future Java 6 and 7 updates won't be able to run
+      browser-based applications?&nbsp; The answer is no; these releases
+      can still run Java web content, but they must be launched with the
+      latest Java 8 update configured with <a
+href="https://docs.oracle.com/javase/8/docs/technotes/guides/deploy/deployment_rules.html"
+data-cke-saved-href="https://docs.oracle.com/javase/8/docs/technotes/guides/deploy/deployment_rules.html">Deployment
+
+
+
+
+
+
+
+        Rule Sets</a>.&nbsp; Briefly, Deployment Rule Sets&nbsp;enable
+      you&nbsp;to control the version of the JRE that is used for
+      specific applications.&nbsp; In this scenario, the Latest (most
+      secure) Java 8 update is&nbsp;launched when a user clicks on a
+      link to start a web application.&nbsp;&nbsp;The Java 8
+      plugin&nbsp;will consult the Deployment Rule Set, which contains a
+      set of rules, to determine what to do next,&nbsp; If a rule exists
+      to direct&nbsp;your application to run a specific version of Java,
+      it will do so.&nbsp; If no rule exists, the rule set can be
+      configured to block the application, thus assuring only those
+      applications you trust can run.</p>
+    <p>The purpose of this article is not to introduce you to Deployment
+      Rule Sets; there are other&nbsp;excellent&nbsp;resources including
+      this entry entitled <a
+href="https://blogs.oracle.com/java-platform-group/introducing-deployment-rule-sets"
+data-cke-saved-href="https://blogs.oracle.com/java-platform-group/introducing-deployment-rule-sets">Introducing
+
+
+
+
+
+
+
+        Deployment Rule Sets</a>.&nbsp; Rather, the discussion today
+      focuses on a critical step in creating rule sets, namely the <strong><em>requirement
+
+
+
+
+
+
+
+          that the rule set be signed</em></strong>.&nbsp; The
+      aforementioned article was written in 2013 when Deployment Rule
+      Sets were first introduced.&nbsp; Java web application security
+      has been further ratcheted up since, and the rule set signing
+      section in the article only glosses over the steps required.</p>
+    <p>To help facilitate&nbsp;the signing of Deployment Rule Sets, the
+      following GitHub project has been created:</p>
+    <p><a href="https://github.com/jtconnors/sign_drs"
+        data-cke-saved-href="https://github.com/jtconnors/sign_drs">https://github.com/jtconnors/sign_drs</a></p>
+    <p>Along with documentation and a sample ruleset,&nbsp;it includes a
+      Windows Powershell script which automates the process.&nbsp; You
+      can check out the project's <a
+        href="https://github.com/jtconnors/sign_drs/blob/master/README.txt"
+data-cke-saved-href="https://github.com/jtconnors/sign_drs/blob/master/README.txt">README</a>
+      for further info.</p>
+    <link <div="" class="footer">
+    <a href="index.html">Index</a>
+  </body>
+</html>

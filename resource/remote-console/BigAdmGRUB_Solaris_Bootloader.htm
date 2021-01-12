@@ -1,0 +1,1595 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<!-- saved from url=(0084)http://www.oracle.com/technetwork/systems/articles/grub-boot-solaris-jsp-135325.html -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><HTML><HEAD><META 
+content="IE=11.0000" http-equiv="X-UA-Compatible">
+
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">	 
+<SCRIPT type="text/javascript">
+   var _U = "undefined";
+   var g_HttpRelativeWebRoot = "/ocom/";
+   var SSContributor = false;
+   var SSForceContributor = false;
+   var SSHideContributorUI = false;
+   var ssUrlPrefix = "/technetwork/";
+   var ssUrlType = "2";
+   
+   var g_navNode_Path = new Array();
+       g_navNode_Path[0] = 'otnen';
+       g_navNode_Path[1] = 'otnen_sysadmin';
+       g_navNode_Path[2] = 'otnen_adminarticles';
+   var g_ssSourceNodeId = "otnen_adminarticles";
+   var g_ssSourceSiteId = "otnen";
+</SCRIPT>
+   
+<SCRIPT id="ssInfo" type="text/xml" warning="DO NOT MODIFY!">
+  <ssinfo >
+    <fragmentinstance  id="fragment14" fragmentid="Universal_Localization_Fragment" library="server:UNIVERSAL_LOCALIZATION_FRAG">
+    </fragmentinstance>
+    <fragmentinstance  id="fragment16" fragmentid="Universal_Localization_Fragment" library="server:UNIVERSAL_LOCALIZATION_FRAG">
+    </fragmentinstance>
+    <fragmentinstance  id="fragment17" fragmentid="Universal_Localization_Fragment" library="server:UNIVERSAL_LOCALIZATION_FRAG">
+    </fragmentinstance>
+    <fragmentinstance  id="fragment18" fragmentid="universal-search-fragment" library="server:UNIVERSAL-SEARCH-FRAGMET-LIB">
+      
+    </fragmentinstance>
+    <fragmentinstance  id="fragment22" fragmentid="Universal_Localization_Fragment" library="server:UNIVERSAL_LOCALIZATION_FRAG">
+    </fragmentinstance>
+    <fragmentinstance  id="fragment23" fragmentid="ocom-commonassets" library="server:OCOM-FRAGMENT-LIBRARAY">
+      
+    </fragmentinstance>
+    <fragmentinstance  id="fragment24" fragmentid="ExternalNavigationHorizontal" library="server:EXTERNALNAVHORIZONTALLIB">
+    </fragmentinstance>
+    <fragmentinstance  id="fragment25" fragmentid="ExternalNavVertical" library="server:EXTERNAL_NAV_VERTICAL">
+    </fragmentinstance>
+    <fragmentinstance  id="fragment27" fragmentid="Universal_Localization_Fragment" library="server:UNIVERSAL_LOCALIZATION_FRAG">
+    </fragmentinstance>
+    <fragmentinstance  id="fragment28" fragmentid="Universal_Localization_Fragment" library="server:UNIVERSAL_LOCALIZATION_FRAG">
+    </fragmentinstance>
+    <fragmentinstance  id="fragment29" fragmentid="ExternalBreadCrumb" library="server:EXTERNAL_BREADCRUMB">
+    </fragmentinstance>
+    <fragmentinstance  id="fragment32" fragmentid="universal-metatag" library="server:UNIVERSAL-FRAGMENTS">
+    </fragmentinstance>
+    <fragmentinstance  id="fragment33" fragmentid="ExternalNavTabsTop" library="server:EXTERNAL_NAV_TABS_TOP">
+    </fragmentinstance>
+    <fragmentinstance  id="fragment35" fragmentid="universal-webcache-integration" library="server:UNIVERSAL-WEBCACHE-INTEGRATION">
+      
+    </fragmentinstance>
+    <fragmentinstance  id="fragment37" fragmentid="Universal_Localization_Fragment" library="server:UNIVERSAL_LOCALIZATION_FRAG">
+    </fragmentinstance>
+    <fragmentinstance  id="fragment38" fragmentid="universal-addthis-print-email" library="server:UNIVERSAL-FRAGMENTS">
+      
+    </fragmentinstance>
+    <fragmentinstance  id="fragment39" fragmentid="sitecatalyst-otn-standard" library="server:SITECATALYST-OTN-STANDARD">
+      
+    </fragmentinstance>
+    <fragmentinstance  id="fragment40" fragmentid="universal-addthis-print-email" library="server:UNIVERSAL-FRAGMENTS">
+      
+    </fragmentinstance>
+      <fragmentinstance  id="fragment41" fragmentid="mosaic-header-content" library="server:MOSAIC-HEADER-CONTENT">
+        
+      </fragmentinstance>
+      <fragmentinstance  id="fragment42" fragmentid="ocomheader" library="server:OCOMHEADER">
+        
+      </fragmentinstance>
+      <fragmentinstance  id="fragment43" fragmentid="ocomfooter" library="server:OCOMFOOTER">
+        
+      </fragmentinstance>
+      <fragmentinstance  id="fragment44" fragmentid="ocom-commonassets" library="server:OCOM-FRAGMENT-LIBRARAY">
+        
+      </fragmentinstance>
+  </ssinfo>
+  </SCRIPT>
+       
+<STYLE type="text/css">
+  #u06v1 li{
+    font-size: 11px;
+}
+    HTML,BODY,TD,H1,H2,H3,H4,OL,UL,DL,LI,DT,DD {font-family:arial,helvetica,sans-serif;}
+    HTML,BODY,TD,CODE,KBD,TT,OL,UL,DL,LI,DT,DD {font-size:12px;}
+    a:link {color:#000;text-decoration:none;}
+    a:visited {color:#000;text-decoration:none;}
+    a:hover {color:#FF0000;text-decoration:underline;}
+
+    #Wrapper_FixedWidth {text-align: left; margin: 0px auto; padding: 0px; border:0; width: 1000px;}
+    #Wrapper_FixedWidth_Header {margin: 0 0 15px 0; width:100%; display:block; }
+    #Wrapper_FixedWidth_Leftnav {float: left; width: 181px;}
+    #Wrapper_FixedWidth_Rightnav {float: right;  width: 185px; }
+    #Wrapper_FixedWidth_Centercontent {float: left; width: 810px;}
+    #Wrapper_FixedWidth_Maincontent {float: left; width: 595px;}
+    #Wrapper_FixedWidth_Footer{ clear: both; }
+    .header{display:block; width:100%; padding:2px 0px 5px 0px; margin:0px 0px 10px 0px;}
+    .logo{width:140px; float:left; padding:12px 0px 0px 12px;}
+    .welcomeMsg{text-align:right; font-size:10px; padding:5px 12px 0px 0px; float:right;}
+    .secureSearch{text-align:right; padding:10px 0px 0px 0px; margin-top:20px;}
+    .greybarhomebot{background: #DCDCDC;height: 7px; margin-top: 7px; float:left; width:100%; margin-top:20px;}
+    .footerLinks {font-size:10px;}
+    .sngPsta {font-size:11px;line-height:13px;color:#000;text-align:left;}
+    a.sngPsta:link {color:#000;text-decoration:none;display:block;padding:3px 10px;}
+    a.sngPsta:visited {color:#000;text-decoration:none;display:block;padding:3px 10px;}
+    a.sngPsta:hover {color:#fff;text-decoration:none;display:block;background-color:#9a9a9a;padding:3px 10px;}
+    /* For Mosaic */
+    ul#navigation li.top-level p a.noimg {background:none;}
+    /* For Mosaic */
+    #centerSectBlankPS {display: block;min-width: 570px;}
+    .lock {position:absolute; top:1px;*top:1px; left:152px; margin:0px; padding:0px;}
+  </STYLE>
+   <!-- SS_BEGIN_SNIPPET(fragment44,ocom-commonassets-droppoint)-->											 <!-- SS_END_SNIPPET(fragment44,ocom-commonassets-droppoint)--> 
+ <!--SS_BEGIN_SNIPPET(fragment32,code)-->			<!--SS_END_SNIPPET(fragment32,code)--> 
+  
+<STYLE type="text/css">
+    <!-- Add logo class to styles.css file -->
+    .logo{FLOAT: left; WIDTH: 151px;  PADDING-TOP: 4px}
+    #centerSectBlankPS {display: block;min-width: 570px;}
+    .sunquicklinks_wrapper{DISPLAY: block; FLOAT: right; WIDTH: 200px; TEXT-ALIGN: right;}
+    .welcomesignin_wrapper{FLOAT: left; WIDTH: 634px; *width:621px; TEXT-ALIGN: right;VERTICAL-ALIGN: bottom; PADDING-TOP: 12px}
+    .logo_wrapper{DISPLAY: block; MARGIN-BOTTOM: 6px; float:left; WIDTH: 974px; HEIGHT: 40px;}
+	.menu-ocom {display:none;}
+	
+  </STYLE>
+<!--Mosaic Header --><!--[if IE]>
+  <STYLE>
+    .logo_align{margin-bottom: 4px; margin-left:0px;}
+    .search_position{margin:7px 3px 14px 16px;}
+    #panelDiv_search .contentBg{padding:15px 5px 5px 5px; } 
+    ul#navigation div.submenu {border-bottom:1px solid #b7b7b7;}
+    ul#navigation div.submenu .bottomleft{background:none; width:15px; height:30px; float:left;  margin-left:-16px; margin-bottom:-42px; }
+    ul#navigation div.submenu .bottomcenter{background:none; height:30px;  margin-left:15px; margin-right:15px; float:left; width:360px;} 
+    ul#navigation div.submenu .bottomright{background:none; width:15px; height:30px; float:left; margin-left:360px; }
+    ul#navigation div.submenu .partner_bottomleft{ background:none; width:15px; height:30px;  float:left; margin-left:-16px; margin-bottom:-42px; clear:left; margin-top:15px;}
+    ul#navigation div.submenu .partner_bottomcenter{  background:none; width:362px; height:30px; margin-left:15px;  float:center;}
+    ul#navigation div.submenu .partner_bottomright{  background:none; width:15px; height:30px; float:right; margin-right:-15px;}
+    </STYLE>
+  <![endif]--> <!--SS_BEGIN_SNIPPET(fragment29,1)--><!--SS_END_SNIPPET(fragment29,1)--> <!--SS_BEGIN_SNIPPET(fragment32,head_tags)-->
+												          		 <TITLE>BigAdmin Feature Article: GRUB and the Solaris 
+10 1/06 OS: The New Bootloader for x86 Platforms</TITLE> 
+<META name="Title" content="BigAdmin Feature Article: GRUB and the Solaris 10 1/06 OS: The New Bootloader for x86 Platforms"> 
+<META name="Description" content="This paper describes the boot architecture for the Solaris OS on x86 platforms (the Solaris 10 1/06 OS) and the user experience."> 
+<META name="Keywords" content="boot,architecture,grub,bootloader,x86,Solaris,Solaris 10,Solaris x86,user experience,Shudong Zhou,Jan Setje-Eiler"> 
+<META name="robots" content="INDEX, FOLLOW"> 
+<META name="country" content="USA"> 
+<META name="Language" content="en"> 
+<META name="Updated Date" content="5/31/11 1:14 PM">			 <!--SS_END_SNIPPET(fragment32,head_tags)--> <!--SS_BEGIN_SNIPPET(fragment33,1)-->
+				 <LINK href="BigAdmGRUB_Solaris_Bootloader_files/receiver-style-css.css" 
+rel="stylesheet" type="text/css" media="screen"> <LINK href="BigAdmGRUB_Solaris_Bootloader_files/subtabs-css.css" 
+rel="stylesheet" type="text/css" media="screen"> 
+<SCRIPT language="JavaScript" src="BigAdmGRUB_Solaris_Bootloader_files/prototype-1.7.2.0.js" type="text/javascript"></SCRIPT>
+			 <!--SS_END_SNIPPET(fragment33,1)--> <!--SS_BEGIN_SNIPPET(fragment35,code)-->
+			 <!--SS_END_SNIPPET(fragment35,code)--> <!-- SS_BEGIN_SNIPPET(fragment44,ocom-commonassets)--><LINK 
+href="BigAdmGRUB_Solaris_Bootloader_files/ocom-mosaic.css" rel="stylesheet" 
+type="text/css"> <LINK href="BigAdmGRUB_Solaris_Bootloader_files/master-mosaic.css" 
+rel="stylesheet" type="text/css"> 
+<SCRIPT language="JavaScript" src="BigAdmGRUB_Solaris_Bootloader_files/jquery.js" type="text/javascript"></SCRIPT>
+ 
+<SCRIPT language="JavaScript" src="BigAdmGRUB_Solaris_Bootloader_files/oraclelib-mosaic.js" type="text/javascript"></SCRIPT>
+     
+<SCRIPT src="BigAdmGRUB_Solaris_Bootloader_files/notice.js" type="text/javascript" async="async" crossorigin=""></SCRIPT>
+ <!--[if IE]>
+  <STYLE>
+    .logo_align{margin-bottom: 4px; margin-left:0px;}
+    .search_position{margin:7px 3px 14px 16px;}
+    #panelDiv_search .contentBg{padding:30px 5px 5px 5px; } 
+    ul#navigation div.submenu {border-bottom:1px solid #b7b7b7;}
+    ul#navigation div.submenu .bottomleft{background:none; width:15px; height:30px; float:left;  margin-left:-16px; margin-bottom:-42px; }
+    ul#navigation div.submenu .bottomcenter{background:none; height:30px;  margin-left:15px; margin-right:15px; float:left; width:380px;} 
+    ul#navigation div.submenu .bottomright{background:none; width:15px; height:30px; float:left; }
+    ul#navigation div.submenu .partner_bottomleft{ background:none; width:15px; height:30px;  float:left; margin-left:-16px; margin-bottom:-42px; clear:left; margin-top:15px;}
+	ul#navigation div.submenu .partner_bottomcenter{  background:none; width:382px; height:30px; margin-left:15px;  float:center;}
+	ul#navigation div.submenu .partner_bottomright{  background:none; width:15px; height:30px; float:right; margin-right:-15px;}
+  </STYLE>
+<![endif]--> <!--[if IE 6]>
+  <style>
+  #panelDiv_search .BottomleftCurv{background:none; width:15px; height:30px; float:left;}
+  #panelDiv_search .centerBottom{background:none;width:153px;height:30px;float:left;}
+  #panelDiv_search .BottomrightCurv{background:none;width:15px;height:30px;float:right;}
+  #panelDiv_search .contentBg{border-bottom:1px solid #ababab;}
+  #navigation{width:971px;}
+  </style>
+<![endif]--> 
+ <!--Brightcove script line and lightbox code--> 
+<META name="GENERATOR" content="MSHTML 11.00.9600.18639"></HEAD>
+<BODY class="f01 f01v0 f01bg">
+<DIV id="bcVideoPlayer" style="display: none;">&nbsp;</DIV>
+<DIV class="lightbox_overlay" id="lightbox_brightcove" style="display: none; z-index: 30000;" 
+onclick="showclose();"><!--spacer-->&nbsp;</DIV><!-- SS_END_SNIPPET(fragment44,ocom-commonassets)--> 
+<A name="top"></A>	 
+<DIV class="f01bg"></DIV>
+<DIV class="f01v0w1"><!-- SS_BEGIN_SNIPPET(fragment42,ocomheader)-->						<!-- U01v0 --> 
+<!--div class="u01" id="u01" data-menusrc="/us/mosaicmenu/index.html"--> 
+<DIV class="u01" id="u01" data-menusrc="/us/assets/MENUCONTENT-EN">
+<DIV class="u01tools" data-trackas="header">
+<DIV class="u01logo"><A href="https://www.oracle.com/index.html" 
+data-lbl="logo">Oracle</A></DIV>
+<UL class="u01navtools">
+  <LI><A class="menu-otn" href="http://www.oracle.com/us/mosaicmenu/index.html#otn-menu-countryselect" 
+  data-lbl="country">Country</A></LI>
+  <LI><A class="menu-ocom menu-multicol" href="https://www.oracle.com/corporate/region/index.html#ocom-menu-countryselect" 
+  data-lbl="country">Country</A></LI>
+  <LI><A href="https://www.oracle.com/communities/index.html#menu-communities" 
+  data-lbl="communities">Communities</A></LI>
+  <LI><A href="https://www.oracle.com/corporate/role/index.html#menu-iam" 
+  data-lbl="i-am-a">I am a...</A></LI>
+  <LI><A href="https://www.oracle.com/corporate/task/index.html#menu-iwant" 
+  data-lbl="i-want-to">I want to...</A></LI></UL>
+<UL class="u01pfile" data-lbl="welcome">
+  <LI id="pfile-wlcm">Welcome</LI>
+  <LI id="pfile-acct"><A href="https://profile.oracle.com/myprofile/account/secure/update-account.jspx?nexturl=" 
+  data-lbl="account">Account</A></LI>
+  <LI id="pfile-sout"><A href="javascript:sso_sign_out();" 
+  data-lbl="signout">Sign Out</A></LI>
+  <LI id="pfile-regs"><A href="http://www.oracle.com/webapps/redirect/signon?nexturl=" 
+  data-lbl="signin">Sign In/Register</A></LI>
+  <LI id="pfile-help"><A href="http://www.oracle.com/us/corporate/contact/about-your-account-070507.html" 
+  data-lbl="help">Help</A></LI></UL>
+<DIV class="u01search">
+<FORM name="searchForm" class="u01searchform" action="https://www.oracle.com/search/results?cat=otn" 
+method="get" 
+data-errormsg="No Search Term Entered. Please Try Again"><INPUT name="cat" type="hidden" value="otn"> 
+    <INPUT name="Ntk" type="hidden" value="S3">     <INPUT name="Ntt" class="textcnt autoclear ui-autocomplete-input" id="txtSearch" value="Search" autocomplete="off"> 
+    
+<INPUT class="u01searchbttn" type="submit" value="Submit Search"></FORM></DIV></DIV>
+<UL class="u01nav" data-trackas="hnav">
+  <LI><A class="u01nav" href="https://www.oracle.com/products/index.html#menu-products-n-services" 
+  data-trackas="hnav" data-lbl="productsandservices">
+  <H3>Products</H3></A></LI>
+  <LI><A class="u01nav" href="https://www.oracle.com/solutions/index.html#menu-solutions" 
+  data-trackas="hnav" data-lbl="solutions">
+  <H3>Solutions</H3></A></LI>
+  <LI><A class="u01nav" href="https://www.oracle.com/downloads/index.html#menu-downloads" 
+  data-trackas="hnav" data-lbl="downloads">
+  <H3>Downloads</H3></A></LI>
+  <LI><A class="u01nav" href="https://shop.oracle.com/#menu-store" data-trackas="hnav" 
+  data-lbl="store">
+  <H3>Store</H3></A></LI>
+  <LI><A class="u01nav" href="https://www.oracle.com/support/index.html#menu-support" 
+  data-trackas="hnav" data-lbl="support">
+  <H3>Support</H3></A></LI>
+  <LI><A class="u01nav" href="http://education.oracle.com/#menu-training" 
+  data-trackas="hnav" data-lbl="training">
+  <H3>Training</H3></A></LI>
+  <LI><A class="u01nav" href="http://www.oracle.com/partners/index.html#menu-partners" 
+  data-trackas="hnav" data-lbl="partners">
+  <H3>Partners</H3></A></LI>
+  <LI><A class="u01nav" href="https://www.oracle.com/corporate/index.html#menu-about" 
+  data-trackas="hnav" data-lbl="about">
+  <H3>About</H3></A></LI>
+  <LI><A class="u01btn" href="http://www.oracle.com/technetwork/index.html#menu-otn" 
+  data-trackas="hnav" data-lbl="oracletechnologynetwork">
+  <H3>OTN</H3></A></LI></UL></DIV><!-- /U01v0 --> 			 <!-- SS_END_SNIPPET(fragment42,ocomheader)--> 
+  <!--SS_BEGIN_SNIPPET(fragment29,2)-->		 <!--**override root for testing purposes:**-->
+	 <!--** Header Logo ** -->	 <!--** Header Search ** -->	 <!--** Welcome SignIn ** -->
+	 		 <!--** Footer ** -->	        <!--** Header Logo ** -->                    <!-- MOSAIC --> <!-- Communities--> <!-- User Category --> 
+ <!-- User Intrest --> <!-- Navigation starts here -->                           
+                                                                                 
+                                                           <!-- User Community SC code --> <!-- User Category SC code --> 
+ <!-- User Interest SC code -->		     
+<DIV id="breadCrumb">
+<DIV class="breadCrumb_Left"></DIV>
+<DIV class="breadCrumb_Center">
+<DIV style="position: relative;"><SPAN class="breadCrumb_Content"><A onclick="navTrack('otn','en','breadcrumb','otnen');" 
+href="http://www.oracle.com/technetwork/index.html"><SPAN 
+class="red">Oracle</SPAN> Technology Network</A><SPAN class="rightarrow"><IMG 
+alt=" " src="BigAdmGRUB_Solaris_Bootloader_files/rightarrow-066625.gif"></SPAN>
+			     <A onclick="navTrack('otn','en','breadcrumb','otnen_sysadmin');" href="http://www.oracle.com/technetwork/systems/index.html">System 
+Admins and Developers</A><SPAN class="rightarrow"><IMG alt=" " src="BigAdmGRUB_Solaris_Bootloader_files/rightarrow-066625.gif"></SPAN>
+			     <SPAN class="active">All System Admin Articles</SPAN></SPAN></DIV></DIV>
+<DIV class="breadCrumb_Right"></DIV></DIV><!--SS_END_SNIPPET(fragment29,2)-->    
+   
+<DIV id="wrapper_lnav_maincont_rcol_foot">
+<DIV id="Wrapper_FixedWidth_Leftnav"><!--SS_BEGIN_SNIPPET(fragment25,2)-->		 <!--**override root for testing purposes:**-->
+	 <!--** Header Logo ** -->	 <!--** Header Search ** -->	 <!--** Welcome SignIn ** -->
+	 		 <!--** Footer ** -->	        <!--** Header Logo ** -->                    <!-- MOSAIC --> <!-- Communities--> <!-- User Category --> 
+ <!-- User Intrest --> <!-- Navigation starts here -->                           
+                                                                                 
+                                                           <!-- User Community SC code --> <!-- User Category SC code --> 
+ <!-- User Interest SC code -->  <!--** retrieve input parameters: **-->								 <!--** retrieve the root node: **-->
+	 <!--rootId = ssGetFirstNodeId(siteId)-->	 <!--nodeId = rootId-->	 <!--** retrieve the nodeLevel and set it to ssNumVertLevels **-->
+	 <!--** retrieving the nodeLevel **-->		        	            		 <!--** setting the nodelevel to ssNumVertLevels **--> 
+                <!--** Get the section ID in custom section property **-->						 
+                                               	                                 
+                
+<DIV class="topLeftNavBorder_li"><!--Spacer--></DIV>
+<DIV class="XMLLeftNav_li" id="XMLLeftNav"><!--** section link: **-->    		     
+		    		    											               
+<UL class="level01">
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','sysarchive');" 
+  href="http://www.oracle.com/technetwork/systems/archive/index.html" target="_top">
+  <DIV>Archive</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','asr');" 
+  href="http://www.oracle.com/technetwork/systems/asr/index.html" target="_top">
+  <DIV>Auto Service Request (ASR)</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','adminarticles');" 
+  href="http://www.oracle.com/technetwork/systems/articles/index.html" target="_top">
+  <DIV>All System Admin Articles</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','alltopics');" 
+  href="http://www.oracle.com/technetwork/systems/alltopics/index.html" target="_top">
+  <DIV>All Systems Topics</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','coolthreads');" 
+  href="http://www.oracle.com/technetwork/systems/coolthreads/index.html" 
+  target="_top">
+  <DIV>Cool Threads</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','sys_didyouknow');" 
+  href="http://www.oracle.com/technetwork/systems/didyouknow/index.html" target="_top">
+  <DIV>Did you Know</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','dst');" 
+  href="http://www.oracle.com/technetwork/systems/dst/index.html" target="_top">
+  <DIV>DST</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','endnotices');" 
+  href="http://www.oracle.com/technetwork/systems/end-of-notices/index.html" 
+  target="_top">
+  <DIV>End of Notices</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','sysadmin_faq');" 
+  href="http://www.oracle.com/technetwork/systems/faq/index.html" target="_top">
+  <DIV>FAQ</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','handsonlabs');" 
+  href="http://www.oracle.com/technetwork/systems/hands-on-labs/index.html" 
+  target="_top">
+  <DIV>Hands-On Labs</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','highperfcomp');" 
+  href="http://www.oracle.com/technetwork/systems/hpc/index.html" target="_top">
+  <DIV>High Performance Computing</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','interoperability');" 
+  href="http://www.oracle.com/technetwork/systems/interoperability/index.html" 
+  target="_top">
+  <DIV>Interoperability</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','jettool');" 
+  href="http://www.oracle.com/technetwork/systems/jet-toolkit/index.html" 
+  target="_top">
+  <DIV>Jet Toolkit</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','systems_aces');" 
+  href="http://www.oracle.com/technetwork/systems/aces/index.html" 
+target="_top">
+  <DIV>Oracle ACES for Systems</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','delloracle');" 
+  href="http://www.oracle.com/technetwork/systems/dell-oracle/index.html" 
+  target="_top">
+  <DIV>Oracle on Dell</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','patches');" 
+  href="http://www.oracle.com/technetwork/systems/patches/index.html" target="_top">
+  <DIV>Patches</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','securitycerts');" 
+  href="http://www.oracle.com/technetwork/systems/security/index.html" target="_top">
+  <DIV>Security</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','swsilicon');" 
+  href="http://www.oracle.com/technetwork/systems/software-in-silicon/index.html" 
+  target="_top">
+  <DIV>Software in Silicon</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','softwarestacks');" 
+  href="http://www.oracle.com/technetwork/systems/software-stacks/index.html" 
+  target="_top">
+  <DIV>Software Stacks</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','solarisdev');" 
+  href="http://www.oracle.com/technetwork/systems/solaris-developer/index.html" 
+  target="_top">
+  <DIV>Solaris Developer</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','admindocs');" 
+  href="http://www.oracle.com/technetwork/systems/documentation/index.html" 
+  target="_top">
+  <DIV>Solaris HowTo</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','idetopics');" 
+  href="http://www.oracle.com/technetwork/systems/studio-ide-topics/index.html" 
+  target="_top">
+  <DIV>Solaris Studio IDE Topics</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','sysadmindays');" 
+  href="http://www.oracle.com/technetwork/systems/sysadmindays/index.html" 
+  target="_top">
+  <DIV>Sysadmin Days</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','sysadmindocs');" 
+  href="http://www.oracle.com/technetwork/systems/sys-admin-docs/index.html" 
+  target="_top">
+  <DIV>System Admin Docs</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','adminupgrade');" 
+  href="http://www.oracle.com/technetwork/systems/upgrade/index.html" target="_top">
+  <DIV>Upgrade</DIV></A></LI>
+  <LI><A class="level01_top_link_subnav" onclick="navTrack('otn','en','lnav','logicdomains');" 
+  href="http://www.oracle.com/technetwork/systems/logical-domains/index.html" 
+  target="_top">
+  <DIV>VM Server for SPARC</DIV></A></LI></UL></DIV>
+<DIV class="botLeftNavBorder_li"><!--Spacer--></DIV><!--** end of ExternalNavMultiV **-->
+			 <!--SS_END_SNIPPET(fragment25,2)-->         </DIV>
+<DIV id="Wrapper_FixedWidth_Centercontent">
+<DIV class="pg0 pg0v0 pg0x1v0 pg0x1"><!--SS_BEGIN_SNIPPET(fragment33,2)-->				 <!--SS_END_SNIPPET(fragment33,2)--> 
+<SCRIPT type="text/javascript">
+window['MULTIDDOCNAMECONFIG'] = { 
+show_addrowbutton: false, 
+primaryurl: 'OTN-LT-3COL?MainContent=160543&RHS1=150615&RHS2=160529&RHS3=152505&RHS4=&RHS5=&RHS6=&RHS7=&RHS8=&RHS9=&RHS10=&RHS11=&RHS12=&RHS13=&RHS14=&RHS15=&RHS16=&RHS17=', 
+rows: [ 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}, 
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+},
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+},  
+{ 
+createnewxml_defaultmetadata_default: 'dDocTitle%3DRHS', 
+browse_querytext_default: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_default: true, 
+show_browsebutton_default: true, 
+
+createnewxml_defaultmetadata_override: 'dDocTitle%3DRHS', 
+browse_querytext_override: 'xWebsiteObjectType <Matches> `Data File`', 
+show_createnewxmlbutton_override: true, 
+show_browsebutton_override: true, 
+
+show_deletebutton: true 
+}                    
+] 
+}; 
+</SCRIPT>
+ 
+<STYLE>
+  .sidebox h4 a:link {_width:178px;}
+  .sidebox h4 a:visited{_width:178px;}
+  .sidebox h4 a:hover {_width:178px;}
+</STYLE>
+	 
+<DIV class="orcl6w1">
+<DIV class="orcl6x0"></DIV></DIV>
+<DIV class="orcl6w2">
+<DIV class="orcl6w3"><!-- content goes here --> 
+<H3>GRUB and the Solaris 10 1/06 OS: The New Bootloader for x86 Platforms</H3>
+<P><I class="small">Shudong Zhou and Jan Setje-Eiler, December 2005</I></P>
+<P>This paper describes the boot architecture for the Solaris 10 1/06 Operating 
+System on x86 platforms, as well as the user experience. Please note: Some of 
+the details in this paper may change without notice. Refer to man pages and 
+Solaris OS administration documents for supported interfaces.  </P>
+<P>The new bootloader described in this document is available prior to the 
+formal release of the Solaris 10 1/06 OS from either the <A href="http://www.opensolaris.org/os/">OpenSolaris 
+Project</A> or the <A href="http://www.sun.com/software/solaris/solaris-express/get.jsp">Solaris 
+Express program</A>. </P><BR>
+<H5>1. Introduction to the Boot Process</H5>
+<P>When an x86-based system powers on, the BIOS initializes the CPU, memory, and 
+platform hardware. Upon completion, the BIOS loads the initial bootstrap 
+software (that is, the bootloader) from the configured boot device and hands 
+control over to the bootloader. The Solaris 10 3/05 OS and earlier releases use 
+a Sun-developed bootloader that includes an interactive shell and a menu-driven 
+device configuration assistant based on realmode drivers.  </P>
+<P>Starting with the Solaris 10 1/06 release, the open source GRUB or  GNU GRand 
+Unified Bootloader (see reference 1) is used as the bootloader. The initial 
+delivery is based on GRUB version 0.95 and will be updated as newer versions 
+become available. The Solaris kernel is fully compliant with the Multiboot 
+Specification (reference 2); hence, the Solaris OS can be booted via any 
+bootloader implementing the Multiboot Specification.  </P>
+<P>The switch to GRUB brings several benefits to Solaris customers.  </P>
+<UL>
+  <LI>
+  <P>With GRUB it is very easy to specify	kernel and boot options in the boot 
+  menu.</P></LI>
+  <LI>
+  <P>For end users, booting and installing from USB DVD drives is now 
+  supported.</P></LI>
+  <LI>
+  <P>It is easier for the Solaris OS to	coexist with other operating systems on 
+  the same machine. In	particular, it is possible for the Solaris OS to share 
+  the same GRUB	bootloader with Linux.</P></LI>
+  <LI>
+  <P>Deploying the Solaris OS via the network is also simplified,	particularly 
+  in the area of DHCP server setup. Vendor-specific options are no longer 
+  required in the DHCP server setup.</P></LI>
+  <LI>
+  <P>Developers no longer need to deal with realmode drivers, which were part of 
+  the bootloader required for previous Solaris releases.</P></LI>
+  <LI>
+  <P>For IHVs, it is now possible to deliver drivers at install	time via CD/DVD 
+  in addition to floppies.</P></LI></UL>
+<P>Finally, by adopting a bootloader developed by the open source community, 
+Sun's customers can leverage the considerable GRUB experience gained within that 
+community.</P><BR>
+<H5>2. Booting the Solaris OS With GRUB</H5>
+<P>Once GRUB gains control, it displays a menu on the console asking the user to 
+choose an OS instance to boot. The user may pick a menu item, modify a menu item 
+using the built-in editor, or manually load an OS kernel in command mode. To 
+boot the Solaris OS, GRUB must load a <CODE class="small">boot_archive</CODE> 
+file and a "multiboot" program. The boot archive is a ramdisk image containing 
+Solaris kernel modules and data. GRUB simply puts it in memory without any 
+interpretation. The multiboot program is an ELF executable with a Multiboot
+ Specification-compliant header. Once loading is complete, GRUB hands control 
+over to the multiboot program. GRUB itself then becomes inactive, and its memory 
+is reclaimed.  </P>
+<P>The multiboot program is responsible for assembling core kernel modules in 
+memory by reading the <CODE class="small">boot_archive</CODE>, and passing 
+boot-related information (as specified in the Multiboot Specification) to the 
+kernel. Note that the multiboot program goes hand-in-hand with the <CODE class="small">boot_archive</CODE> 
+file. You cannot mix and match multiboot and <CODE 
+class="small">boot_archive</CODE> information from different releases or OS 
+instances.  </P>
+<P>Once the kernel gains control, it will initialize CPU, memory, and I/O 
+devices, and it will mount the root file system on the device as specified by 
+the <CODE class="small">bootpath</CODE> property with a file system type as 
+specified by the property <CODE class="small">fstype</CODE>. Properties can be 
+set in <CODE class="small">/boot/solaris/bootenv.rc</CODE> via the <CODE class="small">eeprom(1M)</CODE> 
+command or in the GRUB command line via the GRUB menu or shell. If the 
+properties are not specified, the root file system defaults to UFS on <CODE 
+class="small">/devices/ramdisk:a</CODE>, which is the case when booting the 
+install miniroot.  </P><BR>
+<H5>3. Installation</H5>
+<P>The Solaris OS may be installed from CD, DVD, and net install servers. The 
+Solaris 10 1/06 release differs from the Solaris 10 3/05 release in several 
+ways:  </P>
+<UL>
+  <LI>
+  <P><B>Minimum memory requirement</B>:	The system must have 256MB of main 
+  memory to boot the install	miniroot. Systems with insufficient memory will get 
+  a message from	GRUB: "Selected item can not fit in memory".</P></LI>
+  <LI>
+  <P><B>USB drive support</B>: Installation from CD/DVD drives connected via USB 
+  interfaces is fully supported.</P></LI>
+  <LI>
+  <P><B>Net install</B>: The standard procedure for setting up net	install 
+  images remains the same. Clients are assumed to boot via	the Preboot eXecution 
+  Environment (PXE) mechanism. Clients not capable of PXE boot can use a GRUB 
+  floppy (see Appendix B).</P></LI></UL>
+<P>When booting the install miniroot, a GRUB menu is displayed. A user may 
+interactively edit boot options (see section 4.2). After GRUB loads the Solaris 
+OS, the following install menu is displayed:  </P>
+<OL>
+  <LI>Solaris Interactive (default)</LI>
+  <LI>Custom JumpStart</LI>
+  <LI>Solaris Interactive Text (Desktop session)</LI>
+  <LI>Solaris Interactive Text (Console session)</LI>
+  <LI>Apply driver updates</LI>
+  <LI>Single user shell</LI></OL>
+<P>The Device Configuration Assistant and associated interactive shell, which 
+users are familiar with from the Solaris 10 3/05 OS and earlier, are no longer 
+present. Users wishing to add drivers required during install (for example, host
+ adapter drivers) should choose option 5 and supply an ITU (Install Time Update) 
+floppy or CD/DVD.  </P>
+<P>Option 6 is available for system recovery. It provides quick access to a root 
+prompt without going through system identification. This option is identical to 
+booting a Solaris Failsafe session (see section 4.4).  </P><BR>
+<H5>4. Managing the Boot Subsystem</H5>
+<P><B>4.1 BIOS</B> </P>
+<P>It is generally a good idea to update the BIOS firmware to the latest 
+revision before installing the Solaris OS. This is typically accomplished by 
+visiting the support page for the vendor that manufactured the computer. </P>
+<P>Compared to the Solaris 10 3/05 release, the Solaris 10 1/06 OS uses a 
+different subset of BIOS features. In particular, the kernel makes use of more
+ information from the Advanced Configuration and Power Management Interface 
+(ACPI) table, using the parser from Intel's ACPI CA software.  </P>
+<P>On systems that do not conform to BIOS 2.0 specifications, the syslog may
+ contain messages related to parsing the ACPI table, such as:  </P>
+<PRE class="small">ACPI-0725: *** Warning:
+Type override - [4s] had invalid type (DEB_[\200IODB
+</PRE>
+<P>Such messages are harmless and do not impact normal system operation. If ACPI 
+errors prevent normal system boot, the user can disable the ACPI parser by 
+setting <CODE class="small">acpi-user-options</CODE> to 2 (see <CODE class="small">eeprom(1M)</CODE>) 
+in the kernel line of the GRUB menu:  </P>
+<PRE class="small">kernel .. -B ...,acpi-user-options=2</PRE>
+<P>In this case, the system assumes a set of standard ISA devices is present, 
+including a keyboard, a mouse, two serial ports, and a parallel port.  </P>
+<P><B>4.2 Boot Options</B> </P>
+<P>To boot the Solaris OS, a user may specify the kernel to load, options to be 
+passed to the kernel (see <CODE class="small">kernel(1M)</CODE>), and a list of 
+property names and values to customize system behaviors (see <CODE 
+class="small">eeprom(1M)</CODE>). At Solaris installation time, a set of default 
+values are chosen for the system and stored in <CODE 
+class="small">/boot/solaris/bootenv.rc</CODE>. Users may change the settings by 
+editing the GRUB menu or modifying the <CODE class="small">bootenv.rc</CODE>
+ file indirectly via the <CODE class="small">eeprom(1M)</CODE> command.  </P>
+<P>Specifying kernel name and kernel options via <CODE 
+class="small">eeprom</CODE> requires setting the <CODE 
+class="small">boot-file</CODE> property. To boot the 32-bit kernel in verbose 
+mode, run the following command:  </P>
+<PRE class="small"># eeprom boot-file="kernel/unix -v"</PRE>
+<P>To specify the same thing on the GRUB menu, modify the <CODE 
+class="small">kernel</CODE> command of the GRUB menu from:  </P>
+<PRE class="small">kernel /platform/i86pc/multiboot</PRE>
+<P>to:  </P>
+<PRE class="small">kernel /platform/i86pc/multiboot kernel/unix -v</PRE>
+<P>See <CODE class="small">kernel(1M)</CODE> for additional boot arguments that 
+the Solaris kernel accepts.  </P>
+<P>Properties other than <CODE class="small">boot-file</CODE> can be specified 
+on the GRUB kernel command line with this syntax:  </P>
+<PRE class="small">kernel /platform/i86pc/multiboot -B prop1=val1[,prop2=val2...]
+</PRE>
+<P>To configure the serial console on <CODE class="small">ttya (com1)</CODE>, 
+set the <CODE class="small">console</CODE> property to <CODE 
+class="small">ttya</CODE>:  </P>
+<PRE class="small">kernel /platform/i86pc/multiboot -B console=ttya        
+</PRE>
+<P>If the property value contains commas, the value should be quoted. The 
+following GRUB command sets the Solaris console to <CODE 
+class="small">ttya</CODE> in high speed.  </P>
+<PRE class="small">kernel /platform/i86pc/multiboot -B console=ttya,ttya-mode="115200,8,n,1,-"
+</PRE>
+<P>In short, specifying <CODE class="small">"-B foo=bar"</CODE> in the GRUB menu 
+is equivalent to running <CODE class="small">"eeprom foo=bar"</CODE>. The <CODE 
+class="small">-B</CODE> option in GRUB is primarily for temporary overrides. 
+Permanent settings should be specified via <CODE class="small">eeprom(1M)</CODE> 
+so that they are preserved by the Solaris upgrade process.  </P>
+<P><B>4.3 Boot Archive</B></P>
+<P>The boot archive refers to the file <CODE 
+class="small">platform/i86pc/boot_archive</CODE>. It is a collection of core 
+kernel modules and configuration files packed in either UFS or ISOFS format. At 
+boot time, GRUB loads the boot archive into system memory. The kernel can now 
+initialize itself from data and text in the boot archive without performing I/O 
+to the root device. Once the kernel gains sufficient I/O capability, it will
+ mount the root file system on the real root device as specified by the <CODE 
+class="small">bootpath</CODE> property. At this point, the boot archive loaded 
+by GRUB is discarded from memory.  </P>
+<P>The content of the boot archive is specified in <CODE 
+class="small">/boot/solaris/filelist.ramdisk</CODE>. Upon system shutdown, the 
+system checks for updates to the root file system and updates the boot archive 
+when necessary. The system may manually update the boot archive prior to system 
+shutdown by running the <CODE class="small">bootadm(1M)</CODE> command.  </P>
+<P><B>4.4 The Failsafe Menu Entry</B></P>
+<P>New to the Solaris 10 1/06 OS is a file, <CODE 
+class="small">/boot/x86.miniroot-safe</CODE>, containing a bootable, standalone 
+Solaris image. This file can be loaded by choosing the <CODE 
+class="small">Solaris failsafe</CODE> entry from the GRUB menu. This is for the 
+convenience of system administrators when the normal entry fails to boot.  </P>
+<P>Suppose you add a new package containing a faulty driver, and the system 
+panics at boot time. Upon reboot, you can pick the Solaris failsafe menu entry. 
+While in the failsafe session, mount the root file system on <CODE 
+class="small">/a</CODE> and run <CODE class="small">pkgrm -R </CODE>to remove 
+the faulty package. Once this is complete, you can reboot to the normal Solaris 
+entry to resume system operation.  </P>
+<P>The file <CODE class="small">/boot/x86.miniroot-safe</CODE> can also be 
+copied to portable media, such as a USB stick, as a recovery tool.  </P>
+<P><B>4.5 Keeping the System Bootable</B> </P>
+<P>To ensure that the system remains bootable, the GRUB boot blocks, the GRUB 
+menu, and the boot archive must be up-to-date.  </P>
+<P>The GRUB boot blocks reside in the Solaris partition. If the boot blocks 
+become corrupt, they should be reinstalled using the <CODE 
+class="small">installgrub(1M)</CODE> command. Note that <CODE 
+class="small">installboot(1M)</CODE> and <CODE class="small">fmthard(1M)</CODE> 
+cannot be used to write GRUB boot blocks.  </P>
+<P>The GRUB menu resides in <CODE class="small">/boot/grub/menu.lst</CODE> (or 
+<CODE class="small">/stubboot/boot/grub/menu.lst</CODE> if a Solaris boot 
+partition is used). The menu is maintained with the <CODE 
+class="small">bootadm(1M) update-menu</CODE> subcommand. Because GRUB names 
+disks by the BIOS disk number, a change in BIOS boot device configuration may 
+render GRUB menu entries invalid in some cases. Running <CODE 
+class="small">bootadm update-menu</CODE> will create the correct menu entry in 
+such cases.  </P>
+<P>The boot archive must be updated as the root file system is modified. In 
+cases of system failure (power failure or kernel panic) immediately following a 
+kernel file update, the boot archive may be out of sync with the root file 
+system. In such cases, the <CODE class="small">system/boot-archive</CODE> 
+service, managed through the Solaris Service Manager (see <CODE 
+class="small">svcadm(1M)</CODE> for example), will fail on the next reboot. 
+Solaris will print a message telling the user that it is still possible to boot 
+and clear the event that triggered the error, but it is safer to reboot the 
+system, select failsafe session, and update the boot archive while in the 
+failsafe session.  </P><BR>
+<H5>5. Multiboot Setup</H5>
+<P>If other bootable partitions exist, the Solaris install program attempts to 
+add GRUB entries for them. At the time of this writing, Microsoft Windows and 
+diagnostic partitions are recognized. Users may add other operating systems by 
+editing the GRUB menu directly.  </P>
+<P>Suppose you have a system with the Solaris OS, Linux, and Windows laid out on 
+the same disk as follows:  </P>
+<PRE class="small">        fdisk partition 0:      Windows
+        fdisk partition 1:      Linux
+        fdisk partition 2:
+                slice 0         Solaris 9
+                slice 3         Solaris 10 1/06</PRE>
+<P>The GRUB menu should look like:  </P>
+<PRE class="small">#---------- ADDED BY BOOTADM - DO NOT EDIT ----------
+title Solaris 10 1/06
+        root (hd0,2,d)
+        kernel /platform/i86pc/multiboot
+        module /platform/i86pc/boot_archive
+#---------------------END BOOTADM--------------------
+title Solaris 9
+        root (hd0,2,a)
+        chainloader +1
+        makeactive
+title Linux
+        root (hd0,1)
+        kernel &lt;from Linux's GRUB menu...&gt;
+        initrd &lt;from Linux's GRUB menu...&gt;
+title Windows
+        root (hd0,0)
+        chainloader +1</PRE>
+<P>Note that the Solaris <CODE class="small">fdisk partition</CODE> must be the 
+active partition. Do not put <CODE class="small">"makeactive"</CODE> under the
+ Windows menu. Doing so will make the system boot Windows all the time.  </P>
+<P>GRUB as obtained from sources other than Sun does not currently recognize 
+Solaris on-disk VTOC and UFS formats. Sun has submitted changes to the GRUB 
+project to support this; until they have been integrated, only the Solaris GRUB 
+will work. If Linux installed GRUB on the master boot block, you will not be 
+able to get to the Solaris OS even if you make the Solaris partition the active 
+partition. In this case, you can chainload from the Linux GRUB by modifying the 
+menu on Linux. Alternatively, you can replace the master boot sector with the
+ Solaris GRUB in the above example, by using the <CODE 
+class="small">installgrub(1M)</CODE> command: </P>
+<PRE class="small">installgrub -m /boot/grub/stage1 /boot/grub/stage2 /dev/rdsk/c0t2d0s3
+</PRE>
+<P>Before the Solaris VTOC and UFS implementation is propagated to the standard 
+GRUB release, only the Solaris version of GRUB will work.  </P><BR>
+<H5>6. Netboot and Diskless Clients</H5>
+<P>Booting from a network typically requires a DHCP server configured for PXE 
+clients and a boot server providing TFTP service. If there is no PXE/DHCP server 
+available (or the BIOS does not contain PXE code), it is possible to load GRUB 
+from floppy, CD-ROM, or a local disk, configure the network manually in the GRUB 
+menu, and boot the Solaris OS from a file server. See Appendix B for additional 
+details.  </P>
+<P>Setting up the DHCP server is a site-specific task and is left to the local 
+network administrator. See the Sun BluePrints document, “Configuring JumpStart 
+Servers to Provision Sun x86-64 Systems”: <A href="http://www.sun.com/blueprints/0205/819-1692.pdf">http://www.sun.com/blueprints/0205/819-1692.pdf</A>. 
+</P>
+<P>To boot the Solaris OS, the DHCP server must respond to the BIOS PXE request 
+with the IP address of the file server and the name of the boot file (<CODE 
+class="small">pxegrub</CODE>). The boot server is responsible for serving the 
+<CODE class="small">pxegrub</CODE> binary, the GRUB menu, the multiboot program, 
+and a boot archive. Standard tools are provided for setting up the boot server.  
+</P>
+<P><B>6.1 Net Install Server</B> </P>
+<P>The <CODE class="small">add_install_client(1M)</CODE> command is used to set 
+up the net install for install clients. For Solaris 10 1/06 and later releases, 
+<CODE class="small">add_install_client(1M)</CODE> should always be invoked with 
+the <CODE class="small">-d</CODE> option for PXE/DHCP boot, even if a GRUB 
+floppy is used to bootstrap to the network.  </P>
+<P>After running <CODE class="small">add_install_client</CODE>, you should see 
+<CODE class="small">/tftpboot/01&lt;eth_addr&gt;</CODE> as a link to <CODE 
+class="small">pxegrub</CODE> and <CODE 
+class="small">/tftpboot/menu.lst.01&lt;eth_addr&gt;</CODE> containing a GRUB 
+menu entry. The <CODE class="small">&lt;eth_addr&gt;</CODE> is the Ethernet 
+address of the client network interface in uppercase. In addition, the <CODE 
+class="small">/boot</CODE> directory of the net image is loopback mounted under 
+<CODE class="small">/tftpboot</CODE> to make <CODE 
+class="small">multiboot</CODE> and <CODE class="small">x86.miniroot</CODE> 
+accessible via <CODE class="small">tftp</CODE>.  </P>
+<P><B>6.2. Diskless Clients</B></P>
+<P>The <CODE class="small">smdiskless(1M)</CODE> command is used to set up 
+diskless clients. In earlier releases, <CODE class="small">smdiskless(1M)</CODE> 
+sets up the <CODE class="small">root</CODE> and <CODE class="small">usr</CODE> 
+file systems and exports to clients over NFS. However, users must manually 
+configure the <CODE class="small">/tftpboot</CODE> area in order to boot 
+clients. This manual step has been removed in the Solaris 10 1/06 OS. The <CODE 
+class="small">smdiskless(1M)</CODE> command automatically invokes a script in 
+<CODE class="small">/usr/sadm/lib/wbem/config_tftp</CODE> to set up the <CODE 
+class="small">/tftpboot</CODE> area for PXE boot.  </P>
+<P>After running <CODE class="small">smdiskless</CODE>, you should see <CODE 
+class="small">/tftpboot/01&lt;eth_addr&gt;</CODE> as a link to <CODE class="small">pxegrub</CODE>
+ and <CODE class="small">/tftpboot/menu.lst.01&lt;eth_addr&gt;</CODE> containing 
+a GRUB menu entry. The <CODE class="small">&lt;eth_addr&gt;</CODE> is the 
+Ethernet address of the client network interface in uppercase. In addition, 
+<CODE class="small">/export/root/&lt;hostname&gt;/boot</CODE> is loopback 
+mounted under <CODE class="small">/tftpboot</CODE> to make the client's
+ multiboot and boot archive accessible via <CODE class="small">tftp</CODE>.  
+</P>
+<P>The boot archive of diskless clients is automatically updated upon shutdown 
+of the client. If the client's boot archive is out of date when the client is 
+down, the archive can be updated from the server side with the following:  </P>
+<PRE class="small"># bootadm update-archive -R /export/root/&lt;hostname&gt;</PRE>
+<P>This works on both SPARC and x86 platform-based servers, serving x86 clients. 
+ </P><BR>
+<H5>7. Legacy Issues</H5>
+<P><B>7.1 The Solaris x86 Boot Partition</B> </P>
+<P>For x86 systems, the Solaris boot partition is a very small (about 10MB) 
+primary <CODE class="small">fdisk</CODE> partition in PCFS (FAT) format. It was 
+introduced in the Solaris 2.6 release, primarily because BIOS firmware at that 
+time could not access disk blocks beyond 1024 cylinders. It was necessary to put
+ boot code in a small area near the beginning of the disk. The boot partition 
+allowed the Solaris OS to be installed on a non-boot disk with minimal space 
+requirements on the boot disk.  </P>
+<P>With modern systems, there is no longer a need for a boot partition. From the
+ Solaris 10 1/06 OS onward, users no longer have the option to create a boot 
+partition. When upgrading from an old release, an existing x86 boot partition 
+may be retained to keep the system bootable without manual intervention. In such 
+cases, the x86 boot partition is mounted at <CODE class="small">/stubboot</CODE> 
+and contains GRUB boot blocks and a menu file <CODE 
+class="small">/stubboot/boot/grub/menu.lst</CODE>. The user can eliminate the
+ x86 boot partition by deleting the <CODE class="small">/stubboot</CODE> entry 
+from <CODE class="small">/etc/vfstab</CODE>, fixing up <CODE 
+class="small">/boot/grub/menu.lst</CODE>, and reconfiguring BIOS to boot from 
+the Solaris disk partition.  </P>
+<P><B>7.2 Realmode Drivers</B> </P>
+<P>Prior to the Solaris 10 1/06 OS, realmode drivers were run as part of the 
+boot process. It is possible that some existing kernel drivers implicitly depend 
+on a corresponding realmode driver to place hardware in a specific state. Since 
+realmode drivers are no longer part of the GRUB-based boot, such a kernel driver 
+may not function properly. If you run into such a case, please report the 
+problem to the driver vendor so that the kernel driver will be fixed.  </P><BR>
+<H5>Appendix A. GRUB Basics</H5>
+<P>This appendix describes the basic concepts of GRUB. Some of the details in 
+this appendix may change without notice. Refer to GRUB documentation for more 
+detailed information.  </P>
+<P><B>A.1 Device Naming</B> </P>
+<P>The primary purpose of a bootloader is to load data from a storage device to 
+system memory. To work with GRUB, it is necessary to understand how GRUB names 
+devices.  </P>
+<P>The floppy disk is named as:  </P>
+<PRE class="small">(fd0) -- first, second floppy</PRE>
+<P>GRUB can only reference a single network interface:  </P>
+<PRE class="small">(nd) -- network interface</PRE>
+<P>And this is almost always the interface the BIOS probed and configured via 
+DHCP. It is also possible to configure a network interface by booting GRUB from 
+floppy or other local media (see Appendix B).  </P>
+<P>Hard disk names start with <CODE class="small">hd</CODE> and a number, where 
+0 maps to BIOS disk 0x80 (first disk enumerated by the BIOS), 1 maps to 0x81, 
+and so on.  </P>
+<PRE class="small">(hd0) -- first bios disk (also the BIOS boot disk 0x81)
+(hd1) -- second bios disk (BIOS disk 0x81)
+(hd0,1) -- first bios disk, second primary partition
+(hd0,0,a) -- first bios disk, first fdisk partition, Solaris/BSD slice 0 and 1</PRE>
+<P>Be aware that BIOS disk numbering may change when BIOS configuration is 
+modified. Hence, the GRUB menu may become invalid if you change the BIOS boot 
+disk order or modify the disk configuration. To handle boot issues related to 
+disk renumbering in BIOS, it's essential to know the disk naming conventions.  
+</P>
+<P><B>A.2 Functional Components</B> </P>
+<P>The functional GRUB components include <CODE class="small">stage1</CODE>, 
+<CODE class="small">stage2</CODE>, and <CODE class="small">menu.lst</CODE>. 
+<CODE class="small">stage1</CODE> is installed on the first sector of the 
+Solaris <CODE class="small">fdisk</CODE> partition and can be optionally 
+installed on the master boot sector. <CODE class="small">stage2</CODE> is 
+installed in a reserved area in the Solaris partition. The <CODE 
+class="small">menu.lst</CODE> is located in <CODE 
+class="small">/boot/grub</CODE> and read by GRUB <CODE 
+class="small">stage2</CODE>.  </P>
+<P>Note that you cannot use <CODE class="small">dd(1M)</CODE> to write <CODE 
+class="small">stage1</CODE> and <CODE class="small">stage2</CODE> to disk 
+because <CODE class="small">stage1</CODE> must be told where <CODE 
+class="small">stage2</CODE> is located on the disk. The <CODE 
+class="small">installgrub(1M)</CODE> command is the supported way to install
+ GRUB boot blocks.  </P>
+<P>The GRUB shell, although present in <CODE 
+class="small">/boot/grub/bin/grub</CODE>, is not yet supported, and some of the 
+commands will not function on the Solaris OS due to operating system limitations 
+in making BIOS calls.  </P>
+<P><B>A.3 The GRUB Menu</B> </P>
+<P>The default menu file is <CODE class="small">/boot/grub/menu.lst</CODE>. 
+Manual edits to <CODE class="small">menu.lst</CODE> take effect on the next 
+reboot. A typical GRUB menu looks like:  </P>
+<PRE class="small">default 0
+timeout 10
+serial --unit=0 --speed=9600
+terminal serial
+#---------- ADDED BY BOOTADM - DO NOT EDIT ----------
+title Solaris
+  root (hd0,0,a)
+  kernel /platform/i86pc/multiboot -B console=ttya
+  module /platform/i86pc/boot_archive
+#---------------------END BOOTADM--------------------
+#---------- ADDED BY BOOTADM - DO NOT EDIT ----------
+title Solaris failsafe
+  root (hd0,0,a)
+  kernel /boot/multiboot -B console=ttya -s
+  module /boot/x86.miniroot.safe
+#---------------------END BOOTADM--------------------
+</PRE>
+<P>The <CODE class="small">"default"</CODE> line specifies which item to boot if 
+the timer runs out. The <CODE class="small">"timeout"</CODE> line specifies the 
+number of seconds to wait for user input before booting the default entry. If 
+<CODE class="small">timeout</CODE> is <CODE class="small">-1</CODE>, user input 
+is required. The <CODE class="small">serial</CODE> and <CODE 
+class="small">terminal</CODE> commands together switch GRUB output to the serial 
+port specified in the serial --unit tip line. The <CODE 
+class="small">root</CODE> command specifies from which disk, partition, and 
+slice to load files. GRUB automatically detects the file system type. The <CODE 
+class="small">kernel</CODE> command must be followed by the multiboot program. 
+The string after multiboot is passed to the Solaris OS without interpretation.  
+</P>
+<P>To explicitly specify a 64-bit kernel, modify the GRUB kernel command to:  
+</P>
+<PRE class="small">kernel /platform/i86pc/multiboot kernel/amd64/unix
+</PRE>
+<P>Likewise, the following command boots the 32-bit kernel:  </P>
+<PRE class="small">kernel /platform/i86pc/multiboot kernel/unix
+</PRE>
+<P><B>A.4 GRUB Command Mode</B></P>
+<P>You can boot the OS by typing commands at the GRUB prompt. To get the GRUB 
+prompt, hit 'c' at the GRUB menu. Type 'help' for a list of available commands. 
+Hitting Esc returns to the menu. You can also hit 'e' to edit an existing menu 
+item. When done with editing, hit 'b' to boot the system with the modified GRUB 
+entry.  </P><BR>
+<H5>Appendix B. Network Deployment</H5>
+<P>This appendix describes the best practices of deploying the Solaris OS on x86 
+platforms via the network. Some of the details in this appendix may change 
+without notice. Refer to man pages and Solaris administration documents for 
+supported interfaces.  </P>
+<P><B>B.1 Overview of Solaris Network Deployment</B> </P>
+<P>The idea behind deploying the Solaris OS over the network is to place Solaris 
+OS images in a centralized location. Any machine connected to the network may 
+boot and install the release of choice with little or no involvement of the 
+administrator. The installation process can even be done in a hands-off manner 
+via Solaris JumpStart software.  </P>
+<P>Booting from the network typically requires a DHCP server configured for PXE 
+clients and a file server providing <CODE class="small">tftp</CODE> service. The 
+DHCP server is responsible for supplying the information necessary for the 
+client to configure its network interface. The DHCP response also contains the 
+IP address of the file server and the boot file name (<CODE 
+class="small">pxegrub</CODE>). The file server is responsible for serving the 
+<CODE class="small">pxegrub</CODE> binary, the GRUB menu, the multiboot program, 
+and a boot archive. By default, the GRUB menu file is <CODE 
+class="small">menu.lst.01&lt;eth_addr&gt;</CODE>. If this file does not exist, 
+<CODE class="small">pxegrub</CODE> falls back to DHCP option 150 (if specified) 
+or <CODE class="small">/tftpboot/boot/grub/menu.lst</CODE>.  </P>
+<P>Booting the Solaris OS using PXE works as follows:  </P>
+<OL type="a">
+  <LI>User configures BIOS to boot from a network interface.</LI>
+  <LI>BIOS sends a DHCP request.</LI>
+  <LI>DHCP server replies with server address and the	name of the boot 
+file.</LI>
+  <LI>BIOS downloads <CODE class="small">pxegrub</CODE>	from server via <CODE 
+  class="small">tftp</CODE> and executes <CODE 
+class="small">pxegrub</CODE>.</LI>
+  <LI>System downloads a GRUB menu file via <CODE class="small">tftp</CODE> and 
+  shows menu entries.</LI>
+  <LI>User selects menu entry and starts loading the Solaris OS.</LI></OL>
+<P>In a typical deployment scenario, <CODE class="small">pxegrub</CODE> 
+downloads the multiboot program and the <CODE class="small">x86.miniroot</CODE> 
+file, which is decompressed into an in-memory miniroot. Once the miniroot is
+ running, it mounts the Solaris image (as specified in the <CODE 
+class="small">install_media</CODE> property on the GRUB menu) on <CODE class="small">/cdrom</CODE>,
+ and the installation process starts.  </P>
+<P>In the following sections, we will elaborate on the DHCP server setup, client 
+requirements, and several different deployment scenarios.  </P>
+<P><B>B.2 The DHCP Service</B> </P>
+<P>When a client sends a DHCP request, the server is informed of the client's ID 
+(typically Ethernet address), the "class" of the request, and the subnet the 
+client resides in. The Solaris DHCP server forms the response-based macros 
+matching the client request:  </P>
+<UL>
+  <LI>
+  <P>A class macro 	 </P>
+  <LI>
+  <P>A network macro 	 </P>
+  <LI>
+  <P>An IP macro 	 </P>
+  <LI>
+  <P>A client macro 	 </P></LI></UL>
+<P>The class macro is named by a "class string" embedded in the DHCP request. On 
+x86 platforms, BIOS always makes a DHCP request with the class <CODE class="small">PXEClient:Arch:00000:UNDI:002001</CODE>. 
+If a macro by this name is defined in the DHCP server configuration, then macro 
+content is sent to x86 clients in step (c) of section B.1.  </P>
+<P>The network macro is named by the IP address of the subnet. If a macro <CODE 
+class="small">129.146.87.0</CODE> is defined on the DHCP server, the macro 
+content is sent to all clients on that subnet, regardless of the class of the 
+request. If an option is defined in both the class macro and the network macro, 
+the network macro takes precedence.  </P>
+<P>The IP macro is named by an IP address. It is rarely used in the context of 
+booting the Solaris OS on x86 platforms.  </P>
+<P>The client macro is named by the client's type (01 for ether) and MAC address 
+in uppercase letters. For a client with Ethernet address <CODE 
+class="small">0:0:39:fc:f2:ef</CODE>, the corresponding macro name is <CODE 
+class="small">01000039FCF2EF</CODE>.  </P>
+<P>Suppose we have a client in subnet <CODE class="small">129.146.87.0</CODE> 
+with Ethernet address <CODE class="small">0:0:39:fc:f2:ef</CODE> making a DHCP 
+request of class <CODE class="small">PXEClient</CODE>.  </P>
+<P>The DHCP server has matching macros:  </P>
+<PRE class="small">- PXEClient
+BootSrvA:  129.146.87.194
+BootFile:  pxegrub
+- 129.146.87.0
+Router:    129.146.87.1
+NISdmain:  sunsoft.eng.sun.com
+- 01000039FCF2EF
+BootFile:  01000039FCF2EF</PRE>
+<P>The actual DHCP response will be as follows:  </P>
+<PRE class="small">BootSrvA:  129.146.87.194
+BootFile:  01000039FCF2EF
+Router:    129.146.87.1
+NISdmain:  sunsoft.eng.sun.com</PRE>
+<P>Note that the <CODE class="small">BootFile</CODE> in the client macro 
+overrides the <CODE class="small">BootFile</CODE> in the class macro.  </P>
+<P><B>B.3. The Simplest Netboot Setup</B></P>
+<P>For the bare minimum, you need a server and a client. The server should have 
+a running DHCP server and a Solaris distribution image available. The client 
+machine is connected to the same subnet as the server capable of supporting a 
+PXE boot request. Here are steps for server setup, assuming the server's IP 
+address is <CODE class="small">192.168.0.123</CODE> and the client's Ethernet 
+address is <CODE class="small">0:0:39:fc:f2:ef</CODE>.  </P>
+<P>a. Go to the Tools directory of the Solaris distribution image and run:</P>
+<PRE class="small"># add_install_client -d -e 0:0:39:fc:f2:ef i86pc</PRE>
+<P>b. Create a client macro name <CODE class="small">01000039FCF2EF</CODE> for 
+DHCP service with:</P>
+<PRE class="small">BootSrvA:  192.168.0.123
+BootFile:  01000039FCF2EF</PRE>
+<P>You can do this either from the <CODE class="small">dhcpmgr</CODE> GUI or 
+from command-line interfaces.  </P>
+<P>Now you can boot the client and install the Solaris OS.  </P>
+<P><B>B.4. Net Install Without PXE/DHCP</B></P>
+<P>It is possible to load GRUB from floppy, CD-ROM, or a local disk, configure 
+the network manually in GRUB, and download <CODE class="small">multiboot</CODE>
+ and <CODE class="small">boot_archive</CODE> from the file server. You may want 
+to do this for a number of reasons:  </P>
+<UL>
+  <LI>The client's BIOS does not support PXE.</LI>
+  <LI>The network card does not have UNDI ROM.</LI>
+  <LI>There is no DHCP service on the network.</LI>
+  <LI>You can automate install/reboot sequences without reconfiguring boot 
+  device order in the BIOS.</LI></UL>
+<P>The standard GRUB <CODE class="small">stage2</CODE> installed with the 
+Solaris OS contains netboot support. You may use the functionality by hitting
+ 'c' in the GRUB menu to go into command mode. Here is a working example:  </P>
+<PRE>grub&gt; ifconfig --address=192.168.0.02 --gateway=192.168.0.1 
+   --mask=255.255.255.0 --server=192.168.123.110
+grub&gt; root (nd)
+grub&gt; kernel /multiboot.I86PC.Solaris_10-1 kernel/unix -B
+   install_media=192.168.123.110:/export/setje/boot_74L2
+grub&gt; module /x86.miniroot
+grub&gt; boot
+</PRE>
+<P>Of course, the <CODE class="small">ifconfig</CODE> command must be specified 
+with values appropriate for your local network environment. You can also add a 
+menu entry with the above commands to the <CODE class="small">menu.lst</CODE> 
+file on disk or floppy.  </P>
+<P>Make sure you edit <CODE class="small">/boot/grub/menu.lst</CODE> on the
+ floppy before using it. If your network card contains UNDI ROM, simply pick the 
+UNDI-based floppy image. Otherwise, you should pick the floppy image with the 
+matching Solaris driver name (<CODE class="small">bge</CODE>, <CODE class="small">e1000g</CODE>, 
+and so on). If you have a special GRUB <CODE class="small">stage2</CODE> and 
+wish to build your own floppy, here are the instructions:  </P>
+<PRE class="small">&lt;format floppy&gt;
+# mount -F pcfs /dev/diskette /mnt (you may have to disable vold prior to doing this)
+# cd /boot/grub
+# /sbin/installgrub stage1 stage2 /dev/rdiskette
+stage1 written to boot sector on floppy
+first 2 sectors of stage2 written on floppy
+</PRE>
+<P>Edit <CODE class="small">/mnt/boot/grub/menu.lst</CODE> to contain the 
+following entry:  </P>
+<PRE class="small">title Solaris
+  ifconfig --address=192.168.0.2 --gateway=192.168.0.1 
+     --mask=255.255.255.0 --server=192.168.123.110
+  root (nd)
+  kernel /multiboot.I86PC.Solaris_11-1 kernel/unix -B
+     install_media=192.168.123.110:/export/setje/boot_74L2
+  module /x86.miniroot
+</PRE>
+<P><B>B.5. Managing Multiple Solaris Images</B></P>
+<P>In the presence of multiple Solaris images, you need a way to pick which 
+release or build to install for each client. Here are some possible ways to do 
+this.  </P>
+<OL type="a">
+  <LI>Keep DHCP server unchanged, and run <CODE 
+  class="small">add_install_client</CODE> on the boot server.</LI>
+  <LI>Keep the boot server unchanged, and modify the DHCP client macro (via web 
+  interface) to pick the release/build.</LI>
+  <LI>Keep both boot server and DHCP server unchanged, and the client picks the 
+  release/build from GRUB menu.</LI></OL>
+<P>Case (a) is the standard way of managing the boot server. The network admin 
+does a one-time setup of DHCP service for each client. After that, the client 
+user logs in the boot server and runs <CODE 
+class="small">add_install_client</CODE>. If you have a working DHCP setup for 
+Solaris 10 FCS clients, the same setup works with <CODE 
+class="small">pxegrub</CODE> based boot.  </P>
+<P>Case (b) requires the use of DHCP option 150 to supply the GRUB menu file. 
+When the user selects a release/build for a client, the DHCP configuration is 
+modified to set option 150 to the menu file containing the selected 
+release/build. Note that the menu file for each release/build must be created a 
+priori on the boot server. If the selected release/build does not use <CODE 
+class="small">pxegrub</CODE> to boot, the old Solaris setting is configured.  
+</P>
+<P>Case (c) works only for releases or builds based on <CODE 
+class="small">pxegrub</CODE>. As a new image is added on the server side, a menu 
+entry is appended. When a client boots, the new menu entry is available for 
+selection. Unfortunately, <CODE class="small">pxegrub</CODE> cannot "chainload" 
+the old Solaris netboot program (called <CODE class="small">nbp</CODE>). To make 
+client selection work across <CODE class="small">nbp</CODE> and <CODE class="small">pxegrub</CODE>, 
+you may configure <CODE class="small">pxelinux</CODE> on the server, which can 
+load either <CODE class="small">nbp</CODE> or <CODE 
+class="small">pxegrub</CODE>. A detailed discussion of <CODE 
+class="small">pxelinux</CODE> is beyond the scope of this paper. </P>
+<P><B>B.6. Automated Deployment Sequence</B></P>
+<P>Automated deployment often performs the following sequence: </P>
+<UL>
+  <LI>Boot net and install the Solaris OS on a disk via Solaris JumpStart 
+  software.</LI>
+  <LI>Reboot to disk and run a preconfigured set of tasks.</LI></UL>
+<P>At the end of the deployment, the machine sits idle, waiting for user 
+action.</P>
+<P>In most cases, the initial netboot can be initiated manually by pressing F12 
+(or some other key sequence, depending on the platform). However, some systems 
+do not support BIOS serial console redirection, and requiring the user to be at 
+the physical console is unreasonable. Also, some BIOSes provides a very short 
+time window for requesting netboot, making it a poor user experience. One
+ workaround is to boot from floppy to net, then rewrite the floppy to boot to 
+disk. This method is no longer viable as newer platforms no longer ship with 
+floppy drives. </P>
+<P>We recommend loading GRUB from disk. Add the following menu entry in <CODE 
+class="small">/boot/grub/menu.lst</CODE> to boot to the network for JumpStart 
+and make it the default boot entry through this command: </P>
+<PRE class="small"> # bootadm set-menu default=&lt;menu_entry_number&gt;
+</PRE>
+<P>where <CODE class="small">&lt;menu_entry_number&gt;</CODE> is the menu item 
+(numbering from 0) of the option you add below:</P>
+<PRE class="small">title Solaris Jumpstart
+        dhcp
+        root (nd)
+        kernel .../multiboot kernel/unix - install -B console=...
+        module ../x86.miniroot
+</PRE>
+<P>Once the system is installed, the default <CODE class="small">boot =.</CODE>
+ entry is modified automatically to boot from disk. This way, the whole 
+deployment sequence can be initiated via a power-cycle.  </P>
+<P><B>B.7. Trouble-Shooting</B></P>
+<P>Now, what happens if this doesn't work? Here are some tips for 
+trouble-shooting.</P>
+<P>a. Client boots straight to disk without attempting netboot.</P>
+<P>This usually means the client PXE ROM is disabled or that the BIOS is 
+configured to boot from the disk before the network. The fix is to go into BIOS 
+and modify the configuration. Details vary from one machine to another.</P>
+<P>b. Client attempts to boot net, but there is no response.</P>
+<P>Perform the usual checking of network cables, LED lights (if any) on the 
+interface card, and so on. Run <CODE class="small">snoop</CODE> on the
+ server:</P>
+<PRE class="small"># snoop -v [-d &lt;interface&gt;] 0:0:39:fc:f2:ef
+</PRE>
+<P>where <CODE class="small">&lt;interface&gt;</CODE> is something like <CODE 
+class="small">bge0</CODE>. The <CODE class="small">-d</CODE> option is needed 
+only if the server has more than one network interface card. Here is what you 
+should see: </P>
+<UL>
+  <LI><CODE class="small">DHCPDISCOVER (client -&gt; server)</CODE></LI>
+  <LI><CODE class="small">DHCPOFFER (server -&gt; client)</CODE></LI>
+  <LI><CODE class="small">DHCPREQUEST (client -&gt; server)</CODE></LI>
+  <LI><CODE class="small">DHCPACK (server -&gt; client)</CODE></LI></UL>
+<P>If there is no <CODE class="small">DHCPDISCOVER</CODE> message, then the
+ client is not transmitting, usually due to a bad cable or interface card.  </P>
+<P>If the <CODE class="small">DHCPDISCOVER</CODE> packet is seen, but no <CODE 
+class="small">DHCPOFFER</CODE> message, it means the server is not responding. 
+Look at the <CODE class="small">DHCPDISCOVER</CODE> message to verify that the 
+Ethernet address matches the macro name in the DHCP server. If the server uses 
+class macros, make sure the class string matches. The class string in the BIOS 
+DHCP request is always the following:</P>
+<PRE class="small">PXEClient:Arch:00000:UNDI:002001
+</PRE>
+<P>c. Client displays TFTP timeout message.</P>
+<P>This can happen when <CODE class="small">tftp</CODE> service is not set up 
+properly. Check the server to verify that <CODE class="small">tftp</CODE> is 
+enabled (<CODE class="small">in.tftpd</CODE> is running) and that the file <CODE 
+class="small">/tftpboot/01000039FCF2EF</CODE> exists and is linked to a <CODE 
+class="small">pxegrub</CODE> binary. The <CODE 
+class="small">add_install_client</CODE> step is supposed to set up both the 
+<CODE class="small">tftp</CODE> file and the <CODE class="small">tftp</CODE> 
+service.  </P>
+<P>d. Client hangs in the middle of downloading <CODE 
+class="small">x86.miniroot</CODE>.</P>
+<P>The TFTP protocol can transfer up to 65K blocks. Some <CODE 
+class="small">tftp</CODE> servers (for example, those running the Solaris 8 OS) 
+only support small block sizes (512), resulting in a maximum file size of 32MB,
+ less than the size of <CODE class="small">x86.miniroot</CODE> (about 45MB).
+ Upgrading the <CODE class="small">tftp</CODE> server will solve the problem.  
+</P>
+<P>If the server is running the Solaris 8 OS, you may copy <CODE 
+class="small">/usr/sbin/in.tftpd</CODE> from the Solaris 9 OS, until the TFTP
+ patch for the Solaris 8 OS becomes available.  </P>
+<P>e. Client finishes downloading <CODE class="small">x86.miniroot</CODE> and 
+then hangs.</P>
+<P>Most likely, the console output went somewhere else. Make sure the <CODE 
+class="small">console</CODE> variable is set correctly on the GRUB menu line. 
+Setting input-device/output-device also works. See section 4.2.</P>
+<P>f. Client displays "No ethernet card found" message.</P>
+<P>This may happen when booting GRUB from local media and loading the Solaris OS 
+from the network. It is an indication that the GRUB cannot find any network 
+interface using the PCI BIOS32 service.  </P>
+<P>g. Client displays "No PnPBios found" message.</P>
+<P>This may happen when booting GRUB from local media and loading the Solaris OS 
+from the network. In this case, GRUB located the network interface, but failed 
+to locate the PnP Bios service to install UNDI ROM from the network interface 
+card. </P><BR>
+<H5>References</H5>
+<OL>
+  <LI>GNU GRUB web page (<A 
+  href="http://www.gnu.org/software/grub/grub.html">http://www.gnu.org/software/grub/grub.html</A></LI>
+  <LI>Multiboot Specification web page on the GNU site (<A href="http://www.gnu.org/software/grub/manual/multiboot/multiboot.html">http://www.gnu.org/software/grub/manual/multiboot/multiboot.html</A></LI>
+  <LI>FAQ for GRUB and the Solaris 10 1/06 OS: The New Bootloader for x86 
+  Platforms (<A href="http://www.oracle.com/bigadmin/features/articles/grub_boot_faq.html">http://www.oracle.com/bigadmin/features/articles/grub_boot_faq.html</A></LI></OL>
+<DIV class="cornerBR"><!-- BEGIN G25 COMPONENT V.2 --> 
+<DIV class="g25">
+<DIV class="commentBody" style="padding: 6px; border: 1px solid rgb(0, 0, 0); border-image: none; background-color: rgb(255, 255, 255);"><!-- BEGIN WIKI LINK --> 
+<DIV style="float: right;">Discuss and comment on this resource in the           
+                  <A href="http://wikis.sun.com/display/BigAdmin/General+BigAdmin+Content+Comments">BigAdmin 
+Wiki</A></DIV><!-- END WIKI LINK --> 
+<DIV id="baCommentsBody">&nbsp;</DIV></DIV><!-- commentBody --></DIV><!-- END G25 COMPONENT V.2 --></DIV></DIV></DIV>
+<DIV class="orcl6w5">
+<DIV class="orcl6x0"></DIV>
+<DIV class="orcl6x1"></DIV></DIV>
+<DIV class="orcl6w6">
+<DIV class="orcl6x0"></DIV>
+<DIV class="orcl6x1"></DIV></DIV></DIV>
+<DIV id="Wrapper_FixedWidth_Rightnav">
+<DIV style="background-color: rgb(255, 255, 255);">
+<TABLE width="100%" bgcolor="#dddddd" border="0" cellspacing="0" 
+cellpadding="0">
+  <TBODY>
+  <TR>
+    <TD><IMG width="10" height="20" alt="Left Curve" src="BigAdmGRUB_Solaris_Bootloader_files/left-curve-9-121830.gif"></TD>
+    <TD align="center">
+      <DIV align="center"><SPAN class="boldbodycopy">Popular 
+      Downloads</SPAN></DIV></TD>
+    <TD align="right"><IMG width="10" height="20" alt="Right Curve" src="BigAdmGRUB_Solaris_Bootloader_files/right-curve-7-104150.gif"></TD></TR>
+  <TR>
+    <TD colspan="3"><IFRAME width="100%" src="BigAdmGRUB_Solaris_Bootloader_files/071496.htm" 
+      frameborder="0" scrolling="no" onload="resizeIframe(this)"></IFRAME>       
+        </TD></TR></TBODY></TABLE>
+<STYLE type="text/css">
+body {font-family:Arial, Helvetica, sans-serif}
+#downRSS {padding:0;position:absolute;top:3px;right:10px;}
+#downWrapper {padding:0 0 0px 0;background-color:#ffffff;}
+#downMain {padding:5px 0 0 0; margin: 0; font-size:12px; }
+#downMain .downLoad {background-image:url(http://www.oracleimg.com/ocom/groups/public/@otn/documents/digitalasset/115899.gif); background-repeat:no-repeat; background-position:top left; padding:0 0 10px 16px; margin:0 0 0 5px;}
+#downMain a:link {color:#000;text-decoration:underline;} 
+#downMain a:visited {color:#999;text-decoration:underline;}
+#downMain a:hover {color:#ff0000;text-decoration:underline;}
+</STYLE>
+ 
+<TABLE width="100%" bgcolor="#dddddd" border="0" cellspacing="0" 
+cellpadding="0">
+  <TBODY>
+  <TR>
+    <TD><IMG width="10" height="20" alt="Left Curve" src="BigAdmGRUB_Solaris_Bootloader_files/121830.gif"></TD>
+    <TD align="center">
+      <DIV align="center"><SPAN class="boldbodycopy">More Systems 
+      Downloads</SPAN></DIV></TD>
+    <TD align="right"><IMG width="10" height="20" alt="Right Curve" src="BigAdmGRUB_Solaris_Bootloader_files/104150.gif"></TD></TR>
+  <TR>
+    <TD colspan="3">
+      <DIV id="downWrapper">
+      <DIV id="downMain">
+      <DIV class="downLoad"><A href="http://www.oracle.com/technetwork/server-storage/developerstudio/downloads/index.html" 
+      target="">Developer Studio</A></DIV><!--        <div class="downLoad"><a target="" href="/technetwork/server-storage/developerstudio/downloads/136197">Solaris Studio Express</a></div> --> 
+                  
+      <DIV class="downLoad"><A href="http://netbeans.org/downloads/index.html" 
+      target="">NetBeans IDE</A></DIV>
+      <DIV class="downLoad"><A href="http://www.oracle.com/technetwork/server-storage/solaris-cluster/downloads/index.html" 
+      target="">Solaris Cluster</A></DIV>
+      <DIV class="downLoad"><A href="http://dlc.sun.com/virtualbox/vboxdownload.html" 
+      target="">VirtualBox</A></DIV></DIV></DIV></TD></TR></TBODY></TABLE><BR><A 
+onclick="navTrack('otn','en','button','cloudgetstartedbutton-lgblue');" href="hhttps://cloud.oracle.com/tryit?intcmp=ocom-otn"><IMG 
+alt="" src="BigAdmGRUB_Solaris_Bootloader_files/opc-button-515466.jpg"></A> 
+<BR><BR>&nbsp;                   </DIV></DIV></DIV>
+<DIV id="Wrapper_FixedWidth_Footer">
+<DIV class="addThisPrintEmail"><!--SS_BEGIN_SNIPPET(fragment40,1)--> 
+&nbsp;&nbsp;&nbsp;	<A href="javascript:mailpage()"><IMG width="19" height="16" 
+alt="E-mail this page" src="BigAdmGRUB_Solaris_Bootloader_files/email.gif" 
+border="0"></A> <SPAN style="margin-bottom: 2px;"><A href="javascript:mailpage()">E-mail 
+this page</A></SPAN>&nbsp;&nbsp;&nbsp;	<A onclick="printerView()" href="javascript: void 0;"><IMG 
+width="19" height="16" alt="Printer View" src="BigAdmGRUB_Solaris_Bootloader_files/print_icon.gif" 
+border="0">&nbsp;Printer View</A>			 <!--SS_END_SNIPPET(fragment40,1)-->         
+    </DIV><!-- SS_BEGIN_SNIPPET(fragment43,ocomfooter)-->						<!-- U06v1 --> 
+<DIV class="u06v1" id="u06v1" data-trackas="ffooter" data-openff="Open Info" 
+data-closeff="Close Info">
+<DIV class="u06v1z1">&nbsp;</DIV>
+<DIV class="u06v1w1">
+<DIV class="u06v1w2">
+<UL>
+  <H5>Oracle Cloud</H5>
+  <LI><A href="https://www.oracle.com/cloud/index.html" data-lbl="cloud:learn-about-oracle-cloud">Learn 
+  About Oracle Cloud Computing</A></LI>
+  <LI><A href="https://cloud.oracle.com/tryit?intcmp=ocom-ft" target="_blank" 
+  data-lbl="cloud:get-a-free-trial">Get a Free Trial</A></LI>
+  <LI><A href="https://www.oracle.com/cloud/daas.html" data-lbl="cloud:learn-about-daas">Learn 
+  About DaaS</A></LI>
+  <LI><A href="https://www.oracle.com/cloud/saas.html" data-lbl="cloud:learn-about-saas">Learn 
+  About SaaS</A></LI>
+  <LI><A href="https://www.oracle.com/cloud/paas.html" data-lbl="cloud:learn-about-paas">Learn 
+  About PaaS</A></LI>
+  <LI><A href="https://www.oracle.com/cloud/iaas.html" data-lbl="cloud:learn-about-iaas">Learn 
+  About IaaS</A></LI>
+  <LI><A href="https://www.oracle.com/cloud/private-cloud.html" data-lbl="cloud:learn-about-private-cloud">Learn 
+  About Private Cloud</A></LI>
+  <LI><A href="https://www.oracle.com/cloud/managed-cloud.html" data-lbl="cloud:learn-about-managed-cloud">Learn 
+  About Managed Cloud</A></LI></UL></DIV>
+<DIV class="u06v1w2">
+<UL>
+  <H5>Java</H5>
+  <LI><A href="https://www.oracle.com/java/index.html" data-lbl="java:learn-about-java">Learn 
+  About Java</A></LI>
+  <LI><A href="http://java.com/download" target="_blank" data-lbl="java:download-java-for-consumers">Download 
+  Java for Consumers</A></LI>
+  <LI><A href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" 
+  data-lbl="java:download-java-for-developers">Download Java for 
+  Developers</A></LI>
+  <LI><A href="http://www.oracle.com/technetwork/java/index.html" data-lbl="java:java-resources-for-developers">Java 
+  Resources for Developers</A></LI>
+  <LI><A href="https://cloud.oracle.com/java" target="_blank" data-lbl="java:java-cloud-service">Java 
+  Cloud Service</A></LI>
+  <LI><A href="http://www.oracle.com/technetwork/java/javamagazine/index.html" 
+  data-lbl="java:java-magazine"><EM>Java Magazine</EM></A></LI></UL></DIV>
+<DIV class="u06v1w2">
+<UL>
+  <H5>Customers and Events</H5>
+  <LI><A href="http://www.oracle.com/us/corporate/customers/overview/index.html" 
+  data-lbl="customers-and-events:explore-and-read-customer-stories">Explore and 
+  Read Customer Stories</A></LI>
+  <LI><A href="http://events.oracle.com/search/search?group=Events&amp;keyword=" 
+  target="_blank" data-lbl="customers-and-events:all-oracle-events">All Oracle 
+  Events</A></LI>
+  <LI><A href="https://www.oracle.com/openworld/index.html" target="_blank" 
+  data-lbl="customers-and-events:oracle-openworld">Oracle OpenWorld</A></LI>
+  <LI><A href="https://www.oracle.com/javaone/index.html" target="_blank" 
+  data-lbl="customers-and-events:javaone">JavaOne</A></LI></UL><BR>
+<UL>
+  <H5>Email Subscriptions</H5>
+  <LI><A href="https://go.oracle.com/subscriptions?l_code=en-us&amp;src1=OW:O:FO" 
+  data-lbl="email-subscriptions:subscription-center">Subscription 
+Center</A></LI></UL></DIV>
+<DIV class="u06v1w2">
+<UL>
+  <H5>Communities</H5>
+  <LI><A href="https://blogs.oracle.com/" 
+  data-lbl="communities:blogs">Blogs</A></LI>
+  <LI><A href="https://community.oracle.com/welcome" target="_blank" data-lbl="communities:discussion-forums">Discussion 
+  Forums</A></LI>
+  <LI><A href="https://wikis.oracle.com/" target="_blank" data-lbl="communities:wikis">Wikis</A></LI>
+  <LI><A href="http://www.oracle.com/technetwork/community/oracle-ace/index.html" 
+  data-lbl="communities:oracle-aces">Oracle ACEs</A></LI>
+  <LI><A href="http://www.oracle.com/us/corporate/customers/user-groups/index.html" 
+  data-lbl="communities:user-groups">User Groups</A></LI>
+  <LI><A href="http://www.oracle.com/us/social-media/twitter/index.html" 
+  data-lbl="communities:social-media-channels">Social Media 
+Channels</A></LI></UL></DIV>
+<DIV class="u06v1w2">
+<UL>
+  <H5>Services and Store</H5>
+  <LI><A href="http://www.oracle.com/us/support/software/premier/my-oracle-support-068523.html" 
+  data-lbl="services-and-store:log-in-to-my-oracle-support">Log In to My Oracle 
+  Support</A></LI>
+  <LI><A href="https://education.oracle.com/" target="_blank" data-lbl="services-and-store:training-and-certification">Training 
+  and Certification</A></LI>
+  <LI><A href="http://www.oracle.com/partners/en/join-now/index.html" target="_blank" 
+  data-lbl="services-and-store:become-a-partner">Become a Partner</A></LI>
+  <LI><A href="https://solutions.oracle.com/scwar/scr/index.html" data-lbl="services-and-store:find-a-partner-solution">Find 
+  a Partner Solution</A></LI>
+  <LI><A href="https://shop.oracle.com/" target="_blank" data-lbl="services-and-store:purchase-from-the-oracle-store">Purchase 
+  from the Oracle Store</A></LI>
+  <LI><A href="http://www.oracle.com/technetwork/opensource/index.html" target="" 
+  data-lbl="services-and-store:source-code-for-open-source-software">Source Code 
+  for Open Source Software</A></LI>
+  <LI>
+  <DIV class="u06callout">
+  <H5>Contact and Chat</H5><STRONG>US Sales: +1.800.633.0738 </STRONG><BR><A 
+  href="https://www.oracle.com/corporate/contact/global.html" data-lbl="contact-and-chat:global-contacts">Global 
+  Contacts</A><BR><A href="http://www.oracle.com/us/support/contact/index.html" 
+  target="" data-lbl="contact-and-chat:oracle-support">Oracle Support</A><BR><A 
+  href="http://www.oracle.com/partners/en/most-popular-resources/partner-business-center-1954023.html" 
+  data-lbl="contact-and-chat:partner-support">Partner Support</A><BR><!-- <strong>E-Mail:</strong> <a data-lbl="contact-and-chat:email" href="mailto:help@oracle.com">help@oracle.com</a></div> --></DIV></LI></UL></DIV></DIV>
+<DIV class="u06v1z2">&nbsp;</DIV></DIV><!-- /U06v1 --><!-- U06v0 --> 
+<DIV id="u06" data-trackas="footer">
+<HR>
+ 
+<H3><A href="https://www.oracle.com/corporate/index.html" data-lbl="integrated cloud applications and platform services">Integrated 
+Cloud Applications and Platform Services</A></H3>
+<UL class="u06-links">
+  <LI><A href="https://www.oracle.com/legal/copyright.html" 
+  data-lbl="copyright">©&nbsp;Oracle</A></LI>
+  <LI><A href="https://go.oracle.com/subscriptions?l_code=en-us&amp;src1=OW:O:FO" 
+  data-lbl="subscribe">Subscribe</A></LI>
+  <LI><A href="https://www.oracle.com/corporate/careers/index.html" data-lbl="careers">Careers</A></LI>
+  <LI><A href="https://www.oracle.com/corporate/contact/index.html" data-lbl="contact us">Contact 
+  Us</A></LI>
+  <LI><A href="https://www.oracle.com/sitemap.html" data-lbl="site maps">Site 
+  Maps</A></LI>
+  <LI><A href="https://www.oracle.com/legal/privacy/index.html" data-lbl="legal notices">Legal 
+  Notices</A></LI>
+  <LI><A href="https://www.oracle.com/legal/terms.html" 
+  data-lbl="terms of use">Terms of Use</A></LI>
+  <LI><A href="https://www.oracle.com/legal/privacy/index.html" data-lbl="privacy rights">Privacy</A></LI>
+  <LI>
+  <DIV id="teconsent">&nbsp;</DIV></LI>
+  <LI><A href="https://www.oracle.com/legal/privacy/privacy-policy.html#advertising" 
+  data-lbl="ad choices">Ad Choices</A></LI>
+  <LI class="u06-mobile"><A href="http://www.oracle.com/us/corporate/mobile-application/index.html" 
+  data-lbl="oracle mobile">Oracle Mobile</A></LI></UL>
+<UL class="scl-icons">
+  <LI class="scl-facebook"><A title="Oracle on Facebook" href="http://www.oracle.com/us/social-media/facebook/index.html" 
+  data-lbl="facebook">Facebook</A></LI>
+  <LI class="scl-linkedin"><A title="Oracle on LinkedIn" href="http://www.oracle.com/us/social-media/linkedin/index.html" 
+  data-lbl="linkedIn">LinkedIn</A></LI>
+  <LI class="scl-twitter"><A title="Follow Oracle on Twitter" href="http://www.oracle.com/us/social-media/twitter/index.html" 
+  data-lbl="twitter">Twitter</A></LI>
+  <LI class="scl-googleplus"><A title="Follow Oracle on Google+" href="https://plus.google.com/115607918987921226255" 
+  target="_blank" data-lbl="google plus">Google+</A></LI>
+  <LI class="scl-youtube"><A title="Watch Oracle on YouTube" href="http://www.youtube.com/oracle/" 
+  target="_blank" data-lbl="youtube">YouTube</A></LI>
+  <LI class="scl-feed"><A title="Oracle RSS Feeds" href="http://www.oracle.com/us/syndication/feeds/index.html" 
+  data-lbl="oracle rss feed">Oracle RSS Feed</A></LI></UL></DIV><!-- /U06v0 --> 
+			 <!-- SS_END_SNIPPET(fragment43,ocomfooter)-->           </DIV></DIV>
+<DIV class="lightbox_overlay" id="fade"><!--spacer-->         </DIV><!--SS_BEGIN_SNIPPET(fragment39,1)-->
+				 <!-- Start SiteCatalyst code --> 
+<SCRIPT language="JavaScript" src="BigAdmGRUB_Solaris_Bootloader_files/ora_otn.js"></SCRIPT>
+ <!-- End SiteCatalyst code --> 			<!--SS_END_SNIPPET(fragment39,1)-->       
+</DIV><!--SS_BEGIN_SNIPPET(fragment35,universal-webcache-integration)-->								
+			 <!--SS_END_SNIPPET(fragment35,universal-webcache-integration)--> <!--Brightcove script line and lightbox code--> 
+  
+<DIV id="bcVideoPlayer" style="display: none;"></DIV>
+<DIV class="lightbox_overlay" id="lightbox_brightcove" style="display: none; z-index: 30000;" 
+onclick="showclose();"><!--spacer-->&nbsp;  </DIV></BODY></HTML>

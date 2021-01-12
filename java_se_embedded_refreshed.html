@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Java SE Embedded Refreshed</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p><big><b>Java SE Embedded Refreshed</b></big><br>
+      <small><small>By Jim Connors 16 December 2010</small></small><br>
+    </p>
+    <p>As embedded processor designs continue their inexorable drive
+      towards ever increasing capability, the natural desire to utilize
+      more robust software platforms, previously reserved for powerful
+      desktop computers and servers, follows suit.&nbsp; Recognizing
+      this trend, a version of the Java Standard Edition platform,
+      called <a
+href="http://www.oracle.com/technetwork/java/embedded/overview/index.html">Java
+
+
+
+        SE Embedded</a>, has been developed to address this growing
+      market.&nbsp; In addition to bringing all of the benefits of the
+      ubiquitous Java Standard Edition to the most popular embedded
+      processors, static footprint and memory optimizations have been
+      realized.&nbsp; To get a feel for some of the space savings, check
+      out this <a
+        href="https://dzone.com/articles/reduced-footprint-java-se-brin">article</a>.</p>
+    <p>Partly due to the turmoil surrounding the Oracle acquisition of
+      Sun, a refresh of the Java SE Embedded binaries took longer than
+      anticipated.&nbsp; The new versions are now available for <a
+href="http://www.oracle.com/technetwork/java/embedded/downloads/index.html">download</a>
+      with these <a
+href="http://www.oracle.com/technetwork/java/embedded/overview/sys-reqs-embedded-159989.html">supported
+
+
+
+        configurations</a>.&nbsp; During that time frame, Java SE-E
+      engineers were able take care of some internal housekeeping which
+      should help for better synchronization of future releases of Java
+      SE with Java SE-E.&nbsp; In the past, Java SE-E engineers would
+      take a snapshot of the Java Standard Edition code and incorporate
+      their modifications to create a new release, forking from the
+      standard edition source,.&nbsp; Now, the Java SE-E code is part of
+      the overall Java SE project, such that future Java SE enhancements
+      and bug fixes should now be automatically incorporated into the
+      Java SE-E code base.</p>
+    <p>The refreshed Java SE-E binaries are based on the Java SE 6
+      Update 21, and represent substantial security, performance and
+      quality enhancements.&nbsp; Benchmark tests show that, for
+      example, simply replacing the previous versions of the Java SE-E
+      virtual machines with the latest binaries produces on averageimg
+      about 20% performance gain for the same hardware/OS
+      combination.&nbsp; Having recently introduced a Just-In-Time (or
+      JIT) compiler to the Android Dalvik Virtual Machine, we thought it
+      would be an interesting exercise to compare performance of Java
+      SE-E to Android on identical hardware.&nbsp; For a full
+      explanation of the results and methodology, check out <a
+href="https://blogs.oracle.com/javaseembedded/entry/how_does_android_22s_performance_stack_up_against_java_se_embedded">Bob
+
+
+
+        Vandette's blog</a> on this topic.&nbsp; To cut to the chase,
+      for the selected benchmarks, Java SE-E outperforms Android by a
+      factor of two.&nbsp; </p>
+    <p>Improving virtual machine performance is a tedious process that
+      takes time.&nbsp; The bottom line is this:&nbsp; Java SE Virtual
+      Machine engineers have been at this for a very long time, and have
+      had the benefit of fifteen years of scrutiny from the computer
+      science community.&nbsp; It will take considerable time and effort
+      for Android to come close to this capability.&nbsp; In the
+      interim, the Java Virtual Machine performance and quality
+      improvement marches on.<br>
+    </p>
+    <p><img src="resource/java_se-e/plug.jpg"><img
+        src="resource/java_se-e/plug2.jpg">&nbsp;&nbsp; Next up: Take a
+      look at these pictures.&nbsp; Based upon Marvell's Plug Computer
+      design, these amazing devices pack a 1+GHz Arm processor with
+      512MB RAM and consume a minuscule 5 watts of power. They run Java
+      SE-E beautifully.&nbsp; Combined with an IDE like <a
+        href="http://netbeans.org">NetBeans</a>, this makes for an
+      ideal, although unofficial, Java SE Embedded Development Kit.<br>
+    </p>
+    <div class="footer"><a href="index.html">Index</a></div>
+  </body>
+</html>

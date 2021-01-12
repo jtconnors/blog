@@ -1,0 +1,32 @@
+body {
+    width:600px;
+    margin-left: 100px;
+}
+
+BODY {
+    font-size: 15px;
+    line-height: 20px;
+}
+
+BODY {
+    font-family: DejaVu Serif, Bitstream Vera Serif, Georgia, serif;
+}
+
+BODY {
+    line-height: 1.4;
+}
+
+BODY {
+    text-align: justify;
+}
+
+
+
+div.header {
+    display: block; text-align: center; 
+    position: running(header);
+}
+div.footer {
+    display: block; text-align: left;
+    position: running(footer);
+}

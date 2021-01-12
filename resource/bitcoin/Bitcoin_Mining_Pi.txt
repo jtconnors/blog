@@ -1,0 +1,83 @@
+Seting up Bitcoin mining on Raspberry Pi for Gekkoscience 2Pac BM1384 Stickminer
+
+################################################################################
+Part I - Configuring the Raspberry Pi
+
+1. Update Raspbian to the latest (as of August 2017)
+
+   $ sudo apt-get update
+   $ sudo apt-get upgrade -y
+
+2. Add the following packages to accommodate the cgminer software's dependencies:
+
+   $ sudo apt-get install -y build-essential git libusb-1.0-0-dev libusb-1.0-0 libcurl4-openssl-dev libncurses5-dev libudev-dev screen libtool automake pkg-config libjansson-dev
+
+3. Create a user called bitcoin
+
+   $ sudo adduser bitcoin
+
+4. Log in as the bitcoin user
+
+5. Pull down the source code branch for the cgminer software that supports the
+   Gekkoscience 2Pac Stickminer and build it.
+
+   $ mkdir -p git/vthoang; cd git/vthoang
+   $ git clone https://github.com/vthoang/cgminer.git
+   $ cd cgminer
+   $ CFLAGS="-O2" ./autogen.sh --enable-gekko
+   $ make -j 2
+
+6. Grant permission for the bitcoin user to access the USB devices
+
+   $ cd ~/git/vthoang/cgminer/
+   $ sudo usermod -G plugdev -a `whoami`
+   $ sudo cp 01-cgminer.rules /etc/udev/rules.d/
+   $ sudo reboot
+
+
+The GekkoScience 2Pac USB device requires a lot of power, especially when overclocked.  You will need a quality powerd usb hub to run multiple ASICs at the same time. Furthermore, these things run hot, so a fan (nothing terribly intricate) should be included in the set up.
+
+################################################################################
+Part II - Choosing a Bitcoin Wallet and Setting up you Payout Address
+
+In order to collect bitcoins from mining, you need to point to a bitcoin address.  To get an address you must first get a bitcoin wallet. 
+
+There are many bitcoin wallets to choose from.  In this example, we'll use Electrum, one of the more popular wallets. 
+
+1. Go to https://electrum.org (not .com) and download the electrum software.  It is available for Windows, OSX, Linux and Android.
+
+2. After installation, start up the Electrum executable, you'll be prompted for some options which you should just choose the default,  Ultimately you'll be asked to create a seed which will be used to generate your private keys.
+
+You can extend what they offer (usually 12 words).  It is important to:
+
+   - Save the seed on a piece of paper and store in a safe place.  It will
+     allow you to recover your wallet in case of computer failure.
+   - Never disclose your seed.
+   - Never type it on a website.
+   - Do not store it electronically.
+
+3. You will be asked to confirm the seed by retyping it completely, It helps make sure that you have properly saved it.
+
+4. You'll be asked to select a secure wallet password.  Make sure to secure and remember that too.
+
+5. Once set up, go to the Addresses tab.  Select one of the assigned addresses.  In the Label field of the selected address, click right and choose Edit Label.  Assign it some value (like "Slush Pool mining payout") so you know what that specific address will be used for.  We'll ultimately use the selected address to tell slush pool where to send mined bitcoins.
+ 
+
+################################################################################
+Part III - Choosing a mining pool
+
+You can attempt to go it alone and compete with the rest of the world in trying to win bitcoins, but the odds of doing so are very slim.  Instead nowadays it might make better sense to join a mining pool where you share in the overall pool's success.  You receive a payout based on your percentage contribution to the pool.
+
+There are many bitcoin mining pools to choose from.  For this example we'll
+use Slush Pool, one of the first and most popular pools.
+
+
+1. Sign up for a Slush Pool account at slushpool.com
+
+2. Remember the forllowing information, that needs to be provided to the Raspberry Pi cgminer program:
+
+URL: stratum+tcp://stratum.slushpool.com:3333
+userID: myUserId   (example: jc11837.worker1)
+password: d0it  (can be anything)
+
+3. Once logged in to slushpool.com, under the "My Account" menu near the top of the screen, click on the Payouts menu.  Copy and paste the select bitcoin address from your Electrum client (section II) to assign a bitcoin address for receiving reward payouts.
