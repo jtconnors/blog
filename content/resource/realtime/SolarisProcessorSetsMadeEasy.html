@@ -1,0 +1,1616 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Solaris Processor Sets Made Easy</title>
+  </head>
+  <body>
+    <div style="padding: 0px 10px; text-align: left; color: rgb(51, 51,
+      51); font-family: arial, helvetica, sans-serif; font-size: 21px;
+      font-weight: normal;">Solaris Processor Sets Made Easy </div>
+    <table style="border: 0px outset rgb(153, 153, 153); width: 100%;
+      text-align: left; border-collapse: separate; border-spacing: 0px;">
+      <tbody style="text-align: left;">
+        <tr style="text-align: left;">
+          <td style="padding: 10px; width: 100%; text-align: left;
+            color: rgb(51, 51, 51); font-family: arial, helvetica,
+            sans-serif; font-size: 12px; vertical-align: top;">
+            <table style="border: 0px outset rgb(153, 153, 153); width:
+              100%; text-align: left; border-collapse: separate;
+              border-spacing: 0px;">
+              <tbody style="text-align: left;">
+                <tr style="text-align: left;">
+                  <td style="padding: 0px; text-align: left; color:
+                    rgb(51, 51, 51); font-family: arial, helvetica,
+                    lucida, sans-serif; font-size: 11px; vertical-align:
+                    top;"><em style="text-align: left;">By Dr. Matthias
+                      Laux, June 2001</em></td>
+                  <td style="padding: 0px; width: 10px; text-align:
+                    left; color: rgb(51, 51, 51); font-family: arial,
+                    helvetica, sans-serif; font-size: 12px;">&nbsp;</td>
+                  <td style="padding: 0px; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px; vertical-align: bottom;"
+                    align="right"><br>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="padding: 4px 0px 8px; text-align: left;
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px;">
+              <table style="border: 0px outset rgb(153, 153, 153);
+                width: 100%; text-align: left; border-collapse:
+                separate; border-spacing: 0px; background-color:
+                rgb(231, 231, 231);">
+                <tbody style="text-align: left;">
+                  <tr style="text-align: left;">
+                    <td style="padding: 0px; text-align: left; color:
+                      rgb(51, 51, 51); font-family: arial, helvetica,
+                      sans-serif; font-size: 12px;"><img
+                        style="border-width: 0px; width: 1px; height:
+                        4px; text-align: left;" alt=" "
+src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <a name="skip2content" style="text-align: left; font-family:
+              arial, helvetica, sans-serif; font-size: 12px;
+              text-decoration: none;"></a>
+            <h2 style="margin: 3px 0px; padding: 0px; text-align: left;
+              color: rgb(0, 0, 0); font-family: arial, helvetica,
+              sans-serif; font-size: 17px;"><a name="P0"
+                style="text-align: left; color: rgb(0, 0, 0);
+                font-family: arial, helvetica, sans-serif; font-size:
+                17px; text-decoration: none;"></a>Abstract</h2>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Processor
+              sets are an interesting feature of the Solaris operating
+              environment that allow the binding of processes to groups
+              of CPUs in a multiprocessor system. There are numerous
+              reasons why processor sets can be useful: </p>
+            <br style="text-align: left;">
+            <ul style="text-align: left; font-family: arial, helvetica,
+              sans-serif; font-size: 12px;">
+              <li style="margin: 0px; padding: 0px; text-align: left;
+                font-family: arial, helvetica, sans-serif; font-size:
+                12px; list-style-type: square; list-style-image:
+url(&quot;data:image/gif;base64,R0lGODlhBQAFAIABAGZmZgAAACH5BAEAAAEALAAAAAAFAAUAQAIHjI8BawvNCgA7&quot;);">
+                Single processes requiring a dedicated CPU can be bound
+                to a processor set, thus ensuring access to the required
+                resources and getting rid of costly task switches. </li>
+              <li style="margin: 0px; padding: 0px; text-align: left;
+                font-family: arial, helvetica, sans-serif; font-size:
+                12px; list-style-type: square; list-style-image:
+url(&quot;data:image/gif;base64,R0lGODlhBQAFAIABAGZmZgAAACH5BAEAAAEALAAAAAAFAAUAQAIHjI8BawvNCgA7&quot;);">
+                Different applications running on a large system can be
+                assigned to separate processor sets. Migration of CPUs
+                can be used to dynamically control the resources
+                available to each application, for example, as a
+                reaction to application peak loads.</li>
+              <li style="margin: 0px; padding: 0px; text-align: left;
+                font-family: arial, helvetica, sans-serif; font-size:
+                12px; list-style-type: square; list-style-image:
+url(&quot;data:image/gif;base64,R0lGODlhBQAFAIABAGZmZgAAACH5BAEAAAEALAAAAAAFAAUAQAIHjI8BawvNCgA7&quot;);">
+                Scalability tests are made easy by confining an
+                application to different numbers of CPUs on a
+                multiprocessor system.</li>
+              <li style="margin: 0px; padding: 0px; text-align: left;
+                font-family: arial, helvetica, sans-serif; font-size:
+                12px; list-style-type: square; list-style-image:
+url(&quot;data:image/gif;base64,R0lGODlhBQAFAIABAGZmZgAAACH5BAEAAAEALAAAAAAFAAUAQAIHjI8BawvNCgA7&quot;);">
+                In a benchmark scenario, processor sets are frequently
+                employed with complex requirements, for example,
+                separating application processes from CPUs handling
+                network interrupts, or separating database work
+                processes from central processes like log or database
+                writer. </li>
+            </ul>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">This article
+              describes the support Solaris offers for processor set
+              creation and process binding. In addition, a modular set
+              of Perl scripts is described that facilitate the handling
+              of even very complex processor sets and process binding
+              requirements. The application of these scripts in a
+              real-life example scenario (based on two important ISV
+              applications: the SAP R/3 ERP system and the Oracle RDBMS)
+              is demonstrated. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Note that the
+              scripts described below are available as a <a
+                style="text-align: left; color: rgb(89, 79, 191);
+                font-family: arial, helvetica, sans-serif; font-size:
+                12px; text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor_scripts.tar.Z">compressed
+                <code style="text-align: left; color: rgb(102, 102,
+                  102); font-family: monaco, courier, &quot;courier
+                  new&quot;; font-size: 12px;">tar</code> archive</a>. </p>
+            <h4 style="margin: 3px 0px; padding: 0px; text-align: left;
+              color: rgb(0, 0, 0); font-family: arial, helvetica,
+              sans-serif; font-size: 16px;"><a name="P1"
+                style="text-align: left; color: rgb(0, 0, 0);
+                font-family: arial, helvetica, sans-serif; font-size:
+                16px; text-decoration: none;"></a>Identifying CPUs and
+              Their State</h4>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">When process
+              binding and processor set creation is considered, the
+              first step is to identify the available CPUs in the system
+              and their state. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">The basic
+              tools that Solaris makes available to accomplish these
+              tasks are <code style="text-align: left; color: rgb(102,
+                102, 102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">psrinfo</code> to identify
+              CPUs and their state and <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">psradm</code>
+              to change the state of a CPU if necessary. The
+              corresponding system calls are <code style="text-align:
+                left; color: rgb(102, 102, 102); font-family: monaco,
+                courier, &quot;courier new&quot;; font-size: 12px;">processor_info</code>
+              and <code style="text-align: left; color: rgb(102, 102,
+                102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">p_online</code>,
+              respectively (see the <a style="text-align: left; color:
+                rgb(89, 79, 191); font-family: arial, helvetica,
+                sans-serif; font-size: 12px; text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor.html%23A1">Appendix</a>
+              for a complete listing of all relevant OS commands and
+              system calls). </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">A CPU is in
+              one of several possible states, which are reported by <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">psrinfo</code>: </p>
+            <ol style="text-align: left; font-family: arial, helvetica,
+              sans-serif; font-size: 12px;">
+              <li style="text-align: left; font-family: arial,
+                helvetica, sans-serif; font-size: 12px;"> State <code
+                  style="text-align: left; color: rgb(102, 102, 102);
+                  font-family: monaco, courier, &quot;courier new&quot;;
+                  font-size: 12px;"> on-line </code> (the default
+                state: available for LWP scheduling and interrupt
+                handling) </li>
+              <li style="text-align: left; font-family: arial,
+                helvetica, sans-serif; font-size: 12px;"> State <code
+                  style="text-align: left; color: rgb(102, 102, 102);
+                  font-family: monaco, courier, &quot;courier new&quot;;
+                  font-size: 12px;"> off-line </code> (not available
+                for LWP scheduling) </li>
+              <li style="text-align: left; font-family: arial,
+                helvetica, sans-serif; font-size: 12px;"> State <code
+                  style="text-align: left; color: rgb(102, 102, 102);
+                  font-family: monaco, courier, &quot;courier new&quot;;
+                  font-size: 12px;"> no-intr </code> (available for LWP
+                scheduling, but does not handle network or I/O
+                interrupts) </li>
+            </ol>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Only CPUs in
+              states 1 and 3 can be used for process binding and
+              assigned to processor sets. At the same time, CPUs can
+              already be assigned to processor sets. These can be
+              identified using <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">psrset -p</code>.
+              The state of a CPU (<code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">on-line</code>,
+              <code style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">off-line</code>, or <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">no-intr</code>) can be changed using
+              the <code style="text-align: left; color: rgb(102, 102,
+                102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">psradm</code> command. The
+              OS will ensure that at least one CPU is able to handle
+              interrupts and process LWPs. Note that the CPUs handling
+              interrupts can de identified, for example using <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">mpstat</code>. </p>
+            <h4 style="margin: 3px 0px; padding: 0px; text-align: left;
+              color: rgb(0, 0, 0); font-family: arial, helvetica,
+              sans-serif; font-size: 16px;"><a name="P2"
+                style="text-align: left; color: rgb(0, 0, 0);
+                font-family: arial, helvetica, sans-serif; font-size:
+                16px; text-decoration: none;"></a>Traditional Process
+              Binding</h4>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">The
+              capability of binding a process to a specific CPU has been
+              available in Solaris for a long time. On the OS level,
+              this binding is accomplished using the <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">pbind</code> command, and the <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">processor_bind</code> system call can
+              be used in programs. Note that <code style="text-align:
+                left; color: rgb(102, 102, 102); font-family: monaco,
+                courier, &quot;courier new&quot;; font-size: 12px;">pbind</code>
+              operates on the process level only, while <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">processor_bind</code> also supports
+              LWP binding. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Using this
+              approach, <i style="text-align: left;">all</i> LWPs of a
+              given process are bound to the specified CPU, and the
+              binding is not exclusive, that is, other LWPs in the
+              system may get scheduled to the same CPU. Thus, it is not
+              possible to exclusively reserve a CPU for a given process.
+              It is also not easy to allocate more than one CPU to a
+              multithreaded application since this would have to be done
+              programmatically using <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">processor_bind</code>,
+              which cannot directly handle any scheduling behaviour.
+              This is where processor sets come in. </p>
+            <h4 style="margin: 3px 0px; padding: 0px; text-align: left;
+              color: rgb(0, 0, 0); font-family: arial, helvetica,
+              sans-serif; font-size: 16px;"><a name="PSRSET"
+                style="text-align: left; color: rgb(0, 0, 0);
+                font-family: arial, helvetica, sans-serif; font-size:
+                16px; text-decoration: none;"></a>Solaris Processor Sets</h4>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">With release
+              2.6, Solaris added support for processor sets, a logical
+              partitioning of the CPUs in a multiprocessor system. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Processor
+              sets are maintained using the <code style="text-align:
+                left; color: rgb(102, 102, 102); font-family: monaco,
+                courier, &quot;courier new&quot;; font-size: 12px;">psrset</code>
+              command. For example, </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">psrset -c 3 4 5
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">would create
+              a processor set using the CPUs 3, 4, and 5 (provided they
+              are available for assignment to such a <a
+                style="text-align: left; color: rgb(89, 79, 191);
+                font-family: arial, helvetica, sans-serif; font-size:
+                12px; text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor.html%23CREATE">set</a>).
+              Each processor set in a system has a unique ID (=&gt; 1),
+              which is returned by the OS after set creation. Note that
+              processor sets are not persistent, that is, they're gone
+              after a reboot of the system. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Only
+              processes and LWPs that have been explicitly bound to a
+              processor set via <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">psrset -b</code>
+              or <code style="text-align: left; color: rgb(102, 102,
+                102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">pset_bind</code> are
+              scheduled on the CPUs of this set; these CPUs are reserved
+              exclusively. This allows you to achieve the goals outlined
+              in the <a style="text-align: left; color: rgb(89, 79,
+                191); font-family: arial, helvetica, sans-serif;
+                font-size: 12px; text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor.html%23P0">Abstract</a>,
+              so the remainder of this article is concerned with
+              processor sets only. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Note that it
+              is not possible to bind any other processes or LWPs to
+              CPUs assigned to a user-created processor set using <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">pbind</code> or <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">processor_bind</code>. As a
+              consequence of this, a CPU to which a process has been
+              bound using the latter methods cannot be assigned to a
+              user processor set as long as this binding is present. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">It is also
+              not possible to bind every CPU in a multiprocessor system
+              to a user processor set. At least one CPU needs to remain
+              unbound since otherwise the kernel itself would not have
+              any CPU left for its own processing. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Note that <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">psrset</code> also offers the
+              capability to change the interrupt handling state of all
+              CPUs within a given set. This is more convenient than
+              using <code style="text-align: left; color: rgb(102, 102,
+                102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">psradm</code> for each CPU
+              in the set. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Another
+              Solaris tool offering support for processor sets is <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">mpstat</code>, which reports
+              statistical data like user, system, and idle time for each
+              CPU. Using the <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">-P</code>
+              flag, these statistics can be limited to a specific
+              processor set. Using the <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">-p</code>
+              flag adds another column to the output, indicating the
+              processor set each CPU in a system belongs to. </p>
+            <h4 style="margin: 3px 0px; padding: 0px; text-align: left;
+              color: rgb(0, 0, 0); font-family: arial, helvetica,
+              sans-serif; font-size: 16px;"><a name="CREATE"
+                style="text-align: left; color: rgb(0, 0, 0);
+                font-family: arial, helvetica, sans-serif; font-size:
+                16px; text-decoration: none;"></a>Creating a Processor
+              Set - A More Convenient Approach</h4>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">There are
+              four basic steps involved in binding one or more processes
+              to a processor set: </p>
+            <ol style="text-align: left; font-family: arial, helvetica,
+              sans-serif; font-size: 12px;">
+              <li style="text-align: left; font-family: arial,
+                helvetica, sans-serif; font-size: 12px;"> Check the
+                available CPUs and their state.</li>
+              <li style="text-align: left; font-family: arial,
+                helvetica, sans-serif; font-size: 12px;"> Create the
+                processor set.</li>
+              <li style="text-align: left; font-family: arial,
+                helvetica, sans-serif; font-size: 12px;"> Identify the
+                required process IDs (PIDs).</li>
+              <li style="text-align: left; font-family: arial,
+                helvetica, sans-serif; font-size: 12px;"> Bind the
+                processes to the processor set.</li>
+            </ol>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">The basic
+              Solaris tools described so far offer the complete
+              functionality required to handle these tasks. However,
+              there are some shortcomings: </p>
+            <ul style="text-align: left; font-family: arial, helvetica,
+              sans-serif; font-size: 12px;">
+              <li style="margin: 0px; padding: 0px; text-align: left;
+                font-family: arial, helvetica, sans-serif; font-size:
+                12px; list-style-type: square; list-style-image:
+url(&quot;data:image/gif;base64,R0lGODlhBQAFAIABAGZmZgAAACH5BAEAAAEALAAAAAAFAAUAQAIHjI8BawvNCgA7&quot;);">
+                To create a processor set, individual CPU IDs need to be
+                specified. These may not be contiguous in a
+                multiprocessor system (for example, if not all boards
+                are populated) or CPUs may not be available for various
+                reasons (off-lined, already assigned to other processor
+                sets, and so on).
+                <p style="text-align: left; color: rgb(51, 51, 51);
+                  font-family: arial, helvetica, sans-serif; font-size:
+                  12px; margin-top: 0px; margin-bottom: 17px;">A more
+                  realistic use case would be "create a processor set
+                  with N CPUs". </p>
+              </li>
+              <li style="margin: 0px; padding: 0px; text-align: left;
+                font-family: arial, helvetica, sans-serif; font-size:
+                12px; list-style-type: square; list-style-image:
+url(&quot;data:image/gif;base64,R0lGODlhBQAFAIABAGZmZgAAACH5BAEAAAEALAAAAAAFAAUAQAIHjI8BawvNCgA7&quot;);">
+                To bind processes, process IDs need to be <a
+                  style="text-align: left; color: rgb(89, 79, 191);
+                  font-family: arial, helvetica, sans-serif; font-size:
+                  12px; text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor.html%23IDENTIFY">determined</a>.
+                In complex scenarios involving many processes, this can
+                be very inconvenient.
+                <p style="text-align: left; color: rgb(51, 51, 51);
+                  font-family: arial, helvetica, sans-serif; font-size:
+                  12px; margin-top: 0px; margin-bottom: 17px;">A more
+                  realistic use case would be "bind all processes of a
+                  specific type to a specified processor set". </p>
+              </li>
+            </ul>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">The Solaris
+              commands are too generic to handle these use cases, and
+              thus a modular set of Perl scripts to easily handle more
+              complex tasks was developed as an abstraction layer
+              between the user and the Solaris commands. These scripts
+              can then be reused by even higher-level scripts to
+              automatically generate very complex processor sets and
+              process binding patterns on distributed host
+              configurations. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;"><a style="text-align: left; color:
+                  rgb(89, 79, 191); font-family: monaco, courier,
+                  &quot;courier new&quot;; font-size: 12px;
+                  text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor_check_available_cpus">check_available_cpus</a></code>
+            </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Before
+              creating a processor set, a snapshot of the CPUs and their
+              state in the system is required. The script <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">check_available_cpus</code> combines
+              the output of <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">psrinfo</code>
+              and <code style="text-align: left; color: rgb(102, 102,
+                102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">psrset -p</code> and
+              presents the CPUs in the system sorted according to their
+              state and availability, ultimately satisfying the
+              requirement of identifying those CPUs that are available
+              for assignment to a processor set. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">An example
+              output could look like this: </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">10 CPU total in system
+    0  1  2  3  4  5  6  7  10 11
+ 8 CPU on-line
+    0  1  2  4  5  6  10 11
+ 3 CPU no-intr
+    2  4  10
+ 2 CPU off-line
+    3  7
+ 4 CPU assigned to set(s)
+    0  1  2  10
+ 4 CPU available for assignment
+    4  5  6  11
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Now a
+              complete picture of the CPUs in the system is available,
+              which will be used by the next script in the stack to
+              create new processor sets. Note that <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">check_available_cpus</code> supports <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">-i</code> as a command line switch, in
+              which case CPUs in the <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">no-intr</code>
+              state will not be considered as available for assignment.
+            </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;"><a style="text-align: left; color:
+                  rgb(89, 79, 191); font-family: monaco, courier,
+                  &quot;courier new&quot;; font-size: 12px;
+                  text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor_make_psrset">
+                  make_psrset </a> </code> </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">After it has
+              been determined which CPUs can be used for assignment to a
+              new processor set, this set needs to be created. Rather
+              than explicitly specifying the CPU numbers determined
+              above as arguments to <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">psrset -c</code>,
+              <code style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">make_psrset</code> handles the basic
+              use case of creating a processor set with a given number
+              of CPUs: </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">make_psrset 4
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">would create
+              a set using the first 4 available CPUs as determined by <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">check_available_cpus</code>. Note that
+              <code style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">make_psrset</code> also supports a
+              flag <code style="text-align: left; color: rgb(102, 102,
+                102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">-e</code> to exclude
+              specific CPUs from being assigned to a processor set,
+              should such a need arise. </p>
+            <h4 style="margin: 3px 0px; padding: 0px; text-align: left;
+              color: rgb(0, 0, 0); font-family: arial, helvetica,
+              sans-serif; font-size: 16px;"><a name="CONVENIENCE"
+                style="text-align: left; color: rgb(0, 0, 0);
+                font-family: arial, helvetica, sans-serif; font-size:
+                16px; text-decoration: none;"></a>Some Convenience
+              Scripts</h4>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">This section
+              describes some more scripts that can be useful when
+              dealing with processor sets. These scripts are utility
+              scripts facilitating common tasks related to processor set
+              and process management. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;"><a style="text-align: left; color:
+                  rgb(89, 79, 191); font-family: monaco, courier,
+                  &quot;courier new&quot;; font-size: 12px;
+                  text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor_delete_psrsets">
+                  delete_psrsets </a> </code> </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">This script
+              is a convenience wrapper for the Solaris <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">psrset -d</code> command. It
+              identifies all processor sets in the system and removes
+              them. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;"><a style="text-align: left; color:
+                  rgb(89, 79, 191); font-family: monaco, courier,
+                  &quot;courier new&quot;; font-size: 12px;
+                  text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor_identify_procs_psrsets">
+                  identify_procs_psrsets </a> </code> </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">This script
+              gives a complete picture of all processor sets in the
+              system and the processes bound to each of them. Lists of
+              processes are also written to files for each processor set
+              for other postprocessing purposes. <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">identify_procs_psrsets</code> can be
+              handy to quickly gain an overview of the system and to
+              check whether processor set creation and process binding
+              was successful. Note that <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">identify_procs_psrsets</code>
+              also supports <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">-s</code> as
+              a command line switch, limiting the output to a quick
+              summary of the most important data. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;"><a style="text-align: left; color:
+                  rgb(89, 79, 191); font-family: monaco, courier,
+                  &quot;courier new&quot;; font-size: 12px;
+                  text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor_setup_interrupt_cpus">setup_interrupt_cpus</a></code>
+            </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">This is a
+              first example application built on top of the other
+              scripts described in this article. <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">setup_interrupt_cpus</code> creates a
+              processor set with the specified size and enables
+              interrupt handling for the CPUs in this set (using <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">psrset -n</code>). Interrupt handling
+              is disabled (using <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">psradm -i</code>)
+              for all other online CPUs. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">In scenarios
+              where servers have to handle heavy network traffic,
+              isolating CPUs handling interrupts into a separate
+              processor set can be a useful performance tuning approach.
+              Since these CPUs can be consumed by this task to a
+              significant percentage, application processes being
+              scheduled to the same CPU will experience a high rate of
+              context switches, especially given the high priorities of
+              the interrupts. This can significantly impact the
+              performance of such application processes. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Note,
+              however, that enabling and disabling interrupt handling
+              for a CPU affects both network <i style="text-align:
+                left;">and</i> I/O interrupts, so it is crucial to
+              monitor application, network, and I/O performance when
+              modifying the interrupt handling state of CPUs. Experience
+              has shown that under heavy network <i style="text-align:
+                left;">and</i> I/O load, I/O performance suffers when
+              the interrupts are just constrained to a small set of
+              CPUs. In these cases, it is best to identify the CPUs
+              handling network interrupts (for example, using <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">mpstat</code>) and isolate them in a
+              separate processor set. When interrupt handling is enabled
+              for all CPUs, the I/O interrupts are effectively
+              distributed over many more CPUs and thus network and I/O
+              performance is improved, and consequently also application
+              performance. </p>
+            <h4 style="margin: 3px 0px; padding: 0px; text-align: left;
+              color: rgb(0, 0, 0); font-family: arial, helvetica,
+              sans-serif; font-size: 16px;"><a name="IDENTIFY"
+                style="text-align: left; color: rgb(0, 0, 0);
+                font-family: arial, helvetica, sans-serif; font-size:
+                16px; text-decoration: none;"></a>Identifying Processes</h4>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Now that a
+              processor set can be created, the processes to be bound to
+              it need to be identified. Ideally, this should be possible
+              at an abstract level rather than by specifying lists of
+              PIDs. So the task is to map an abstract description of a
+              process (or set of processes) to a PID (or a list of
+              PIDs). </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Unfortunately,
+              there is no general solution to this. The natural first
+              approach is to use <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">ps</code>,
+              typically with some flags like <code style="text-align:
+                left; color: rgb(102, 102, 102); font-family: monaco,
+                courier, &quot;courier new&quot;; font-size: 12px;">-ef</code>,
+              to determine the process descriptions in the <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">CMD</code> column of the output. This,
+              however, is not a panacea, since there are numerous cases
+              where different process types are listed with the same
+              data in this column. SAP R/3 work processes or IBM DB2
+              database processes are just two examples where this is
+              true. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Thus, in more
+              complicated scenarios, it is necessary to employ a
+              different strategy to identify processes. In the <a
+                style="text-align: left; color: rgb(89, 79, 191);
+                font-family: arial, helvetica, sans-serif; font-size:
+                12px; text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor.html%23EXAMPLE">example
+                scenario</a>, scripts will be described satisfying the
+              sole purpose of identifying PIDs of a specific process
+              type in an application. They can then -- following the
+              modular approach -- be re-used by higher-level scripts. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Sometimes all
+              processes of an application need to be bound to a
+              processor set, but it is difficult to know which processes
+              actually are started by the application. If all
+              application processes are spawned by one parent process,
+              one approach is to use the Solaris <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">ptree</code> command to identify the
+              process hierarchy of the application. Using the PID of any
+              process of the application, </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">ptree &lt;PID&gt;
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">prints the
+              process tree, that is, all parents and children for this
+              process. The top-level parent process PID can then be used
+              in a second call to <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">ptree</code>
+              to get the entire process tree for the application. In a
+              more complicated scenario, for example if an application
+              is started by several initial processes, more complicated
+              combinations of <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">ps</code> and
+              <code style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">ptree</code> may be required. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Another
+              approach is to look for application-specific tools that
+              could be used to retrieve the required information. One
+              example is (<a style="text-align: left; color: rgb(89, 79,
+                191); font-family: arial, helvetica, sans-serif;
+                font-size: 12px; text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor.html%23EXAMPLE2"><code
+                  style="text-align: left; color: rgb(102, 102, 102);
+                  font-family: monaco, courier, &quot;courier new&quot;;
+                  font-size: 12px;">dpmon</code></a> used to identify
+              the dispatcher process of an SAP R/3 instance). </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Sometimes it
+              can also be useful to use the BSD variant of <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">ps</code>, which can be found under <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">/usr/ucb/ps</code>. The standard <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">ps</code> has the disadvantage that
+              the output in the <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">CMD</code> is
+              truncated and so information that might be used to
+              separate processes is not available. The BSD variant
+              offers flags to display a wider output listing with the
+              full command line used to start up the processes. In
+              addition, the information printed is sometimes different
+              from the standard variant. In the case of the IBM DB2
+              mentioned above, using </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">/usr/ucb/ps axw
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">correctly
+              displays the different process types and thus allows you
+              to distinguish them, while the standard variant prints the
+              same process name in the <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">CMD</code>
+              column. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">So, to
+              summarize, there is not one single strategy to satisfy
+              abstract process identification requirements. Built on the
+              approaches described in this section, the recommendation
+              is to build scripts to manage this task for specific
+              applications and then re-use them as modules in
+              higher-level scripts as outlined in the next section. </p>
+            <h4 style="margin: 3px 0px; padding: 0px; text-align: left;
+              color: rgb(0, 0, 0); font-family: arial, helvetica,
+              sans-serif; font-size: 16px;"><a name="EXAMPLE"
+                style="text-align: left; color: rgb(0, 0, 0);
+                font-family: arial, helvetica, sans-serif; font-size:
+                16px; text-decoration: none;"></a>Example Scenario</h4>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><b
+                style="text-align: left;">Scenario Description</b> </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">This last
+              section is devoted to an example application of the
+              concepts described and the scripts developed so far. The
+              idea is to demonstrate that even complex process binding
+              requirements can easily be handled by adding some script
+              support in between the user requirements and the basic
+              Solaris tools. The individual scripts are not described on
+              a detailed code basis since some of them are quite
+              lengthy, but the basic ideas and the integration of the
+              concepts and scripts of the previous sections are
+              outlined. Since the source code of these scripts is
+              available, their modification and extension to meet
+              different requirements should be straightforward. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">The scenario
+              described here is based on two important ISV applications:
+              the SAP R/3 ERP system and the Oracle RDBMS. The first
+              layer of scripts described below covers these applications
+              individually, while the second layer then deals with them
+              in a joint scenario (SAP R/3 application servers
+              connecting to an Oracle database). </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><b
+                style="text-align: left;"> Identifying Processes </b> </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;"><a name="EXAMPLE2" style="text-align:
+                  left; font-family: monaco, courier, &quot;courier
+                  new&quot;; font-size: 12px; text-decoration: none;"></a><a
+                  style="text-align: left; color: rgb(89, 79, 191);
+                  font-family: monaco, courier, &quot;courier new&quot;;
+                  font-size: 12px; text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor_identify_r3_procs">identify_r3_procs</a></code>
+            </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">The task of
+              this script is to identify the PIDs of all processes of an
+              R/3 instance. The problem to be solved here is that
+              several of the main R/3 processes (like dispatcher,
+              dialog, update, batch, spool and enqueue) show up with the
+              same value in the <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">CMD</code>
+              column of the <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">ps</code>
+              output. Thus, it is not possible to tell them apart using
+              this information only. <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">identify_r3_procs</code>
+              employs different strategies to identify the PIDs of all
+              processes related to an R/3 instance: </p>
+            <ul style="text-align: left; font-family: arial, helvetica,
+              sans-serif; font-size: 12px;">
+              <li style="margin: 0px; padding: 0px; text-align: left;
+                font-family: arial, helvetica, sans-serif; font-size:
+                12px; list-style-type: square; list-style-image:
+url(&quot;data:image/gif;base64,R0lGODlhBQAFAIABAGZmZgAAACH5BAEAAAEALAAAAAAFAAUAQAIHjI8BawvNCgA7&quot;);">
+                Call <code style="text-align: left; color: rgb(102,
+                  102, 102); font-family: monaco, courier, &quot;courier
+                  new&quot;; font-size: 12px;">dpmon</code> to identify
+                the different types of R/3 work processes. </li>
+              <li style="margin: 0px; padding: 0px; text-align: left;
+                font-family: arial, helvetica, sans-serif; font-size:
+                12px; list-style-type: square; list-style-image:
+url(&quot;data:image/gif;base64,R0lGODlhBQAFAIABAGZmZgAAACH5BAEAAAEALAAAAAAFAAUAQAIHjI8BawvNCgA7&quot;);">
+                Use the <code style="text-align: left; color: rgb(102,
+                  102, 102); font-family: monaco, courier, &quot;courier
+                  new&quot;; font-size: 12px;">ps -ef</code> output to
+                identify dispatcher, message server, and some other
+                processes. </li>
+              <li style="margin: 0px; padding: 0px; text-align: left;
+                font-family: arial, helvetica, sans-serif; font-size:
+                12px; list-style-type: square; list-style-image:
+url(&quot;data:image/gif;base64,R0lGODlhBQAFAIABAGZmZgAAACH5BAEAAAEALAAAAAAFAAUAQAIHjI8BawvNCgA7&quot;);">
+                Use <code style="text-align: left; color: rgb(102, 102,
+                  102); font-family: monaco, courier, &quot;courier
+                  new&quot;; font-size: 12px;">/usr/proc/bin/ptree</code>
+                to identify <code style="text-align: left; color:
+                  rgb(102, 102, 102); font-family: monaco, courier,
+                  &quot;courier new&quot;; font-size: 12px;">sapstart</code>
+                and all remaining processes created by <code
+                  style="text-align: left; color: rgb(102, 102, 102);
+                  font-family: monaco, courier, &quot;courier new&quot;;
+                  font-size: 12px;">sapstart</code> (since <code
+                  style="text-align: left; color: rgb(102, 102, 102);
+                  font-family: monaco, courier, &quot;courier new&quot;;
+                  font-size: 12px;">sapstart</code> is at the top of the
+                instance process hierarchy, creating the dispatcher,
+                which in turn creates the work processes). </li>
+            </ul>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">The details
+              of how these various strategies are combined can be seen
+              by inspecting the script source code. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Example: </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">identify_procs_psrsets C46 D14
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">could produce
+              the following output (process type - PID): </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">DIA  26730
+DIA  26731
+DIA  26732
+DIA  26733
+DIA  26734
+DIA  19704
+DIA  26735
+DIA  26736
+DIS  19673
+GWR  19696
+OTH  19666
+SEP  19674
+UPD  19709
+UPD  19710
+UPD  19711
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">The process
+              types are identified using three-letter acronyms. The
+              complete list of these acronyms is: </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">DIA - Dialog process
+BTC - Batch process
+SPO - Spool process
+ENQ - Enqueue process
+UPD - Update 1 process
+UP2 - Update 2 process
+DIS - Dispatcher
+MSG - Message server
+COP - Systemlog-collector
+SEP - Systemlog-sender
+GWR - Gateway-process
+OTH - All other processes (e. g. sapstart)
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">These output
+              lists can be processed by other scripts. An example of
+              this is <code style="text-align: left; color: rgb(102,
+                102, 102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;"><a style="text-align: left;
+                  color: rgb(89, 79, 191); font-family: monaco, courier,
+                  &quot;courier new&quot;; font-size: 12px;
+                  text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor.html%23MANAGE">manage_psrsets</a></code>.
+            </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;"><a style="text-align: left; color:
+                  rgb(89, 79, 191); font-family: monaco, courier,
+                  &quot;courier new&quot;; font-size: 12px;
+                  text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor_identify_oracle_procs">identify_oracle_procs
+                </a></code> </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">The task of
+              this script is to identify the PIDs of all processes of an
+              Oracle instance. This task is much simpler than for an R/3
+              instance since the processes can readily be identified by
+              the value in the <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">CMD</code>
+              column of the <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">ps</code>
+              output. The invocation and the output format are very
+              similar to <code style="text-align: left; color: rgb(102,
+                102, 102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">identify_r3_procs</code>,
+              except for the three-letter acronyms, which are of course
+              different: </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">DBW - DB writer
+LGW - Log writer
+LSR - Listener
+SHA - Shadow process
+CKP - Checkpoint process
+PMO - PMON process
+SMO - SMON process
+SNP - SNP process
+REC - RECO process
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">These output
+              lists can also be processed by other scripts like <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">manage_psrsets</code>. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Note that
+              full support for the IBM DB2 database is planned for a
+              future release. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><b
+                style="text-align: left;">Putting it all together</b> </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Now that
+              processor sets can be created and processes can be
+              identified, both tasks need to be brought together. This
+              is where <code style="text-align: left; color: rgb(102,
+                102, 102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">manage_psrsets</code> comes
+              in. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;"><a style="text-align: left; color:
+                  rgb(89, 79, 191); font-family: monaco, courier,
+                  &quot;courier new&quot;; font-size: 12px;
+                  text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor_manage_psrsets">manage_psrsets</a></code><a
+                name="MANAGE" style="text-align: left; font-family:
+                arial, helvetica, sans-serif; font-size: 12px;
+                text-decoration: none;"></a> </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">manage_psrsets</code> is the master
+              script accepting a wide variety of process specifiers to
+              be bound to a processor set: </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">-f=&lt;file&gt;                    : PIDs specified in the input file 
+                               &lt;file&gt;
+-u=&lt;user&gt;                    : Processes owned by user &lt;user&gt;
+-c=&lt;command&gt;                 : Processes whose CMD field in the 
+                                  ps output matches &lt;command&gt;
+-r=&lt;SID&gt;:&lt;instance&gt;:&lt;procs&gt;  : Processes of an SAP R/3 instance
+-o=&lt;SID&gt;:&lt;procs&gt;             : Processes of an Oracle instance
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">The processes
+              thus identified are then bound to a newly created
+              processor set. The cool feature here is that <i
+                style="text-align: left;">any</i> number of such
+              specifiers can be combined in <i style="text-align:
+                left;">one</i> call of <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">manage_psrsets</code>.
+            </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">SAP R/3
+              instances are specified by the ternary identifier <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">&lt;SID&gt;:&lt;instance&gt;:&lt;procs&gt;</code>,
+              where <code style="text-align: left; color: rgb(102, 102,
+                102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">&lt;procs&gt;</code> is one
+              of the three-letter identifiers introduced in the last
+              section (or the additional identifier <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">ALL</code>, selecting all processes of
+              an instance). Similarly, the binary identifier <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">&lt;SID&gt;:&lt;procs&gt;</code>
+              specifies an Oracle instance and a set of processes, again
+              one of the three-letter identifiers listed in the last
+              section, or the additional identifier <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">ALL</code>. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Some
+              examples: </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Bind all
+              processes of user <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">orac46</code>
+              and the PIDs listed in <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">pidlist.txt</code>
+              to a new set of 5 CPUs: </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">manage_psrsets -u=orac46 -f=pidlist.txt 5
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Bind the
+              dispatchers of instances <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">D10</code>, <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">D11</code>, and <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">D12</code> of R/3 system C46 and all
+              processes of instance <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">DVEBMGS00</code>
+              in the R/3 system <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">BIN</code> to
+              a new processor set of 10 CPUs: </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">manage_psrsets -r=C46:D10:DIS -r=C46:D11:DIS 
+-r=C46:D12:DIS -r=BIN:DVEBMGS00:ALL 10
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Note that the
+              latter example could be simplified using a shortcut for
+              the <code style="text-align: left; color: rgb(102, 102,
+                102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">&lt;instance&gt;</code>
+              specifier supported by <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">make_psrsets</code>:
+            </p>
+            <pre style="text-align: left; color: rgb(102, 102, 102); font-family: monaco, courier, &quot;courier new&quot;; font-size: 12px;">manage_psrsets -r=C46:D.10.12:DIS -r=BIN:DVEBMGS00:ALL 10
+</pre>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">D.&lt;A&gt;.&lt;B&gt;</code>
+              effectively selects <i style="text-align: left;">all</i>
+              instances between <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">D&lt;A&gt;</code>
+              and <code style="text-align: left; color: rgb(102, 102,
+                102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">D&lt;B&gt;</code>. This
+              shorthand notation can be helpful in large SAP R/3
+              environments. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">manage_psrsets</code> also supports
+              other flags like the <code style="text-align: left;
+                color: rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">-e</code>
+              option to exclude specific CPUs (these are passed on
+              directly to <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">make_psrset</code>)
+              or the <code style="text-align: left; color: rgb(102,
+                102, 102); font-family: monaco, courier, &quot;courier
+                new&quot;; font-size: 12px;">-d</code> flag to initially
+              delete all existing processor sets, completing <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">make_psrsets</code> to a comprehensive
+              solution to handle even very complex process binding
+              requirements. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;"><a style="text-align: left; color:
+                  rgb(89, 79, 191); font-family: monaco, courier,
+                  &quot;courier new&quot;; font-size: 12px;
+                  text-decoration: none;"
+href="https://archive.li/o/lzsbx/developers.sun.com/solaris/articles/solaris_processor_match_db_r3_procs">match_db_r3_procs</a>
+              </code> </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">This is an
+              example application built on top of some of the other
+              scripts described in this article. <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">match_db_r3_procs</code> identifies
+              the database processes connected to SAP R/3 work
+              processes. Currently only Oracle is supported; full
+              support for IBM DB2 is planned in a future release. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">First, all
+              Oracle process IDs and their matching counterparts (SAP
+              R/3 processes) are obtained from the <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">v$session</code> and v$process views.
+              Then, all instances known to the SAP R/3 message server
+              are retrieved using the SAP <code style="text-align:
+                left; color: rgb(102, 102, 102); font-family: monaco,
+                courier, &quot;courier new&quot;; font-size: 12px;">lgtst</code>
+              tool. For each of these instances, <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">identify_r3_procs</code> returns the
+              process types and the PIDs. This information is matched
+              with the output obtained from the Oracle <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">v$</code> views to produce the desired
+              output. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">This output
+              can be used in <code style="text-align: left; color:
+                rgb(102, 102, 102); font-family: monaco, courier,
+                &quot;courier new&quot;; font-size: 12px;">manage_psrsets</code>,
+              for example, to create a processor set for all the
+              database processes handling the data traffic for a
+              specific SAP R/3 instance, or to create a processor set
+              for all the database processes handling data traffic of
+              SAP R/3 dialog processes. </p>
+            <h4 style="margin: 3px 0px; padding: 0px; text-align: left;
+              color: rgb(0, 0, 0); font-family: arial, helvetica,
+              sans-serif; font-size: 16px;"><a name="S1"
+                style="text-align: left; color: rgb(0, 0, 0);
+                font-family: arial, helvetica, sans-serif; font-size:
+                16px; text-decoration: none;"></a>Summary</h4>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">The scripts
+              described in this article can significantly simplify the
+              task of creating processor sets with complex process
+              binding requirements. They form an additional abstraction
+              layer on top of the Solaris tools <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">psrinfo</code> and <code
+                style="text-align: left; color: rgb(102, 102, 102);
+                font-family: monaco, courier, &quot;courier new&quot;;
+                font-size: 12px;">psrset</code>, and free the user from
+              the tedious tasks of explicitly dealing with CPU and
+              process IDs. The scripts and applications built on top of
+              them are regularly used in many projects including
+              high-end benchmarks. </p>
+            <h4 style="margin: 3px 0px; padding: 0px; text-align: left;
+              color: rgb(0, 0, 0); font-family: arial, helvetica,
+              sans-serif; font-size: 16px;"><a name="S2"
+                style="text-align: left; color: rgb(0, 0, 0);
+                font-family: arial, helvetica, sans-serif; font-size:
+                16px; text-decoration: none;"></a>Resources</h4>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Mauro, Jim,
+              and Richard McDougall <i style="text-align: left;">Solaris
+                Internals: Core Kernel Architecture</i>: Prentice Hall
+              PTR/Sun Microsystems Press, 2000. <br style="text-align:
+                left;">
+              <br style="text-align: left;">
+              Wall, Larry, and Tom Christiansen and Jon Orwant <i
+                style="text-align: left;">Programming Perl</i>: O'Reilly
+              &amp; Associates, 2000. </p>
+            <h4 style="margin: 3px 0px; padding: 0px; text-align: left;
+              color: rgb(0, 0, 0); font-family: arial, helvetica,
+              sans-serif; font-size: 16px;"><a name="A1"
+                style="text-align: left; color: rgb(0, 0, 0);
+                font-family: arial, helvetica, sans-serif; font-size:
+                16px; text-decoration: none;"></a>Appendix Solaris
+              Support for Process Binding and Processor Sets</h4>
+            <table style="border: 2px outset rgb(153, 153, 153);
+              text-align: left;">
+              <tbody style="text-align: left;">
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px; background-color: rgb(173, 216,
+                    230);" colspan="3">CPU information </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">psrinfo</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">OS command </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Display CPU type and state </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">processor_info</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">System call </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Get CPU type and state </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px; background-color: rgb(173, 216,
+                    230);" colspan="3">CPU administration </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">psradm</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">OS command </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Change CPU state </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">p_online</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">System call </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Get or change CPU state </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px; background-color: rgb(173, 216,
+                    230);" colspan="3">Process binding </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">pbind</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">OS command </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Bind (or unbind) a process to a
+                    CPU </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">processor_bind</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">System call </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Bind (or unbind) a process or LWP
+                    to a CPU </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px; background-color: rgb(173, 216,
+                    230);" colspan="3">Processor set administration and
+                    process binding </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">psrset</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">OS command </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Administer processor sets </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">pset_create</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">System call </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Create a processor set </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">pset_assign</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">System call </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Assign (or remove) a CPU to a
+                    processor set </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">pset_destroy</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">System call </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Destroy a processor set </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">pset_info</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">System call </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Get information about a processor
+                    set </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">pset_bind</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">System call </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Bind (or unbind) a process or LWP
+                    to a processor set </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px; background-color: rgb(173, 216,
+                    230);" colspan="3">Miscellaneous </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">mpstat</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">OS command </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Display CPU statistics, optionally
+                    on a processor set basis </td>
+                </tr>
+                <tr style="text-align: left;">
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;"><code style="text-align: left;
+                      color: rgb(102, 102, 102); font-family: monaco,
+                      courier, &quot;courier new&quot;; font-size:
+                      12px;">ptree</code></td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">OS command </td>
+                  <td style="padding: 4px; border: 1px inset rgb(128,
+                    128, 128); text-align: left; color: rgb(51, 51, 51);
+                    font-family: arial, helvetica, sans-serif;
+                    font-size: 12px;">Display process hierarchy in which
+                    a process runs </td>
+                </tr>
+              </tbody>
+            </table>
+            <h5 style="margin: 3px 0px; padding: 0px; text-align: left;
+              color: rgb(0, 0, 0); font-family: arial, helvetica,
+              sans-serif; font-size: 14px;"><a name="A2"
+                style="text-align: left; color: rgb(0, 0, 0);
+                font-family: arial, helvetica, sans-serif; font-size:
+                14px; text-decoration: none;"></a>About the Author</h5>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;">Dr. Matthias
+              Laux is a system engineer working in the Global SAP-Sun
+              Competence Center in Walldorf, Germany. His main interests
+              are Java/J2EE/XML infrastructure and programming,
+              databases and SAP benchmarking. Although he also has a
+              background in aerospace engineering and HPC / parallel
+              programming, today his languages of choice are Java and
+              Perl. </p>
+            <p style="text-align: left; color: rgb(51, 51, 51);
+              font-family: arial, helvetica, sans-serif; font-size:
+              12px; margin-top: 0px; margin-bottom: 17px;"><small
+                style="text-align: left; font-family: arial, helvetica,
+                sans-serif; font-size: 11px;">June 2001</small> </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

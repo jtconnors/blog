@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Updates to Java Serial Communications, Raspberry Pi 3</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <b><big>Updates to Java Serial Communications, Raspberry Pi 3</big></b><br>
+    <small><small>By Jim Connors - 18 May 2017<br>
+        <br>
+      </small></small> Why not kill&nbsp;a few&nbsp;birds with one
+    stone?&nbsp; First, it was high time to finally&nbsp;learn how to
+    post&nbsp;an article&nbsp;with&nbsp;our new blogging&nbsp;platform
+    (based on <a
+      href="https://www.oracle.com/middleware/webcenter/content/features.html"
+data-cke-saved-href="https://www.oracle.com/middleware/webcenter/content/features.html"><font
+        color="#0066cc">Oracle Content Marketing</font></a>).&nbsp;
+    Second, and this is of course relative to my little world, it would
+    be useful to provide an update to&nbsp;one of&nbsp;my more
+    historically read topics dealing with serial communications and
+    Java.<br>
+    A recent comment to one of the Java Serial Port Communications posts
+    mentions difficulty with using the provided RxTx shared object for
+    the ARMv7l architecture.&nbsp; So I figured I'd&nbsp;rebuild it
+    taking advantage of some new hardware. The <a
+      href="https://www.raspberrypi.org/products/raspberry-pi-3-model-b/"
+data-cke-saved-href="https://www.raspberrypi.org/products/raspberry-pi-3-model-b/"><font
+        color="#0066cc">Raspberry Pi 3 </font></a>represents the first
+    64-bit ARM offering from the Raspberry Pi Foundation, and can be
+    ultimately utilized to build both 32 and 64-bit binaries.&nbsp;
+    Although currently most work on this device is done in 32-bit mode,
+    there are some 64-bit environments available.&nbsp; For the 32-bit
+    ARMv7l environment we'll use the ubiquitous <a
+      href="https://www.raspberrypi.org/downloads/raspbian/"
+      data-cke-saved-href="https://www.raspberrypi.org/downloads/raspbian/"><font
+        color="#0066cc">Raspbian Jessie distribution</font></a>. And for
+    our 64-bit AArch64 instance we'll use <a
+      href="https://en.opensuse.org/Portal:42.2"
+      data-cke-saved-href="https://en.opensuse.org/Portal:42.2"><font
+        color="#0066cc">OpenSuSE LEAP 42.2</font></a>.<br>
+    To understand the history of this topic, you can take a look at the
+    following past posts:
+    <ul>
+      <li><a href="serial_port_communication_for_java.html"
+data-cke-saved-href="https://blogs.oracle.com/jtc/serial-port-communication-for-java-se-embedded"><font
+            color="#0066cc">Serial Port Communications for Java SE
+            Embedded</font></a></li>
+      <li><a href="java_serial_communications_revisited.html"
+data-cke-saved-href="https://blogs.oracle.com/jtc/java-serial-communications-revisited"><font
+            color="#0066cc">Java Serial Communications Revisited</font></a></li>
+    </ul>
+    RxTx code has not always been readily available, so to improve upon
+    that, you can now go to <a
+      href="https://github.com/jtconnors/rxtx-2.1-7r2"
+      data-cke-saved-href="https://github.com/jtconnors/rxtx-2.1-7r2"><font
+        color="#0066cc">https://github.com/jtconnors/rxtx-2.1-7r2</font></a>
+    and pull down the source (including the modifications needed to
+    build for Java versions 6 though 8).&nbsp; Additionally, another
+    repository has been created at&nbsp;<a
+      href="https://github.com/jtconnors/rxtx-2.1-7r2-binaries"
+      data-cke-saved-href="https://github.com/jtconnors/rxtx-2.1-7r2-binaries"><font
+        color="#0066cc">https://github.com/jtconnors/rxtx-2.1-7r2-binaries</font></a>&nbsp;to
+
+
+
+
+
+
+    keep&nbsp;compiled binaries for the native shared objects associated
+    with RxTx for popular embedded platforms.&nbsp; If you create
+    subsequent binaries for&nbsp;additional platforms, I'd be glad to
+    add them.<br>
+    Finally, while playing around with both 32 and 64-bit variants, I
+    thought it might be useful to run the <a
+      href="https://www.spec.org/jvm2008/"
+      data-cke-saved-href="https://www.spec.org/jvm2008/"><font
+        color="#0066cc">SPECjvm2008</font></a> benchmark to see
+    how&nbsp;Java performance differs between the architectures.&nbsp;
+    One of the primary advantages of a 64-bit JVM is its ability to
+    support much larger heap sizes.&nbsp; The usefulness of a 64-bit JVM
+    on a Raspberry&nbsp;Pi 3 is certainly debatable, considering it only
+    has 1GB of RAM, nonetheless it would be interesting to see what
+    overhead might be incurred using the 64-bit JVM.<br>
+    <br>
+    <img alt="" src="resource/pi3/Specjvm2008.jpg" width="594"
+      height="391"><br>
+    <br>
+    Although results of individual components of the&nbsp;benchmark do
+    vary, overall it looks like the 64-bit JVM does incur some
+    (hopefully acceptable) overhead.<br>
+    <br>
+    <div class="footer"><a href="../index.html">Index</a></div>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+INFO: GlassFish v3 (74.2) startup time : Embedded(7308ms) startup services(5851ms) total(13159ms)
+Dec 31, 2009 3:12:58 PM com.sun.enterprise.transaction.JavaEETransactionManagerSimplified initDelegates
+INFO: Using com.sun.enterprise.transaction.jts.JavaEETransactionManagerJTSDelegate as the delegate
+Dec 31, 2009 3:13:00 PM org.glassfish.admin.mbeanserver.JMXStartupService$JMXConnectorsStarterThread run
+INFO: JMXStartupService: JMXConnector system is disabled, skipping.
+Dec 31, 2009 3:13:01 PM AppServerStartup run
+INFO: [Thread[GlassFish Kernel Main Thread,5,main]] started
+Dec 31, 2009 3:13:02 PM org.hibernate.validator.util.Version <clinit>
+INFO: Hibernate Validator null
+Dec 31, 2009 3:13:02 PM org.hibernate.validator.engine.resolver.DefaultTraversableResolver detectJPA
+INFO: Instantiated an instance of org.hibernate.validator.engine.resolver.JPATraversableResolver.
+Dec 31, 2009 3:13:10 PM com.sun.common.util.logging.LoggingConfigImpl openPropFile
+INFO: Cannot read logging.properties file. 
+Dec 31, 2009 3:13:12 PM com.sun.enterprise.v3.services.impl.GrizzlyProxy$2$1 onReady
+INFO: Grizzly Framework 1.9.18-k started in: 5367ms listening on port 8888
+Dec 31, 2009 3:13:12 PM com.sun.enterprise.web.WebContainer createHttpListener
+INFO: Created HTTP listener embedded-listener on port 8888
+Dec 31, 2009 3:13:12 PM com.sun.enterprise.web.WebContainer configureHttpServiceProperties
+WARNING: pewebcontainer.invalid_http_service_property
+Dec 31, 2009 3:13:12 PM com.sun.enterprise.web.WebContainer createHosts
+INFO: Created virtual server server
+Dec 31, 2009 3:13:20 PM com.sun.enterprise.web.WebContainer loadSystemDefaultWebModules
+INFO: Virtual server server loaded system default web module
+Dec 31, 2009 3:16:24 PM com.sun.enterprise.security.SecurityLifecycle <init>
+INFO: security.secmgroff
+Dec 31, 2009 3:16:36 PM com.sun.enterprise.security.SecurityLifecycle onInitialization
+INFO: Security startup service called
+Dec 31, 2009 3:16:36 PM com.sun.enterprise.security.PolicyLoader loadPolicy
+INFO: policy.loading
+Dec 31, 2009 3:16:37 PM com.sun.enterprise.security.auth.realm.Realm doInstantiate
+INFO: Realm admin-realm of classtype com.sun.enterprise.security.auth.realm.file.FileRealm successfully created.
+Dec 31, 2009 3:16:37 PM com.sun.enterprise.security.auth.realm.Realm doInstantiate
+INFO: Realm file of classtype com.sun.enterprise.security.auth.realm.file.FileRealm successfully created.
+Dec 31, 2009 3:16:37 PM com.sun.enterprise.security.auth.realm.Realm doInstantiate
+INFO: Realm certificate of classtype com.sun.enterprise.security.auth.realm.certificate.CertificateRealm successfully created.
+Dec 31, 2009 3:16:37 PM com.sun.enterprise.security.SecurityLifecycle onInitialization
+INFO: Security service(s) started successfully....
+classLoader = WebappClassLoader (delegate=true; repositories=WEB-INF/classes/)
+SharedSecrets.getJavaNetAccess()=java.net.URLClassLoader$7@1b2b10a
+Dec 31, 2009 3:16:49 PM com.sun.enterprise.web.WebApplication start
+INFO: Loading application myApplication at /hello
+

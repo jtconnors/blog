@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Solaris Was Real-time Before Real-time Was Cool</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p><big><b>Solaris Was Real-time Before Real-time Was Cool</b></big><small><br>
+        By Jim Connors 23 Feb 2007</small><br>
+    </p>
+    <p>In the financial services market, there is a general trend to
+      move key systems close to, or even right inside the exchanges
+      themselves -- the idea being that the nearer you are to the
+      source, the less network infrastructure and latency you'll
+      experience.&nbsp; With this advantage firms can potentially take
+      on additional transaction loads at higher transaction rates.&nbsp;
+      These systems typically use the latest Intel or AMD processors and
+      run a commercial distribution of Linux.<sup>1</sup></p>
+    <blockquote><font size="1">[1] Thank you <a title="Eric Bruno"
+          href="http://blogs.sun.com/ericbruno">Eric Bruno</a> for your
+        brief description, and for unknowingly letting me (slightly)
+        plagiarize your comments.</font><br>
+    </blockquote>
+    <p>Indeed these co-located systems perform as expected <i>almost</i>
+      all the time.&nbsp; But there are periodic intervals where the
+      latency increases by several orders of magnitude, the
+      ramifications of which could be financially disastrous.&nbsp;
+      After eliminating other components, the street seems to be
+      focusing its wrath on commercial Linux distributions and their
+      lack of real-time capabilities.<br>
+      <br>
+      The linux community is actively working to include underpinnings
+      to support real-time, but as of yet these capabilities are not
+      part of a standard major (i.e. Red Hat, SuSE) distribution.&nbsp;
+      Instead, an alternate version of linux with real-time extensions
+      is offered.&nbsp; These extensions are in effect separate
+      non-standard OS releases, and have not had the soak time required
+      by many institutions.</p>
+    <p>Back in the early 90's, I volunteered to move over to Sun's newly
+      formed SunSoft business unit.&nbsp; One of it's main charters was
+      to push the concept of running Solaris on alternate, i.e. Intel,
+      platforms.&nbsp; (<i>Don't get me started here, can you imagine
+        where Solaris would be right now if Sun had actually taken this
+        initiative seriously back then?</i>)&nbsp; As part of that
+      transition, I had the opportunity to take a Solaris Internals
+      course, and couldn't help but notice the effort put in
+      architecturally to address short latencies.&nbsp; I still have the
+      course notebook; it is dated September 1993.</p>
+    <p>The point is Solaris already has the real-time capabilities
+      claimed by these add-on linux extensions.&nbsp; It is built into
+      the operating system, has been for quite some time, is rock solid
+      and doesn't require any additional components.&nbsp; A partial
+      list of features include:</p>
+    <ul>
+      <li><b>Real-time Scheduling Class</b> - In order to allow equal
+        opportunity to system resources, traditional Unix schedulers
+        transparently change process priorities to give competing
+        processes a fair chance.&nbsp; Although well suited for
+        timesharing systems, this is unacceptable real-time
+        behavior.&nbsp; Since its outset, Solaris through its SVR4
+        roots, introduced the concept of alternate scheduling
+        classes.&nbsp; It includes a real-time scheduling class, which
+        furnishes fixed-priority process scheduling at the highest
+        priority levels in the system.<br>
+      </li>
+    </ul>
+    <ul>
+      <li><b>Fine-Grained Processor Control / Processor Sets</b> -
+        Solaris allows threads and applications to be bound to specific
+        individual processors. In addition, processors within a system
+        can be grouped together as a processor set and dedicated to
+        real-time tasks.<sup>2</sup>&nbsp; Here's a nice <a
+          title="article describing processor sets"
+          href="http://developers.sun.com/solaris/articles/solaris_processor.html">article
+
+
+
+
+          describing processor sets</a>. Dated June 2001,&nbsp;
+        processor sets have been a part of Solaris since release 2.6.</li>
+    </ul>
+    <ul>
+      <li><b>Interrupt Sheltering</b> - Available since Solaris 7, this
+        feature enables CPUs to be sheltered from unbound
+        interrupts.&nbsp; It can be used in conjunction with processor
+        sets to shelter all CPUs in a processor set.&nbsp; Note: At
+        least one processor in the system must be kept unsheltered. <br>
+      </li>
+    </ul>
+    <ul>
+      <li><b>Priority Inheritance</b> - Priority inversion occurs when a
+        high-priority thread blocks on a resource that is held by a
+        lower-priority thread. A runnable thread with a priority between
+        the high and low-priority threads creates a priority inversion
+        because it can receive processor resources ahead of the
+        high-priority thread.&nbsp;</li>
+    </ul>
+    <blockquote>To avoid priority inversions with kernel synchronization
+      primitives, Solaris employs a transient priority inheritance
+      protocol. The protocol enables the low-priority thread holding the
+      resource to “inherit” the higher priority of the blocked
+      high-priority thread. This approach gives the blocking
+      low-priority thread the CPU resources it needs to complete its
+      task as soon as possible so that it can release the
+      synchronization primitive. Upon completion, all threads are
+      returned to their respective priorities by the kernel.<sup>3</sup><br>
+    </blockquote>
+    <ul>
+      <li><b>High Resolution Timers</b> - Solaris 8 introduces the
+        cyclic subsystem; this allows for timers of much better
+        granularity -- in the microsecond and nanosecond range --
+        without burdening the system with a high interrupt rate.</li>
+    </ul>
+    <ul>
+      <li><b>Memory Locking</b> - The paging in and out of data from
+        disk to memory may be considered normal behavior for virtual
+        memory systems, but it is unacceptable for real-time
+        applications.&nbsp; Solaris addresses this problem by allowing
+        the locking down of a process' pages into memory, using <a
+          href="http://docs.sun.com/app/docs/doc/816-5168/6mbb3hrhq?a=view"
+          title="mlock(3C)">mlock(3C)</a> or <a
+          href="http://docs.sun.com/app/docs/doc/816-5168/6mbb3hrhr?a=view"
+          title="mlockall(3C)">mlockall(3C)</a> system calls.<br>
+      </li>
+    </ul>
+    <ul>
+      <li><b>Early Binding</b> - By default, linking of dynamic
+        libraries in the Solaris is done on an as-needed basis. The
+        runtime binding for a dynamically linked function isn't
+        determined until its first invocation. Though flexible, this
+        behavior can induce indeterminism and unpredictable jitter in
+        the timing of a real-time application. To avoid jitter, the
+        Solaris provides for early binding of dynamic libraries. By
+        setting the LD_BIND_NOW environment variable to "1", libraries
+        are bound at application startup time. Using early binding
+        together with memory locking is a very effective approach to
+        avoiding jitter.<sup>4</sup></li>
+    </ul>
+    <blockquote>
+      <p><font size="1">[2,3,4] Shameful plagiarism from</font><font
+          size="1"> <a
+href="http://www.sun.com/software/whitepapers/wp-realtime/wp-realtime.pdf"
+            title="Scalable Real-Time Computing in the Solaris ™
+            Operating Environment. A Technical White Paper">Scalable
+            Real-Time Computing in the Solaris ��� Operating
+            Environment. A Technical White Paper</a>. To further prove
+          the maturity of Solaris' real-time features, this document was
+          written in the Solaris 8 time frame.&nbsp; It was copyrighted
+          in 2000.</font></p>
+    </blockquote>
+    <p>So why not give Solaris more consideration?&nbsp; It's way more
+      mature.&nbsp; And in the unlikely event (chcukle, chuckle) that a
+      lower-latency OS might not solve all your performance problems,
+      I'd put my money on Solaris and <a
+        href="http://www.sun.com/bigadmin/content/dtrace/"
+        title="DTrace">DTrace</a> over anything Linux could offer in
+      finding the real problem.<br>
+    </p>
+    <div class="footer"><a href="../index.html">Index</a></div>
+  </body>
+</html>

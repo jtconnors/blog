@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>An Introduction to Java 8 Compact Profiles</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p> <big><b>An Introduction to Java 8 Compact Profiles</b></big><br>
+      <small><small>By Jim Connors 16 October 2013</small></small></p>
+    <p>Java SE is a very impressive platform indeed, but with all that
+      functionality comes a large and ever increasing footprint.&nbsp;
+      It stands to reason then that one of the more frequent requests
+      from the community has been the desire to deploy only those
+      components required for a particular application instead of the
+      entire Java SE runtime environment.&nbsp; Referred to as
+      subsetting, the benefits of such a concept would seem to be many:</p>
+    <ul>
+      <li>A smaller Java environment would require less compute
+        resources, thus opening up a new domain of devices previously
+        thought to be too humble for Java.</li>
+      <li>A smaller runtime environment could be better optimized for
+        performance and start up time.</li>
+      <li>Elimination of unused code is always a good idea from a
+        security perspective.</li>
+      <li>If the environment could be pared down significantly, there
+        may be tremendous benefit to bundling runtimes with each
+        individual Java application.</li>
+      <li>These bundled applications could be downloaded more quickly.<br>
+      </li>
+    </ul>
+    <p>Despite these perceived advantages, the platform stewards (Sun,
+      then Oracle) have been steadfast in their resistance to
+      subsetting.&nbsp; The rationale for such a stance is quite simple:
+      there was sincere concern that the Java SE platform would
+      fragment.&nbsp; Agree or disagree, the Java SE standard has
+      remained remarkably in tact over time.&nbsp; If you need any
+      further evidence of this assertion, compare the state of Java SE
+      to that of Java ME, particularly in the mobile telephony
+      arena.&nbsp; Better still, look how quickly Android has spawned
+      countless variants in its brief lifespan.</p>
+    <p>Nonetheless, a formal effort has been underway having the stated
+      goal of providing a much more modular Java platform.&nbsp; Called
+      <a href="http://openjdk.java.net/projects/jigsaw/">Project Jigsaw</a>,
+      when complete, Java SE will be composed of a set of finer-grained
+      modules and will include tools to enable developers to identify
+      and isolate only those modules needed for their application.&nbsp;
+      However, implementing this massive internal change and yet
+      maintaining compatibility has proven to be a considerable
+      challenge.&nbsp; Consequently <a
+        href="http://mreinhold.org/blog/late-for-the-train">full
+        implementation of the modular Java platform has been delayed
+        until Java 9</a>.</p>
+    <p>Understanding that Java 9 is quite a ways off, an interim
+      solution will be available for Java 8, called <b><a
+          href="http://openjdk.java.net/jeps/161">Compact Profiles</a></b>.&nbsp;
+
+
+
+      Rather than specifying a complete module system, Java 8 will
+      define subset profiles of the Java SE platform specification that
+      developers can use to deploy.&nbsp; At the current time three
+      compact profiles have been defined, and have been assigned the
+      creative names <i>compact1</i>, <i>compact2</i>, and <i>compact3</i>.
+      The table that follows lists the packages that comprise each of
+      the profiles.&nbsp; Each successive profile is a superset of its
+      predecessor.&nbsp; That is to say, the compact2 profile contains
+      all of the packages in compact1 plus those listed under the
+      compact2 column below.&nbsp; Likewise, compact3 contains all of
+      compact2 packages plus the ones listed in the compact3 column.<br>
+    </p>
+    <p> </p>
+    <pre><code>compact1                     compact2                    compact3
+--------------------------   -----------------------     --------------------------
+java.io                      java.rmi                    java.lang.instrument
+java.lang                    java.rmi.activation         java.lang.management
+java.lang.annotation         java.rmi.registry           java.security.acl
+java.lang.invoke             java.rmi.server             java.util.prefs
+java.lang.ref                java.sql                    javax.annotation.processing
+java.lang.reflect            javax.rmi.ssl               javax.lang.model
+java.math                    javax.sql                   javax.lang.model.element
+java.net                     javax.transaction           javax.lang.model.type
+java.nio                     javax.transaction.xa        javax.lang.model.util
+java.nio.channels            javax.xml                   javax.management
+java.nio.channels.spi        javax.xml.datatype          javax.management.loading
+java.nio.charset             javax.xml.namespace         javax.management.modelbean
+java.nio.charset.spi         javax.xml.parsers           javax.management.monitor
+java.nio.file                javax.xml.stream            javax.management.openmbean
+java.nio.file.attribute      javax.xml.stream.events     javax.management.relation
+java.nio.file.spi            javax.xml.stream.util       javax.management.remote
+java.security                javax.xml.transform         javax.management.remote.rmi
+java.security.cert           javax.xml.transform.dom     javax.management.timer
+java.security.interfaces     javax.xml.transform.sax     javax.naming
+java.security.spec           javax.xml.transform.stax    javax.naming.directory
+java.text                    javax.xml.transform.stream  javax.naming.event
+java.text.spi                javax.xml.validation        javax.naming.ldap
+java.util                    javax.xml.xpath             javax.naming.spi
+java.util.concurrent         org.w3c.dom                 javax.script
+java.util.concurrent.atomic  org.w3c.dom.bootstrap       javax.security.auth.kerberos
+java.util.concurrent.locks   org.w3c.dom.events          javax.security.sasl
+java.util.jar                org.w3c.dom.ls              javax.sql.rowset
+java.util.logging            org.xml.sax                 javax.sql.rowset.serial
+java.util.regex              org.xml.sax.ext             javax.sql.rowset.spi
+java.util.spi                org.xml.sax.helpers         javax.tools
+java.util.zip                                            javax.xml.crypto
+javax.crypto                                             javax.xml.crypto.dom
+javax.crypto.interfaces                                  javax.xml.crypto.dsig
+javax.crypto.spec                                        javax.xml.crypto.dsig.dom
+javax.net                                                javax.xml.crypto.dsig.keyinfo
+javax.net.ssl                                            javax.xml.crypto.dsig.spec
+javax.security.auth                                      org.ieft.jgss
+javax.security.auth.callback
+javax.security.auth.login
+javax.security.auth.spi
+javax.security.auth.x500
+javax.security.cert</code></pre>
+    <p>You may ask what savings can be realized by using compact
+      profiles?&nbsp; As Java 8 is in pre-release stage, numbers will
+      change over time, but let's take a look at a snapshot early access
+      build of Java SE-Embedded 8 for ARMv5/Linux.&nbsp; <i>A
+        reasonably configured compact1 profile comes in at less than
+        14MB</i>.&nbsp; Compact2 is about 18MB and compact3 is in the
+      neighborhood of 21MB.&nbsp; For reference, the latest Java 7u21 SE
+      Embedded ARMv5/Linux environment requires 45MB.</p>
+    <p>So at less than one-third the original size of the already
+      space-optimized Java SE-Embedded release, you have a very capable
+      runtime environment.&nbsp; If you need the additional
+      functionality provided by the compact2 and compact3 profiles or
+      even the full VM, you have the option of deploying your
+      application with them instead.</p>
+    <p>In the next installment, we'll look at Compact Profiles in a bit
+      more detail.<br>
+    </p>
+    <p><a href="../index.html">Index</a> </p>
+  </body>
+</html>

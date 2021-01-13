@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Sprinkle Some Magik on that Java Virtual Machine</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <b><big>Sprinkle Some Magik on that Java Virtual Machine</big></b><br>
+    <small><small>By Jim Connors 5 November 2012<br>
+      </small></small><br>
+    GE Energy, through its Smallworld subsidiary, has been providing
+    geospatial software solutions to the utility and telco markets for
+    over 20 years.&nbsp; One of the fundamental building blocks of their
+    technology is a dynamically-typed object oriented programming
+    language called <a
+      href="http://en.wikipedia.org/wiki/Magik_%28programming_language%29">Magik</a>.&nbsp;
+
+
+
+    Like Java, Magik source code is compiled down to bytecodes that run
+    on a virtual machine -- in this case the Magik Virtual Machine.
+    <p>Throughout the years, GE has invested considerable engineering
+      talent in the support and maintenance of this virtual
+      machine.&nbsp; At the same time vast energy and resources have
+      been invested in the Java Virtual Machine. The question for GE has
+      been whether to continue to make that investment on its own or to
+      leverage massive effort provided by the Java community? Utilizing
+      the Java Virtual Machine instead of maintaining its own virtual
+      machine would give GE more opportunity to focus on application
+      solutions.&nbsp;&nbsp; <br>
+    </p>
+    <p>At last count, there are dozens, perhaps hundreds of examples of
+      programming languages that have been hosted atop the Java Virtual
+      Machine.&nbsp; Prior to the release of Java 7, that effort,
+      although certainly possible, was generally less than optimal for
+      languages like Magik because of its dynamic nature.&nbsp; Java, as
+      a statically typed language had little use for this
+      capability.&nbsp; In the quest to be a more universal virtual
+      machine, Java 7, via <a
+        href="http://www.jcp.org/en/jsr/detail?id=292">JSR-292</a>,
+      introduced a new bytecode called <font face="courier
+        new,courier,monospace">invokedynamic</font>.&nbsp; In short, <font
+        face="courier new,courier,monospace">invokedynamic</font>
+      affords a more flexible method call mechanism needed by dynamic
+      languages like Magik.</p>
+    <p>With this new capability GE Energy has succeeded in hosting their
+      Magik environment on top of the Java Virtual Machine.&nbsp; So you
+      may ask, why would GE wish to do such a thing?&nbsp; The benefits
+      are many:</p>
+    <ul>
+      <li>Competitors to GE Energy claimed that the Magik environment
+        was proprietary.&nbsp; By utilizing the Java Virtual Machine,
+        that argument gets put to bed.&nbsp; JVM development is done in
+        <a href="http://openjdk.java.net/">open source</a>, where
+        contributions are made world-wide by all types of organizations
+        and individuals.<br>
+      </li>
+      <li>The unprecedented wealth of class libraries and applications
+        written for the Java platform are now opened up to Magik/JVM
+        platform as first class citizens.</li>
+      <li>In addition, the Magik/JVM solution vastly increases the
+        developer pool to include the 9 million Java developers -- the
+        largest developer community on the planet.<br>
+      </li>
+      <li>Applications running on the JVM showed substantial performance
+        gains, in some cases as much as a 5x speed up over the original
+        Magik platform.<br>
+      </li>
+      <li>Legacy Magik applications can still run on the original
+        platform.&nbsp; They can be seamlessly migrated to run on the
+        JVM by simply recompiling the source code.<br>
+      </li>
+      <li>GE can now leverage the huge Java community.&nbsp; Undeniably
+        the best virtual machine ever created, hundreds if not thousands
+        of world class developers continually improve, poke, prod and
+        scrutinize all aspects of the Java platform.&nbsp; As
+        enhancements are made, GE automatically gains access to these.<br>
+      </li>
+      <li>As Magik has little in the way of support for multi-threading,
+        GE will benefit from current and future Java offerings (e.g. <a
+          href="http://openjdk.java.net/projects/lambda/">lambda
+          expressions</a>) that aim to further facilitate
+        multi-core/multi-threaded application development.<br>
+      </li>
+      <li>As the JVM is available for many more platforms, it broadens
+        the reach of Magik, including the potential to run on a class
+        devices never envisioned just a few short years ago.&nbsp; For
+        example, <a
+href="http://www.oracle.com/technetwork/java/embedded/downloads/javase/index.html">Java
+
+
+          SE compatible runtime environments are available for popular
+          embedded ARM/Intel/PowerPC configurations</a> that could
+        theoretically host this software too.<br>
+      </li>
+    </ul>
+    As compared to other JVM language projects, the Magik integration
+    differs in that it represents a serious commercial entity betting a
+    sizable part of its business on the success of this effort.&nbsp;
+    Expect to see announcements not only from General Electric, but
+    other organizations as they realize the benefits of utilizing the
+    Java Virtual Machine.<br>
+    <br>
+    <div class="footer"><a href="../index.html">Index</a></div>
+  </body>
+</html>

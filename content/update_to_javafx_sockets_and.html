@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Update to JavaFX, Sockets and Threading: Lessons Learned</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <big><b>Update to JavaFX, Sockets and Threading: Lessons Learned</b></big><br>
+    <small><small>By Jim Connors 9 April 2015</small></small><br>
+    <br>
+    Recently, a reader commented on a dated article of mine, circa 2010,
+    entitled <a href="javafx_sockets_and_threading_lessons.html">JavaFX,
+
+
+
+
+
+
+
+
+      Sockets and Threading: Lessons Learned</a>.&nbsp; In it he
+    correctly stated that, as the original content is based on the
+    deprecated JavaFX 1.3 framework (aka JavaFX Script), he cannot test
+    or utilize that code with the modern JavaFX API.&nbsp; What follows
+    is an update to that blog entry with code and references appropriate
+    for the <a
+      href="http://docs.oracle.com/javase/8/javafx/api/toc.htm">JavaFX 8
+      (Java SE 8 with JavaFX) platform</a>.
+    <p><b>Overview</b></p>
+    <p>For a more thorough understanding of the method behind this
+      madness, please consult the <a
+        href="javafx_sockets_and_threading_lessons.html">original
+        article</a>.&nbsp; Briefly stated, socket programming,
+      especially in Java, often times lends itself to utilizing
+      threads.&nbsp; To facilitate using sockets, both from the "client"
+      and "server" side, an abstract class called <a
+        href="resource/socket_FX8/GenericSocket.java">GenericSocket.java</a>
+      was and is provided and, baring a few minor changes, remains quite
+      similar to the original version. Just as in the Original JavaFX
+      Script framework, <i><b>The JavaFX UI is still not thread-safe
+          and its scene graph must only be accessed through the JavaFX
+          application thread</b></i>.&nbsp;&nbsp; What has changed
+      between old and new is the class and method name required to
+      perform work on the JavaFX application thread.</p>
+    <p>Just like before, we've identified two methods associated with
+      socket manipulations that need to perform work on the main
+      thread.&nbsp; These abstract method calls are incorporated into
+      the GenericSocket.java source and are specified in the <a
+        href="resource/socket_FX8/SocketListener.java">SocketListener.java</a>
+      interface file:</p>
+    <pre>    public interface SocketListener {
+        public void onMessage(String line);
+        public void onClosedStatus(boolean isClosed);
+    }</pre>
+    <p>Within <a href="resource/socket_FX8/GenericSocket.java">GenericSocket.java</a>,
+      you'll see references to these method calls as follows:</p>
+    <pre>    /*
+     * The onClosedStatus() method has to be implemented by
+     * a sublclass.  If used in conjunction with JavaFX,
+     * use Platform.runLater() to force this method to run
+     * on the main thread.
+     */
+     onClosedStatus(true);</pre>
+    <p>&nbsp;and</p>
+    <pre>    /*
+     * The onMessage() method has to be implemented by
+     * a sublclass.  If used in conjunction with JavaFX,
+     * use Platform.runLater() to force this method to run
+     * on the main thread.
+     */
+     onMessage(line);</pre>
+    <p>As implied by these comments, JavaFX-specifc classes that extend
+      the <tt>GenericSocket</tt> class and implement the <tt>SocketListener</tt>
+      interface are required.&nbsp; Correspondingly two helper classes
+      have been created: <a
+        href="resource/socket_FX8/FxSocketClient.java">FxSocketClient.java</a>
+      and <a href="resource/socket_FX8/FxSocketServer.java">FxSocketServer.java</a>.&nbsp;
+
+
+
+
+
+
+
+
+      These extend the <tt>GenericSocket</tt> class and implement the <tt>SocketListener</tt>
+      interface from the perspective of a JavaFX environment.&nbsp; Both
+      classes override the <tt>onMessage()</tt> method like this:</p>
+    <p> </p>
+    <img alt="" src="resource/socket_FX8/onMessage.jpg" width="568"
+      height="290">
+    <p>Likewise, the <tt>onClosedStatus()</tt> method is implemented as
+      follows:</p>
+    <img alt="" src="resource/socket_FX8/onClosedStatus.png" width="569"
+      height="289">
+    <p> </p>
+    <p>As these two code snippets exhibit, we enclose our execution
+      requirements within a call to the <a
+href="https://docs.oracle.com/javafx/2/api/javafx/application/Platform.html#runLater%28java.lang.Runnable%29"><tt>Platform.runLater()</tt></a>
+      method, ensuring that&nbsp; it will be executed on the JavaFX
+      application thread.&nbsp; (For the Java 8 aficionados, you may
+      notice that these two methods could be converted to lambda
+      expressions. That exercise is left to the reader.)&nbsp; What
+      remains now is for any referencing JavaFX class to implement the <tt>SocketListener</tt>
+      interface.<br>
+    </p>
+    <p>To demonstrate the usage of <tt>FxSocketClient</tt> and <tt>FxSocketServer</tt>
+      classes within JavaFX 8, this article provides two NetBeans
+      projects represented by the screenshots that follow.&nbsp; By
+      clicking on each image, you can start up the <tt>FxSocketClient</tt>
+      and <tt>FxSocketServer</tt> applications via <a
+href="https://docs.oracle.com/javase/8/docs/technotes/guides/javaws/developersguide/contents.html">Java
+
+
+
+        WebStart</a> (assuming you have (1) the latest Java 8 installed
+      and (2) you have a browser which allows Java applets to run.&nbsp;
+      The last browsers standing are Internet Explorer 11 and Safari).</p>
+    <table width="798" height="326" border="0" cellspacing="30"
+      cellpadding="20">
+      <tbody>
+        <tr>
+          <td valign="top"><a
+              href="https://jtconnors.com:8445/SocketClientFX/SocketClientFX.jnlp">
+              <img alt="" src="resource/socket_FX8/SocketClientFX.jpg"
+                width="351" height="250"><br>
+            </a></td>
+          <td valign="top"><a
+              href="https://jtconnors.com:8445/SocketServerFX/SocketServerFX.jnlp">
+              <img alt="" src="resource/socket_FX8/SocketServerFX.jpg"
+                width="351" height="250"><br>
+            </a></td>
+        </tr>
+      </tbody>
+    </table>
+    <p>The user interface for these programs was created with the
+      assistance of a terrific tool called the <a
+href="http://www.oracle.com/technetwork/java/javase/downloads/javafxscenebuilder-info-2157684.html">JavaFX
+
+
+
+
+
+
+
+
+        Scene Builder</a>.&nbsp; You can download the source code,
+      including the UI (represented in FXML), here:</p>
+    <ul>
+      <li><a href="resource/socket_FX8/SocketClientFX.zip">SocketClientFX.zip</a></li>
+      <li><a href="resource/socket_FX8/SocketServerFX.zip">SocketServerFX.zip</a></li>
+    </ul>
+    <p><b>The <tt>javafx.concurrent</tt> Package</b></p>
+    <p>The intent of this article was to focus solely on the <tt>Platform.runLater()</tt>
+      method, however, it is important to note that JavaFX 2.x also
+      provides an additional means to create background tasks that
+      safely interact with the JavaFX application thread.&nbsp; Similar
+      in capability to the venerable <a
+href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/package-summary.html"><tt>java.util.concurrent</tt></a>&nbsp;
+
+
+
+
+
+
+
+
+      package (and in fact extending some of those classes), the <a
+href="https://docs.oracle.com/javafx/2/api/javafx/concurrent/package-summary.html"><tt>javafx.concurrent</tt></a>
+      package also furnishes the ability to safely control the execution
+      and track the progress of the application code running in
+      background tasks. For an overview of their use, check out the
+      following article published as part of the Oracle documentation: <a
+href="http://docs.oracle.com/javafx/2/threads/jfxpub-threads.htm">Concurrency
+
+
+
+
+
+
+
+
+        in Java FX</a>.<br>
+    </p>
+    <div class="footer"><a href="../index.html">Index</a></div>
+    <p> </p>
+    <p> </p>
+    <br>
+  </body>
+</html>

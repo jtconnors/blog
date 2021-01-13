@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>JavaFX Scenegraph Performance Revisited</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p><big><b>JavaFX Scenegraph Performance Revisited</b></big><br>
+      <small><small>By Jim Connors 8 November 2009</small></small><br>
+    </p>
+    <p>Prior to the release of JavaFX 1.2, an <a
+        href="node_count_and_javafx_performance.html">earlier blog post</a>
+      explained how creating an application with a scenegraph containing
+      a large number of nodes can have performance implications.&nbsp;
+      That entry was subsequently picked up by <a
+        href="https://dzone.com/java">Java Lobby</a> and recently posted
+      <a href="https://dzone.com/articles/node-count-and-javafx">here</a>.&nbsp;
+
+
+      Partly because it was a few months old, it resulted in a rash of,
+      shall we say, interesting comments.</p>
+    <p>As one commenter pointed out, the initial results represent
+      JavaFX performance in the 1.0/1.1 timeframe.&nbsp; JavaFX 1.2 has
+      since been released, and performance has improved
+      substantially.&nbsp; As a case in point, you can click on the
+      image below to run the clock application.&nbsp; This same
+      application, developed and compiled with JavaFX 1.1 can be run
+      from the previous blog post.&nbsp; Further instructions are <a
+        href="node_count_and_javafx_performance.html">there</a>.&nbsp; <br>
+    </p>
+    <img alt="" src="resource/javafx-node-perf-2/BulbClockNode.jpg"
+      width="400" height="160">
+    <p>This application, compiled with JavaFX 1.2 and run on identical
+      hardware, uses about a third of the CPU resources of the original
+      version.&nbsp; Specifically, using OpenSolaris <a
+href="https://docs.oracle.com/cd/E23823_01/html/816-5166/vmstat-1m.html#scrolltoc">vmstat(1M)</a>
+      to monitor CPU usage, the following average statistics were
+      collected for one minute when the clock display is updated every
+      10th of a second.&nbsp; The abbreviations have the following
+      meanings:<br>
+    </p>
+    <ul>
+      <li><strong>us</strong> = percentage usage of CPU time in <em>user</em>
+        space<br>
+      </li>
+      <li><strong>sy</strong> = percentage usage of CPU time in <em>system</em>
+        space<br>
+      </li>
+      <li><strong>id</strong> = percentage usage of CPU time idling</li>
+      <li>The sum of (us + sy + id) should approximate 100%. </li>
+    </ul>
+    <p>And here are the utilization numbers:</p>
+    <p> </p>
+    <table style="width: 100%;" border="1" cellspacing="1"
+      cellpadding="1">
+      <tbody>
+        <tr>
+          <td align="center"><strong>&nbsp;Version</strong></td>
+          <td align="center"><strong>&nbsp;# Nodes per Digit<br>
+            </strong></td>
+          <td align="center"><strong>&nbsp;CPU Utilization<br>
+            </strong></td>
+        </tr>
+        <tr>
+          <td>&nbsp;BulbClockNode JavaFX 1.1<br>
+          </td>
+          <td>&nbsp;27 BulbNodes<br>
+          </td>
+          <td>&nbsp;us: 22%&nbsp; sy: 2%&nbsp; id: 76%</td>
+        </tr>
+        <tr>
+          <td>&nbsp;BulbClockNode JavaFX 1.2</td>
+          <td>&nbsp;27 BulbNodes</td>
+          <td>&nbsp;us: 7%&nbsp; sy: 2%&nbsp; id: 91%</td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    Yes,&nbsp; performance has improved significantly and will continue
+    to do so.&nbsp; In fact, the JavaFX team is promising even better
+    results with the advent of JavaFX 1.3 (code named SoMa), when
+    considerable refining of the underlying architecture will take
+    place.&nbsp; At this stage in it's lifecycle, it's important to
+    "subscribe" to the JavaFX technology.&nbsp; Advances are coming fast
+    and furious, and they don't promise to slow down anytime soon.<br>
+    <br>
+    <div class="footer"><a href="../index.html">Index</a></div>
+  </body>
+</html>

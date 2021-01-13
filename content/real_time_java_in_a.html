@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Real-Time Java in a Zone</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p><big><b>Real-Time Java in a Zone<br>
+        </b><small><small>By Jim Connors 17 June 2008</small></small><b><br>
+        </b></big></p>
+    <p>As is often the case, Sun's technologies and offerings are being
+      applied in ways which we hadn't necessarily anticipated.&nbsp; Yet
+      another example has reared its head in the govenrment/military
+      space where customers have expressed interest in using Sun's <a
+href="http://www.oracle.com/technetwork/java/javase/documentation/fullyconcurrentgarbagecollector-137267.html">Java
+
+
+        Real-Time System </a>with <a
+href="http://www.oracle.com/technetwork/articles/servers-storage-admin/sol-trusted-extensions-1957756.html">Solaris
+
+
+        Trusted Extensions</a>.&nbsp; As it stands right now, Java RTS
+      will neither operate nor install within the confines of such an
+      environment.&nbsp; Let's investigate why this is so, and see what
+      current opportunities there are for working around this
+      shortcoming.<br>
+    </p>
+    <p>So what is it that causes Trusted Extensions and Java RTS not to
+      play together nicely?&nbsp;&nbsp; It happens to revolve around
+      Trusted Extension's extensive usage of <a
+href="https://docs.oracle.com/cd/E18440_01/doc.111/e18415/chapter_zones.htm#OPCUG426">Solaris
+
+
+        zones</a> to limit access between differing security
+      levels.&nbsp; Solaris packages must be specifically configured to
+      accommodate zones, which has yet to formally take place with Java
+      RTS.&nbsp; As zones are a core component of Solaris, we can, for
+      the sake of simplicity, just use standard Solaris to demonstrate
+      how we can work around this temporary limitation.&nbsp; These
+      modifications should apply to Trusted Extensions just as
+      well.&nbsp;&nbsp; To get Java RTS to work within a zone, follow
+      these steps:<br>
+    </p>
+    <p>1. Install the Java RTS cyclic driver (only) in the global zone.<br>
+    </p>
+    <span style="font-family: monospace;">global# <span
+        style="font-weight: bold;">pkgadd -d . SUNWrtjc</span><br>
+      <br>
+      Processing package instance &lt;SUNWrtjc&gt; from
+      &lt;/cyclic/src/packages_i386&gt;<br>
+      ## Installing package &lt;SUNWrtjc&gt; in global zone<br>
+      <br>
+      Java Real-Time System cyclic driver(i386)
+      2.1.0,REV=2008.06.13.16.10<br>
+      Copyright 2008 Sun Microsystems, Inc.&nbsp; All rights reserved.<br>
+      Use is subject to license terms.<br>
+      Using &lt;/&gt; as the package base directory.<br>
+      ## Processing package information.<br>
+      ## Processing system information.<br>
+      &nbsp;&nbsp; 5 package pathnames are already properly installed.<br>
+      ## Verifying package dependencies.<br>
+      ## Verifying disk space requirements.<br>
+      ## Checking for conflicts with packages already installed.<br>
+      ## Checking for setuid/setgid programs.<br>
+      <br>
+      This package contains scripts which will be executed with
+      super-user<br>
+      permission during the process of installing this package.<br>
+      <br>
+      Do you want to continue with the installation of &lt;SUNWrtjc&gt;
+      [y,n,?] y<br>
+      <br>
+      Installing Java Real-Time System cyclic driver as &lt;SUNWrtjc&gt;<br>
+    </span><br>
+    <br>
+    2. Create a zone called '<font face="courier new,courier,monospace">rtjzone</font>':<br>
+    <pre>global# <b>mkdir -p /zone</b>
+bash-3.00# <b>zonecfg -z rtjzone</b>
+rtjzone: No such zone configured
+Use 'create' to begin configuring a new zone.
+zonecfg:rtjzone&gt; <b>create</b>
+zonecfg:rtjzone&gt; <b>set zonepath=/zone/rtjzone</b>
+zonecfg:rtjzone&gt; <b>verify</b>
+zonecfg:rtjzone&gt; <b>commit</b>
+zonecfg:rtjzone&gt; <b>exit</b></pre>
+    <pre>global# <b>zoneadm list -vc</b>
+&nbsp; ID NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; STATUS&nbsp;&nbsp;&nbsp;&nbsp; PATH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BRAND&nbsp;&nbsp;&nbsp; IP
+   0 global&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; running&nbsp;&nbsp;&nbsp; /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; native&nbsp;&nbsp; shared
+   - rtjzone&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; configured /zone/rtjzone&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; native&nbsp;&nbsp; shared</pre>
+    <pre>global# <b>zoneadm -z rtjzone install</b>
+Preparing to install zone &lt;rtjzone&gt;.
+Creating list of files to copy from the global zone.
+Copying &lt;6984&gt; files to the zone.
+Initializing zone product registry.
+Determining zone package initialization order.
+Preparing to initialize &lt;1074&gt; packages on the zone.
+Initialized &lt;1074&gt; packages on zone.
+Zone &lt;rtjzone&gt; is initialized.
+Installation of &lt;1&gt; packages was skipped.
+The file &lt;/zone/rtjzone/root/var/sadm/system/logs/install_log&gt; contains a log of the zone installation.</pre>
+    <p><br>
+      3.&nbsp; Modify the zone to allow access to the cyclic device, and
+      to allow additional privileges</p>
+    <pre>global# <span style="font-weight: bold;">zonecfg -z rtjzone</span>
+zonecfg:rtjzone&gt; <span style="font-weight: bold;">set limitpriv=default,proc_priocntl,proc_lock_memory,proc_clock_highres</span>
+zonecfg:rtjzone&gt; <span style="font-weight: bold;">add device</span>
+zonecfg:rtjzone:device&gt; <span style="font-weight: bold;">set match=/dev/cyclic</span>
+zonecfg:rtjzone:device&gt; <span style="font-weight: bold;">end</span>
+zonecfg:rtjzone&gt; <span style="font-weight: bold;">verify</span>
+zonecfg:rtjzone&gt; <span style="font-weight: bold;">commit</span>
+zonecfg:rtjzone&gt; <span style="font-weight: bold;">exit
+
+</span>global#<span style="font-weight: bold;"> zoneadm -z rtjzone reboot
+</span></pre>
+    Note:&nbsp; One privilege that is useful with Java RTS is <font
+      face="courier new,courier,monospace">sys_res_config</font>.&nbsp;
+    This is typically used to assign a real-time process to a <a
+      href="resource/realtime/SolarisProcessorSetsMadeEasy.html">processor
+
+
+      set</a>.&nbsp; Unfortunately zones cannot currently be given this
+    privilege.&nbsp; You can however, from the global zone, assign a
+    processor set to a zone, which might be a reasonable workaround.<br>
+    <br>
+    <p>4.&nbsp; Get a copy of the <font face="courier
+        new,courier,monospace">SUNWrtjv</font> package and modify it so
+      that it will install in a zone.&nbsp; The <a
+        href="resource/rts-zone/postinstall">postinstall</a> script and
+      <a href="resource/rts-zone/postremove">postremove</a> script must
+      replaced with those provided by these hyperlinks just mentioned.<br>
+    </p>
+    <pre>rtjzone# <span style="font-weight: bold;">cd /scratch</span>
+rtjzone# <span style="font-weight: bold;">ls</span>
+SUNWrtjv	postinstall	postremove
+rtjzone# <span style="font-weight: bold;">cp postinstall SUNWrtjv/install/</span>
+rtjzone# <span style="font-weight: bold;">cp postremove SUNWrtjv/install/
+
+</span></pre>
+    5. Modify the <font face="courier new,courier,monospace">SUNWrtjv
+      pkgmap</font> file with the appropriate sizes, checksums and last
+    access dates.&nbsp; The source code for a sample C program, called <font
+      face="courier new,courier,monospace">pkgmap_info</font>, which
+    prints out the necessary information, can be found <a
+      href="resource/rts-zone/pkgmap_info.c">here</a>.<br>
+    <br>
+    <pre>rtjzone# <span style="font-weight: bold;">cd SUNWrtjv</span><br style="font-weight: bold;">rtjzone# <span style="font-weight: bold;">grep post pkgmap</span>
+1 i postinstall 5402 42894 1194344457
+1 i postremove 2966 34854 1194344457
+
+rtjzone# <span style="font-weight: bold;">cp pkgmap_info.c /tmp</span>
+rtjzone# <span style="font-weight: bold;">cc -o /tmp/pkgmap_info /tmp/pkgmap_info.c
+</span>rtjzone# <span style="font-weight: bold;">cd /scratch/SUNWrtjv/install/
+</span>rtjzone#<span style="font-weight: bold;"> /tmp/pkgmap_info postinstall
+</span>postinstall 5820 9488 1213727841
+rtjzone# <span style="font-weight: bold;">/tmp/pkgmap_info postremove
+</span>postremove 3092 45039 1213727538<span style="font-weight: bold;">
+</span>
+</pre>
+    Replace the <font face="courier new,courier,monospace">postinstall</font>
+    and <font face="courier new,courier,monospace">postremove</font>
+    entries in the <font face="courier new,courier,monospace">pkgmap</font>
+    file with those produced by the <font face="courier
+      new,courier,monospace">pkgmap_info</font> program.&nbsp; You
+    cannot simply use the example data above because the last access
+    times will not match.&nbsp; Doing so will cause the install to fail.<br>
+    <br>
+    <br>
+    6. Install the Java RTS <font face="courier new,courier,monospace">SUNWrtjv</font>
+    package inside the zone.<br>
+    <br>
+    <span style="font-family: monospace;">rtjzone# <span
+        style="font-weight: bold;">cd /scratch</span><br>
+      rtjzone# <span style="font-weight: bold;">pkgadd -d . SUNWrtjv</span><br>
+      <br>
+      Processing package instance &lt;SUNWrtjv&gt; from &lt;/scratch&gt;<br>
+      <br>
+      Java Real-Time System runtime environment(i386)
+      1.5.0_13_Java-RTS-2.0_01-b08_RTSJ-1.0.2,REV=2007.11.06.12.47<br>
+      Copyright 2005 Sun Microsystems, Inc.&nbsp; All rights reserved.<br>
+      Use is subject to license terms.<br>
+      <br>
+      Where should this package be installed? (/opt): <span
+        style="font-weight: bold;">/opt</span><br>
+      <br>
+      To achieve predictable temporal behavior, the Java Real-Time
+      System<br>
+      must be granted access to a number of privileged Solaris
+      resources.<br>
+      By default, access to these privileged resources is only granted
+      to<br>
+      the superuser (root). They can also be granted to additional users<br>
+      by creating a rights profile, that is, a collection of
+      authorizations,<br>
+      that can later be assigned to an administrative role or directly<br>
+      to a user.<br>
+      <br>
+      As part of this package installation, a local 'Java Real-Time
+      System User'<br>
+      rights profile can be created on this machine.<br>
+      This rights profile should NOT be created if such an action
+      conflicts<br>
+      with your computer security management policies. If unsure,
+      contact<br>
+      your system administrator or your computer security manager.<br>
+      Also refer to the product's release notes for further details
+      regarding<br>
+      the privileges required by the Java Real-Time System.<br>
+      <br>
+      Should a local 'Java Real-Time System User' rights profile be
+      created? [y,n] (no): <span style="font-weight: bold;">y<br>
+      </span>Using &lt;/opt&gt; as the package base directory.<br>
+      ## Processing package information.<br>
+      ## Processing system information.<br>
+      ## Verifying package dependencies.<br>
+      ## Verifying disk space requirements.<br>
+      ## Checking for conflicts with packages already installed.<br>
+      ## Checking for setuid/setgid programs.<br>
+      <br>
+      This package contains scripts which will be executed with
+      super-user<br>
+      permission during the process of installing this package.<br>
+      <br>
+      Do you want to continue with the installation of &lt;SUNWrtjv&gt;
+      [y,n,?] <span style="font-weight: bold;">y<br>
+        <br>
+        ...<br>
+        <br>
+      </span>## Executing postinstall script.<br>
+      Creating the 'Java Real-Time System User' rights profile.<br>
+      <br>
+      Refer to the 'System Administration Guide: Security Services'<br>
+      documentation for further information regarding the way to assign
+      the<br>
+      'Java Real-Time System User' rights profile to users, groups, or<br>
+      administrative roles using the Solaris Management Console, smc(1M)
+      or<br>
+      the usermod(1M), groupmod(1M) and rolemod(1M) commands.<br>
+      <br>
+      <br>
+      Installation of &lt;SUNWrtjv&gt; was successful.<br>
+      <br>
+    </span><span style="font-family: monospace;"></span><br>
+    6.&nbsp; Try running a real-time Java application in the zone.<br>
+    <br>
+    <pre>rtjzone# <span style="font-weight: bold;">/opt/SUNWrtjv/bin/java -version</span>
+java version "1.5.0_13"
+Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_13_Java-RTS-2.0_01-b08_RTSJ-1.0.2)
+Java Real-Time System HotSpot(TM) Client VM (build 1.5.0_13-b08, mixed mode)
+
+
+</pre>
+    We hope to more formally support Solaris zones usage with Java RTS
+    in the future.&nbsp; In the interim this workaround can help you get
+    started.&nbsp; Many thanks to Jim Clarke, who did the lion's share
+    of the legwork to find this solution.<br>
+    <pre><span style="font-weight: bold;"></span><span style="font-weight: bold;"></span></pre>
+    <div class="footer"><a href="../index.html">Index</a></div>
+  </body>
+</html>

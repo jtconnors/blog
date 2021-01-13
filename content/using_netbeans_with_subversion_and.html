@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>NetBeans with Subversion, SSH and Windows</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <big><b>NetBeans with Subversion, SSH and Windows</b></big><br>
+    <small><small>By Jim Connors 20 February 2010</small></small><br>
+    <br>
+    Having spent too much time wrestling with the various components
+    required to get NetBeans to access a subversion repository via ssh,
+    I thought it might make sense to jot down a few notes in an effort
+    to save others from such hardships.<br>
+    <p>NetBeans does have built-in support for CVS, Mercurial and
+      Subversion, but that doesn't mean that these source code revision
+      systems work in a turnkey fashion.&nbsp; In particular,
+      subversion, especially with Windows, does require some work.</p>
+    <p> 1. To start:<br>
+      Get the <a
+href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">latest
+
+
+        JDK</a>.&nbsp; At the time of this writing it was JDK 6 update
+      18<br>
+      Get the <a href="http://netbeans.org/downloads/index.html">latest
+        version of NetBeans</a>,&nbsp; in this case, NetBeans 6.8.&nbsp;
+      Install it referencing the latest JDK and furthermore, once inside
+      NetBeans, utilize the update manager to make sure all of your
+      modules are the latest and greatest.<br>
+    </p>
+    <p>2. Upon starting NetBeans, the menu running along the top of the
+      window has a "Team" entry.&nbsp; Click on Team and follow
+      Subversion-&gt;Checkout (No, you won't be able to check anything
+      out yet). This will bring up an error window which requires you to
+      install a subversion client.<br>
+    </p>
+    <p>Selecting the default action, which installs a subversion plugin
+      for NetBeans, didn't result in much success. Instead choose the
+      second option: "Install Subversion Commandline Client". &nbsp;The
+      recommended download for the client points to CollabNet, which is
+      an excellent choice.&nbsp; Unfortunately the version referred to
+      (v 1.5.5 for Windows) may ultimately prove problematic if you're
+      communicating with a subversion repository that's based on a later
+      version. For this exercise, <a
+        href="http://www.open.collab.net/downloads/subversion/">CollabNet
+
+
+        Subversion Command-Line Client v1.6.9 (for Windows)</a> was
+      downloaded and installed.<br>
+    </p>
+    <p>3. Once Subversion is installed, clicking on
+      Team-&gt;Subversion-&gt;Checkout again will hopefully bring up a
+      second window which requires you fill in two textfields: (1) A
+      repository URL and (2) a tunnel command.&nbsp; Let's focus on the
+      tunnel command first.&nbsp; For windows this requires the
+      equivalent of the Unix/Linux ssh command.&nbsp; To get this
+      functionality <a
+        href="http://www.chiark.greenend.org.uk/%7Esgtatham/putty/download.html">download
+
+
+        and install a version of the PuTTY software package</a>.</p>
+    <p>4. Unlike the Collabnet Subversion Client, PuTTY installation
+      does not put the executables of this package into your PATH.&nbsp;
+      Make sure to add the PuTTY path (typically C:\Program Files\PuTTY)
+      to your PATH.</p>
+    <p>5. You'll need to edit a subversion configuration file to specify
+      the tunnel command as follows:</p>
+    <blockquote>
+      <pre>C:\&gt;cd %APPDATA%\Subversion
+C:\&gt;edit config 
+</pre>
+    </blockquote>
+    <p>Look for the comment that starts like this:</p>
+    <blockquote>
+      <pre>#ssh = $SVN_SSH ssh</pre>
+    </blockquote>
+    <p>Uncomment it and make it look like the statement below.&nbsp; The
+      <font face="courier new,courier,monospace">plink.exe</font>
+      executable is part of the PuTTY software bundle:<br>
+    </p>
+    <blockquote>
+      <pre>ssh = $SVN_SSH plink.exe -l <b><i>user</i></b> -pw <b><i>password</i></b> 
+</pre>
+    </blockquote>
+    <p>Where <i>user</i> is your remote user name and <i>password</i>
+      is your user's password. You can also use private key
+      authentication if you're uncomfortable with putting your password
+      in the clear, which might look something like:</p>
+    <blockquote>
+      <pre>ssh = $SVN_SSH plink.exe -l <i>user</i> -i C:\my_private_key.ppk</pre>
+    </blockquote>
+    <p>6. Prior to trying out Netbeans, first connect to your subversion
+      repository via ssh as follows:</p>
+    <blockquote>
+      <pre>C:\&gt; plink.exe <b><i>user</i></b>@<b><i>host</i></b></pre>
+    </blockquote>
+    <p>Prior to running this command, the NetBeans attempt to access the
+      subversion repository hangs, apparently looking for a host
+      fingerprint cache entry.&nbsp; The <font face="courier
+        new,courier,monospace">plink.exe</font> command above
+      accomplishes its creation, once the correct password is
+      entered.&nbsp; In addition, it assures that SSH is correctly set
+      up on your Subversion repository server.<br>
+    </p>
+    <p>7. Returning to the Team-&gt;Subversion-&gt;Checkout selection
+      from the main NetBeans window, now it's time to fill in the two
+      textfields.&nbsp; The first entry should look something like this:</p>
+    <blockquote>
+      <pre>svn+ssh://<i><b>host</b></i>/<b><i>subversion_repository_path</i></b></pre>
+    </blockquote>
+    <p>for example:</p>
+    <blockquote>
+      <pre>svn+ssh://127.0.0.1/home/svn/myProject</pre>
+    </blockquote>
+    <p>Next should come the tunnel command which should be similar to
+      the entry placed in the <font face="courier
+        new,courier,monospace">%APPDATA%\Subversion\config</font> file,
+      namely</p>
+    <blockquote>
+      <pre>plink -l <i><b>user</b></i> -pw <i><b>password</b></i></pre>
+    </blockquote>
+    <p> Where, again, <i>user i</i>s your remote user name and <i>password</i>
+      is this user's password.</p>
+    <p>8. With information correctly filled in, and assuming your
+      subversion server is correctly configured, you should be able to
+      begin utilizing subversion through ssh with NetBeans.&nbsp; For
+      further information, check out:</p>
+    <ul>
+      <li><a href="http://netbeans.org/kb/docs/ide/subversion.html">Guided
+
+
+          Tour of Subversion</a> with NetBeans</li>
+      <li><a href="http://wiki.netbeans.org/FaqSubversionSSH">NetBeans
+          Subversion FAQ with SSH</a><br>
+      </li>
+    </ul>
+    <p>Good Luck!<br>
+    </p>
+    <p><a href="../index.html">Index</a> </p>
+  </body>
+</html>

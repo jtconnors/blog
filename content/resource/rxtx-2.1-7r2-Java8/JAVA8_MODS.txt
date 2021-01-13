@@ -1,0 +1,70 @@
+
+Modifications to rxtx-2.1-7r2 to create rxtx-2.1-7r2-Java8 version
+
+Initial Problems:
+
+ i.  The RxTx code base is old, and really hasn't been touched in a long
+     time.  It has no notion of any version of Java past Java 5 and will
+     fail to build with any JDK with version 6 or later.
+ ii. Again, do to its age, the RxTx build makes assumpotions about a
+     system defined constant called UTS_RELEASE and where it can be found.
+     This was originally assumed to be found in the <linux/version.h>
+     include file.  Newer versions place this in a kernel module include
+     file.  Without this constant defined, the RxTx build for additional
+     communications support above simple serial communications (Parallel,
+     RS485, I2C ...) will fail to build.
+
+
+Version rxtx-2.1-7r2-Java8 modifications
+
+1. Edited ./configure script at ~line 21448 and added this code immediately
+   after the first line of check_kernel_headers() function:
+
+  #
+  # JTC: For recent versions of Linux, UTS_RELEASE is found in kernel module
+  # include files, not as previously stated in <linux/version.h>.  Sometimes
+  # kernel modules can be hard to get (e.g. Raspian)  As a workaround, create a
+  # local "utsrelease.h" that source files can reference via `uname -r`
+  # command
+  # 
+	  echo "#define UTS_RELEASE \""`uname -r`"\"" > utsrelease.h
+	  cp utsrelease.h src/utsrelease.h
+
+
+2. A few lines down, in the ./configure script at ~line 21462, immediately
+   after the "#include <stdlib.h>" statement, add this line:
+
+   #include "utsrelease.h"
+
+   to the "conftest.c" test.
+
+
+3. Move to the src/directory and edit the following files
+   {SerialImp.c, RS485Imp.c, I2CImp.c, RawImp.c} the same way, adding
+   the following code after the last include file in the source:
+
+  /*
+   * JTC:  Added this include statement so that modern linux'es compile this
+   * source correctly.  The "utsrelease.h" file referenced below is created
+   * by the configure command.
+   */
+  #include "utsrelease.h"
+
+
+4. Edit Makefile.in and look for "CONFIG_CLEAN_FILES =" and replace it
+   as follows:
+
+  # JTC: Modified so 'make distclean' will remove these generated files
+  #CONFIG_CLEAN_FILES =
+  CONFIG_CLEAN_FILES = utsrelease.h src/utsrelease.h
+
+
+5. Edit the ./configure script.  For all instances of:
+
+	case $JAVA_VERSION in
+	1.2*|1.3*|1.4*|1.5*)
+
+   replace with
+
+	case $JAVA_VERSION in
+	1.2*|1.3*|1.4*|1.5*|1.6*|1.7*|1.8*)

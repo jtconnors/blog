@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Bindstorming</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <big><b>Bindstorming</b></big><br>
+    <small><small>By Jim Connors 19 March 2009</small></small><br>
+    <p>It is within our nature, even in the most infinitesimal way, to
+      leave our mark on this world before we exit it.&nbsp; I'd like to
+      coin the following term, heretofore unseen in the JavaFX space,
+      and submit it as my humble contribution to the human collective:</p>
+    <p><b>bindstorm</b> \\'bïnd•storm\\ (noun): condition where a
+      multitude of JavaFX bind recalculations severely hampers
+      interactive performance</p>
+    <p>Yeah, I know, using the word you wish to define inside its
+      definition is bad, but there is precedent for this: (1)
+      Fancy-schmancy, hoity-toity college dictionaries do it all the
+      time. (2) Mathematicians and computer scientists call this <a
+        href="http://en.wikipedia.org/wiki/Recursion">recursion</a>:
+      that mysterious concept which developers use to impress others of
+      their programming prowess.<br>
+    </p>
+    <p>Don't get me wrong, JavaFX binding is incredibly powerful.&nbsp;
+      Heck, we dedicated a whole chapter to it in our
+      soon-to-be-released book <a
+href="https://www.amazon.com/JavaFX-Developing-Rich-Internet-Applications/dp/013701287X">JavaFX:
+
+
+        Developing Rich Internet Applications</a>.&nbsp; But binding
+      does come with a price, and like most anything else,
+      over-consumption can lead to abuse.</p>
+    <p>Consider this use case: you've got a JavaFX application with
+      dozens or maybe even hundreds of <font face="courier
+        new,courier,monospace">Node</font>s that are part of the
+      scenegraph.&nbsp; Each of the <font face="courier
+        new,courier,monospace">Node</font>s are ultimately sized and
+      positioned in proportion to <font face="courier
+        new,courier,monospace">height</font> and <font face="courier
+        new,courier,monospace">width</font> instance variables that are
+      passed on down.&nbsp; If you define <font face="courier
+        new,courier,monospace">width</font> and <font face="courier
+        new,courier,monospace">height</font> at startup and have no
+      interest in a resizeable interface, then you stand a good chance
+      of avoiding the use of many <font face="courier
+        new,courier,monospace">bind</font> expressions.&nbsp; The one
+      potential twist here is that if you're sincerely interested in a
+      non-resizeable application, but want it to consume the entire
+      screen, what do you do?&nbsp; As screens come in all shapes and
+      sizes, you may not know what the resolution is at start
+      time.&nbsp; JavaFX has an elegant solution for this which uses <i>binding</i>.</p>
+    <p>Here's a simple application which defines a <font face="courier
+        new,courier,monospace">Rectangle</font> and <font face="courier
+        new,courier,monospace">Circle</font> that fill the entire
+      screen.&nbsp; You can click anywhere within the <font
+        face="courier new,courier,monospace">Circle</font> to exit the
+      application.&nbsp; Notice the number of <font face="courier
+        new,courier,monospace">bind</font>s required to get this to
+      work.<br>
+    </p>
+    <pre>import javafx.stage.*;
+import javafx.scene.*;
+import javafx.scene.shape.*;
+import javafx.scene.paint.*;
+import javafx.scene.input.*;
+
+function run() : Void {
+&nbsp;&nbsp;&nbsp; var stage: Stage = Stage {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b style="color: rgb(0, 3, 255);">fullScreen: true</b>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; scene: Scene {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; content: [
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rectangle {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; width: <b style="color: rgb(0, 3, 255);">bind</b> stage.width
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; height: <b style="color: rgb(0, 3, 255);">bind</b> stage.height
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fill: Color.BLUE
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Circle {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; centerX: <b style="color: rgb(0, 3, 255);">bind</b> stage.width / 2
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; centerY: <b style="color: rgb(0, 3, 255);">bind</b> stage.height / 2
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; radius: <b style="color: rgb(0, 3, 255);">bind</b> if (stage.width &lt; stage.height) then
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; stage.width / 2 else stage.height / 2
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fill: Color.RED
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; onMouseClicked: function(me: MouseEvent) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FX.exit();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }
+}
+</pre>
+    <p> </p>
+    <p> </p>
+    <p>Imagine what this would look like if you had lots of complex
+      custom components with many more dependencies on <font
+        face="courier new,courier,monospace">height</font> and <font
+        face="courier new,courier,monospace">width</font>.&nbsp; In
+      addition to the potential performance impact, this could be
+      error-prone and cumbersome to code.&nbsp; To avoid the over usage
+      of binding and the potential for a <i>bindstorm</i>, applications
+      of this sort could be re-written as follows:</p>
+    <pre>import javafx.stage.*;
+import javafx.scene.*;
+import javafx.scene.shape.*;
+import javafx.scene.paint.*;
+import javafx.scene.input.*;
+
+function run() : Void {
+    <span style="color: rgb(0, 3, 255);">var AWTtoolkit = java.awt.Toolkit.getDefaultToolkit ();</span><br style="color: rgb(0, 3, 255);"><span style="color: rgb(0, 3, 255);">    var screenSizeFromAWT = AWTtoolkit.getScreenSize ();</span>
+    Stage {
+        fullScreen: true
+        scene: Scene {
+            content: [
+                Rectangle {
+                    width: <span style="color: rgb(0, 3, 255);">screenSizeFromAWT.width</span>
+                    height: <span style="color: rgb(0, 3, 255);">screenSizeFromAWT.height</span>
+                    fill: Color.BLUE
+                }
+                Circle {
+                    centerX: <span style="color: rgb(0, 3, 255);">screenSizeFromAWT.width / 2</span>
+                    centerY: <span style="color: rgb(82, 0, 255);">screenSizeFromAWT.height / 2</span>
+                    radius: <span style="color: rgb(0, 3, 255);">if (screenSizeFromAWT.width &lt;</span><br style="color: rgb(0, 3, 255);"><span style="color: rgb(0, 3, 255);">                        screenSizeFromAWT.height) then</span><br style="color: rgb(0, 3, 255);"><span style="color: rgb(0, 3, 255);">                        screenSizeFromAWT.width / 2</span><br style="color: rgb(0, 3, 255);"><span style="color: rgb(0, 3, 255);">                        else screenSizeFromAWT.height / 2</span>
+                    fill: Color.RED
+                    onMouseClicked: function(me: MouseEvent) {
+                        FX.exit();
+                    }
+                }
+            ]
+        }
+    }
+}
+
+</pre>
+    <p>We achieve the same effect as the first example by first making a
+      call to a method in the <font face="courier
+        new,courier,monospace">java.awt.Toolkit</font> package.&nbsp;
+      With this information we can statically define our scenegraph
+      without the use of binding.</p>
+    <p>There is one caveat to this solution.&nbsp; As the AWT (Advanced
+      Windowing Toolkit) is an integral part of Java SE, this code
+      should be portable across all JavaFX desktops.&nbsp; However, if
+      you wish to deploy a JavaFX Mobile solution, the AWT calls would
+      likely change.&nbsp; Is there a mechanism that might work across
+      both models?</p>
+    <p>As a final thought, while we're on this theme of coining terms,
+      my compadres <a href="https://blogs.oracle.com/clarkeman/">Jim
+        Clarke</a> and <a href="http://www.ericbruno.com/">Eric Bruno</a>,
+      co-authors of the <a
+href="https://www.amazon.com/JavaFX-Developing-Rich-Internet-Applications/dp/013701287X">aforementioned
+
+        JavaFX book</a>, jokingly asked what word could be used to
+      describe this scenario:</p>
+    <p> "Condition where binds lead to binds that leads back to the
+      original bind, ending up in a Stack fault?"<br>
+      <br>
+      BindQuake? BindTsunami? Bindless? BindSpin? BindHole (BlackHole)?
+      BindPit? <br>
+    </p>
+    <p> </p>
+    <a href="../index.html">Index</a>
+  </body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Serial Port Communication for Java SE Embedded</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <big><b>Serial Port Communication for Java SE Embedded</b></big><br>
+    <small><small>By Jim Connors 18 August 2011</small></small><br>
+    <br>
+    The need to communicate with devices connected to serial ports is a
+    common application requirement.&nbsp; Falling outside the purview of
+    the Java SE platform, serial and parallel port communication has
+    been addressed with a project called <a
+      href="http://rxtx.qbang.org/wiki/index.php/Main_Page">RXTX</a>.&nbsp;
+
+
+
+    (In the past, you may have known this as javacomm).&nbsp; With
+    RXTX,&nbsp; Java developers access serial ports through the
+    RXTXcomm.jar file.&nbsp; Alongside this jar file, an underlying
+    native layer must be provided to interface with the operating
+    system's UART ports.&nbsp; For the usual suspects (Windows,
+    Linux/x86, MacOS, Solaris/Sparc), pre-compiled binaries are readily
+    available.&nbsp; To host this on an alternative platform, some
+    (hopefully minimal) amount of work is required.
+    <p>Here's hoping the following notes/observations might aid in
+      helping you to build RXTX for an embedded device utilizing one of
+      our <a
+href="http://www.oracle.com/technetwork/java/embedded/overview/javase/index.html">Java
+
+
+        SE Embedded</a> binaries.&nbsp; The device used for this
+      particular implementation is my current favorite: the <a
+        href="http://www.plugcomputer.org/">Plug Computer</a>.</p>
+    <p>Notes on Getting RX/TX 2.1-7-r2 Working on a Plug Computer<br>
+      <br>
+      1. At this early juncture with Java 7, be wary of mixing Java 7
+      with code from older versions of Java. The class files generated
+      by the JDK7 javac compiler contain an updated version byte with a
+      value that results in older (Java 6 and before) JVMs refusing to
+      load these classes.<br>
+      <br>
+      2. The RXTX download location <a
+        href="http://rxtx.qbang.org/wiki/index.php/Download">http://rxtx.qbang.org/wiki/index.php/Download</a>
+      has binaries for many platforms including Arm variants, but none
+      that worked for the Plug Computer, so one had to be built from
+      source.<br>
+      <br>
+      3. Using the native GCC for the Plug Computer and the RXTX source,
+      binaries (native shared objects) were compiled for the
+      armv5tel-unknown-linux-gnu platform.<br>
+      <br>
+      4. The RXTX "stable" source code found at the aforementioned site
+      is based on version rxtx 2.1-7r2.&nbsp; This code appears to be
+      pretty long in the tooth, in that it has no knowledge of Java
+      6.&nbsp; Some changes need to be made to accommodate a JDK 6
+      environment.&nbsp; Without these modifications, RXTX will not
+      build with JDK6<br>
+      <br>
+      SUGGESTED FIX, most elegant, not recommended:<br>
+      Edit the configure.in file in the source directory and look for
+      the following:<br>
+    </p>
+    <pre>&nbsp;&nbsp;&nbsp; case $JAVA_VERSION in
+    1.2*|1.3*|1.4*|1.5*)
+</pre>
+    <p>and change the second line to:<br>
+    </p>
+    <pre>&nbsp;&nbsp;&nbsp; 1.2*|1.3*|1.4*|1.5*|1.6*)
+</pre>
+    <p>Upon modification, the autogen.sh script found in the rxtx source
+      directory must be re-run to recreate the ./configure script.&nbsp;
+      Unfortunately, this requires loading the autoconf, automake and
+      libtool packages (plus dependencies) and ended up resulting in
+      libtool incompatibilies when running the resultant ./configure
+      script.<br>
+      <br>
+      RECOMMENDED FIX:<br>
+      Instead, edit ./configure and search for the occurrences (there
+      are more than one) of<br>
+    </p>
+    <pre>&nbsp;&nbsp;&nbsp; case $JAVA_VERSION in
+    1.2*|1.3*|1.4*|1.5*)
+</pre>
+    <p>and change the second line to:<br>
+    </p>
+    <pre>&nbsp;&nbsp;&nbsp; 1.2*|1.3*|1.4*|1.5*|1.6*)
+</pre>
+    <p>Run './configure', then 'make' to generate the RXTXcomm.jar and
+      platform specific .so shared object libraries.<br>
+      <br>
+      5. You may also notice in the output of the make, that there were
+      compilation errors for source files which failed to find the
+      meaning of "UTS_RELEASE".&nbsp; This results in some of the shared
+      object files not being created.&nbsp; These pertain to the
+      non-serial aspects of RXTX.&nbsp; As we were only interested in
+      librxtxSerial.so, this was no problem for us.<br>
+      <br>
+      6. Once built, move the following files into the following
+      directories:<br>
+    </p>
+    <pre>&nbsp;&nbsp;&nbsp; # cd rxtx-2.1-7-r2/
+    # cp RXTXcomm.jar $JAVA_HOME/lib/ext
+    # cd armv5tel-unknown-linux-gnu/.libs/
+    # cp librxtxSerial-2.1-7.so $JAVA_HOME/lib/arm
+    # cd $JAVA_HOME/lib/arm
+    # ln -s librxtxSerial-2.1-7.so librxtxSerial.so
+</pre>
+    <p>Now Java applications which utilize RXTX should run without any
+      java command-line additions.</p>
+    <p> The RXTXcomm.jar file can be downloaded <a
+        href="http://rxtx.qbang.org/ToyBox/2.1-7-build1/RXTXcomm.jar">here</a>.&nbsp;
+
+
+      To spare you the effort, a few pre-built versions of&nbsp; <span
+        style="font-family: monospace;"></span>librxtxSerial-2.1-7.so
+      are provided at this location:</p>
+    <ul>
+      <li><a
+          href="resource/rxtx-armv5tel-unknown-linux-gnu/librxtxSerial-2.1-7.so">librxtxSerial-2.1-7.so</a>
+        for ARMv5 based Plug Computers</li>
+      <li><a
+href="resource/rxtx-armv6l-unknown-linux-gnu-ARMEL/librxtxSerial-2.1-7.so">librxtxSerial-2.1-7.so</a>
+        for ARMv6l <i>armel</i> based systems (e.g. original Raspberry
+        Pi Debian distro)</li>
+      <li><a
+href="resource/rxtx-armv6l-unknown-linux-gnu-ARMHF/librxtxSerial-2.1-7.so">librxtxSerial-2.1.7.so</a>
+        for ARMv6l <i>armhf</i> (hard float) systems (e.g. Raspberry Pi
+        Raspbian distro)<br>
+      </li>
+      <li><a href="resource/rxtx-arm7l/librxtxSerial-2.1-7.so">librxtxSerial-2.1-7.so</a>
+        for ARMv7l architecture - Many thanks to <i>Daniel Ryan</i><br>
+      </li>
+    </ul>
+    <p>If you've gone through this exercise on any additional
+      architectures, send them my way and I'll post them here.<br>
+    </p>
+    <p> </p>
+    <a href="../index.html">Index</a>
+  </body>
+</html>

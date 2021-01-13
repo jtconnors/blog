@@ -1,0 +1,459 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Managing Java Flight Recorder Enabled JVMs with SSL</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <big><b>Managing Java Flight Recorder Enabled JVMs with SSL</b></big><br>
+    <small><small>By Jim Connors 15 January 2015</small></small><br>
+    <br>
+    One advantage <a
+href="http://www.oracle.com/technetwork/java/javaseproducts/mission-control/java-mission-control-1998576.html">Java
+
+
+
+
+
+
+
+      Flight Recorder</a> enjoys is that its event collection and
+    profiling framework is built right into the JDK, allowing
+    instrumented JVM instances to operate with near-zero overhead.&nbsp;
+    At arguably negligible expense, would it then make sense to consider
+    enabling Java Flight Recorder on production applications?&nbsp; We
+    say absolutely!
+    <p>You can google around to search for how this framework can be
+      configured to monitor remote JVMs, and nearly all of the reference
+      material will help you get up to speed quickly.&nbsp; However,
+      you'll find that these examples favor simplicity over
+      security.&nbsp; They generally disable authentication and
+      encryption leaving the remote application vulnerable to anyone who
+      knows or can guess its host name and port number.&nbsp; In the
+      real world, if you wanted to monitor a production application
+      remotely, you'd need to carefully consider the security
+      ramifications.</p>
+    <p>Not finding much in the way of instruction here, we thought it
+      might be helpful to document, by example, how a sample remote Java
+      application can be more securely instrumented and managed with
+      Java Flight Recorder and Java Mission Control.&nbsp; What follows
+      are the steps necessary to enable monitoring over a connection
+      that is secured using Secure Sockets Layer (SSL).</p>
+    <p>For the remainder of this article, we'll refer to the
+      instrumented JVM as the <b><i>remote</i></b> side of the solution<i><b>.</b></i>&nbsp;
+
+
+
+
+
+
+
+      To demonstrate the ubiquity of the Java SE platform, our remote
+      JVM will actually reside on a <a
+        href="http://www.raspberrypi.org/">Raspberry Pi</a>.&nbsp; As
+      Java SE and Java SE Embedded runtime environments both now bundle
+      the Java Flight Recorder feature set, it doesn't really matter
+      what type of remote JVM instance we have.&nbsp; The location where
+      the Java Mission Control application runs will be referred to as
+      the <i><b>client</b></i> side.&nbsp; For this example we'll use
+      an Ubuntu-based system.&nbsp; In reality, the client could have
+      run on any of the alternative supported Java clients like Windows
+      or MacOS.<br>
+    </p>
+    <p> </p>
+    <p> </p>
+    <p> </p>
+    <p><b>On the <i>remote</i> side (hostname pi1): </b><br>
+    </p>
+    <p>Remote side, step 0: Create a directory to house the signed
+      digital certificates required for SSL communication.&nbsp;
+      Moreover, it should have minimal access.<br>
+    </p>
+    <blockquote><tt>pi1$ <b>mkdir $HOME/.certs</b><br>
+        pi1$ <b>chmod 700 $HOME/.certs</b></tt><br>
+    </blockquote>
+    <p> </p>
+    <blockquote>
+      <p> </p>
+    </blockquote>
+    <p>Remote side, step 1: Create a self-signed cryptographic key pair
+      with the JDK <tt>keytool(1)</tt> utility.&nbsp; The are many
+      alternatives to creating (and requesting) cryptographic
+      keys.&nbsp; The method we'll use for this example is the most
+      straightforward, as <tt>keytool</tt> is part of the JDK, not to
+      mention the least expensive too!</p>
+    <blockquote>
+      <p><tt>pi1$ <b>keytool -genkey -alias jfrremote -keyalg RSA
+            -validity 730 \</b></tt><br>
+        <tt><b> -keystore $HOME/.certs/jfrremoteKeyStore</b><br>
+          Enter keystore password: <b>changeit</b><br>
+          Re-enter new password: <b>changeit</b><br>
+          What is your first and last name?<br>
+          [Unknown]:&nbsp; <b>Joe Schmo</b><br>
+          What is the name of your organizational unit?<br>
+          &nbsp; [Unknown]:&nbsp; <b>Acme Corp</b><br>
+          What is the name of your organization?<br>
+          &nbsp; [Unknown]:&nbsp; <b>Skunkworks</b><br>
+          What is the name of your City or Locality?<br>
+          &nbsp; [Unknown]:&nbsp; <b>New York</b><br>
+          What is the name of your State or Province?<br>
+          &nbsp; [Unknown]:&nbsp; <b>NY</b><br>
+          What is the two-letter country code for this unit?<br>
+          &nbsp; [Unknown]:&nbsp; <b>US</b><br>
+          Is CN=Joe Schmo, OU=Acme Corp, O=Skunkworks, L=New York,
+          ST=NY, C=US correct?<br>
+          &nbsp; [no]:&nbsp; <b>yes</b><br>
+          <br>
+          Enter key password for &lt;jfrremote&gt;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (RETURN if same as
+          keystore password):</tt></p>
+    </blockquote>
+    <p>Remote side, step 2: Restrict the access of the newly created <tt>jfrremoteKeyStore</tt>
+      file.</p>
+    <blockquote>
+      <p><tt>pi1$ <b>chmod 600 $HOME/.certs/jfrremoteKeyStore</b></tt></p>
+    </blockquote>
+    <p>Remote side, step 3: Verify that the keystore contains our newly
+      created key:</p>
+    <blockquote>
+      <p><tt>pi1$ <b>keytool -keystore $HOME/.certs/jfrremoteKeyStore
+            -list -v</b><br>
+          Enter keystore password: <b>changeit</b><br>
+          <br>
+          Keystore type: JKS<br>
+          Keystore provider: SUN<br>
+          <br>
+          Your keystore contains 1 entry<br>
+          <br>
+          Alias name: jfrremote<br>
+          Creation date: 13-Jan-2015<br>
+          Entry type: PrivateKeyEntry<br>
+          Certificate chain length: 1<br>
+          Certificate[1]:<br>
+          Owner: CN=Joe Schmo, OU=Acme Corp, O=Skunkworks, L=New York,
+          ST=NY, C=US<br>
+          Issuer: CN=Joe Schmo, OU=Acme Corp, O=Skunkworks, L=New York,
+          ST=NY, C=US<br>
+          Serial number: 258d7624<br>
+          Valid from: Tue Jan 13 17:32:51 UTC 2015 until: Thu Jan 12
+          17:32:51 UTC 2017<br>
+          Certificate fingerprints:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MD5:&nbsp;
+          2E:AD:5F:85:61:21:8D:1A:4B:ED:02:7C:67:26:8B:95<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SHA1:
+          82:12:D6:A0:4C:20:E4:7F:C5:C1:C7:BC:AD:C7:D1:E8:47:76:F2:A6<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SHA256:
+AF:E1:D8:7F:67:F3:DA:F1:22:58:42:B9:A5:50:37:6A:BA:49:76:BC:15:5F:11:9D:F0:1E:13:15:39:BB:9F:C4<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Signature
+          algorithm name: SHA256withRSA<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Version: 3<br>
+          <br>
+          Extensions:<br>
+          <br>
+          #1: ObjectId: 2.5.29.14 Criticality=false<br>
+          SubjectKeyIdentifier [<br>
+          KeyIdentifier [<br>
+          0000: 5E EC 1E F8 D5 33 F4 E6&nbsp;&nbsp; 29 06 B6 65 39 85 68
+          05&nbsp; ^....3..)..e9.h.<br>
+          0010: F7 19 B3
+          AF&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+          ....<br>
+          ]<br>
+          ]<br>
+          <br>
+          <br>
+          *******************************************<br>
+          *******************************************</tt> </p>
+    </blockquote>
+    <p>Remote side, step 4: Export the certificate associated with the
+      recently generated key pair. This will be used by the remote JVM
+      instance and also has to be imported into the trust store of the
+      client application (Java Mission Control or <tt>jmc</tt>).</p>
+    <blockquote>
+      <p><tt>pi1$ <b>keytool -export -alias jfrremote -keystore \</b></tt><br>
+        <tt><b>$HOME/.certs/jfrremoteKeyStore -rfc -file jfrremote.cer</b><br>
+          Enter keystore password: <b>changeit</b><br>
+          Certificate stored in file &lt;jfrremote.cer&gt;</tt></p>
+    </blockquote>
+    <p> Remote side, step 5: Securely transfer the certificate stored in
+      the <tt>jfrremote.cer</tt> file over to the system where the Java
+      Mission Control client (<tt>jmc</tt>) will be run</p>
+    <p> </p>
+    <p> </p>
+    <p><b>Switching over to the <i>client</i> side (hostname R840):</b></p>
+    <p>Client side, step 0: Create a directory to house the signed
+      digital certificates required for SSL communication, with minimal
+      access.</p>
+    <blockquote>
+      <p><tt>R840$ <b>mkdir $HOME/.certs</b><br>
+          R840$ <b>chmod 700 $HOME/.certs</b></tt></p>
+    </blockquote>
+    <p>Client&nbsp; side, step 1: Import the certificate, represented by
+      the <tt>jfrremote.cer</tt> file, into the client's trust store.</p>
+    <blockquote>
+      <p><tt>R840$ <b>keytool -importcert -keystore
+            $HOME/.certs/jfrremoteTrustStore \</b></tt><br>
+        <tt><b>-alias jfrremote -file jfrremote.cer</b><br>
+          Enter keystore password: <b>changeit</b><br>
+          Re-enter new password: <b>changeit</b><br>
+          Owner: CN=Joe Schmo, OU=Acme Corp, O=Skunkworks, L=New York,
+          ST=NY, C=US<br>
+          Issuer: CN=Joe Schmo, OU=Acme Corp, O=Skunkworks, L=New York,
+          ST=NY, C=US<br>
+          Serial number: 4fec928c<br>
+          Valid from: Tue Jan 13 08:41:48 EST 2015 until: Thu Jan 12
+          08:41:48 EST 2017<br>
+          Certificate fingerprints:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MD5:&nbsp;
+          3D:81:45:16:49:13:85:38:E8:E9:90:50:4A:59:F5:5E<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SHA1:
+          6E:FA:63:D7:9A:58:26:A4:22:94:33:9F:AA:1A:6C:B6:E4:16:2C:DE<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SHA256:
+58:EB:F0:C9:DD:F9:D4:F7:FD:95:4B:2B:61:4C:88:6D:57:E3:87:9F:71:F5:BD:25:67:FB:3C:C0:05:0B:C6:0F<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Signature
+          algorithm name: SHA256withRSA<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Version: 3<br>
+          <br>
+          Extensions:<br>
+          <br>
+          #1: ObjectId: 2.5.29.14 Criticality=false<br>
+          SubjectKeyIdentifier [<br>
+          KeyIdentifier [<br>
+          0000: D9 A6 A2 0E CE D2 F7 9D&nbsp;&nbsp; FA 96 9C B9 9A 32 E2
+          3A&nbsp; .............2.:<br>
+          0010: 98 ED A7
+          5F&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+          ..._<br>
+          ]<br>
+          ]<br>
+          <br>
+          Trust this certificate? [no]:&nbsp; <b>yes</b><br>
+          Certificate was added to keystore</tt></p>
+    </blockquote>
+    <p>Client side, step 2: Restrict the access of the newly created <tt>jfrremoteTrustStore</tt>
+      file.</p>
+    <blockquote> </blockquote>
+    <blockquote>
+      <p><tt>R840$ <b>chmod 600 $HOME/.certs/jfrremoteTrustStore</b></tt></p>
+    </blockquote>
+    <p>Client side, step 3: Create a self-signed cryptographic key pair
+      with the JDK <tt>keytool(1)</tt> utility.&nbsp; This represents
+      the certificate for the client-side Java Mission Control (<tt>jmc</tt>)
+      application.</p>
+    <blockquote>
+      <p><tt>R840$ <b>keytool -genkey -alias jmc -keyalg RSA -validity
+            730 \</b><br>
+          <b>-keystore $HOME/.certs/jmcKeyStore</b><br>
+          Enter keystore password: <b>changeit</b><br>
+          Re-enter new password: <b>changeit</b><br>
+          What is your first and last name?<br>
+          &nbsp; [Unknown]:&nbsp; <b>Joe Schmo</b><br>
+          What is the name of your organizational unit?<br>
+          &nbsp; [Unknown]:&nbsp; <b>Acme Corp</b><br>
+          What is the name of your organization?<br>
+          &nbsp; [Unknown]:&nbsp; <b>Skunkworks</b><br>
+          What is the name of your City or Locality?<br>
+          &nbsp; [Unknown]:&nbsp; <b>New York</b><br>
+          What is the name of your State or Province?<br>
+          &nbsp; [Unknown]:&nbsp; <b>NY</b><br>
+          What is the two-letter country code for this unit?<br>
+          &nbsp; [Unknown]:&nbsp; <b>US</b><br>
+          Is CN=Joe Schmo, OU=Acme Corp, O=Skunkworks, L=New York,
+          ST=NY, C=US correct?<br>
+          &nbsp; [no]:&nbsp; <b>yes</b><br>
+          <br>
+          Enter key password for &lt;jmc&gt;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (RETURN if same as
+          keystore password):</tt></p>
+    </blockquote>
+    <p>Client side, step 4: Restrict the access of the newly created <tt>jmcKeyStore</tt>
+      file.</p>
+    <blockquote>
+      <p> <tt>R840$ <b>chmod 600 $HOME/.certs/jmcKeyStore</b></tt></p>
+    </blockquote>
+    <p>Client side, step 5: Export the certificate associated with the
+      recently generated key pair. This will be used by the Java Mission
+      Control application and also has to be imported into the trust
+      store of the remote JVM instance.</p>
+    <blockquote>
+      <p><tt>R840$ <b>keytool -export -alias jmc -keystore
+            $HOME/.certs/jmcKeyStore \</b></tt><br>
+        <tt><b>-rfc -file jmc.cer</b><br>
+          Enter keystore password: <b>changeit</b><br>
+          Certificate stored in file &lt;jmc.cer&gt;</tt></p>
+    </blockquote>
+    <p>Client side, step 6: Securely transfer the certificate stored in
+      the <tt>jmc.cer</tt> file over to the system where the remote JVM
+      instance will be run</p>
+    <p><b>Returning to the <i>remote</i> side (hostname pi1): </b></p>
+    <p>Remote side, step 6: Import the certificate, represented by the <tt>jmc.cer</tt>
+      file, into the remote JVM instance's trust store.</p>
+    <blockquote>
+      <p><tt>pi1$ <b>keytool -import -alias jmc -file jmc.cer \</b></tt><br>
+        <tt><b>-keystore $HOME/.certs/jmcTrustStore</b><br>
+          Enter keystore password: <b>changeit</b><br>
+          Re-enter new password: <b>changeit</b><br>
+          Owner: CN=Joe Schmo, OU=Acme Corp, O=Skunkworks, L=New York,
+          ST=NY, C=US<br>
+          Issuer: CN=Joe Schmo, OU=Acme Corp, O=Skunkworks, L=New York,
+          ST=NY, C=US<br>
+          Serial number: 860e0e4<br>
+          Valid from: Tue Jan 13 20:15:33 UTC 2015 until: Thu Jan 12
+          20:15:33 UTC 2017<br>
+          Certificate fingerprints:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MD5:&nbsp;
+          7B:D7:F3:9D:71:52:F9:35:03:3A:68:BF:02:C2:52:51<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SHA1:
+          38:95:6D:2F:DE:FC:99:D6:63:55:00:A8:57:E2:31:FF:53:35:18:F7<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SHA256:
+7D:87:87:01:E5:21:58:02:67:0E:7E:2F:14:77:86:12:9D:52:CD:11:A4:B1:C5:D3:32:D8:05:30:61:7B:F5:3E<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Signature
+          algorithm name: SHA256withRSA<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Version: 3<br>
+          <br>
+          Extensions:<br>
+          <br>
+          #1: ObjectId: 2.5.29.14 Criticality=false<br>
+          SubjectKeyIdentifier [<br>
+          KeyIdentifier [<br>
+          0000: 0A E8 E3 5E 0A 3C 48 FF&nbsp;&nbsp; D4 DB 10 A8 62 31 1E
+          F9&nbsp; ...^.&lt;H.....b1..<br>
+          0010: 55 D8 4C
+          7A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+          U.Lz<br>
+          ]<br>
+          ]<br>
+          <br>
+          Trust this certificate? [no]:&nbsp; <b>yes</b><br>
+          Certificate was added to keystore</tt></p>
+    </blockquote>
+    <p>Remote side, step 7: Restrict the access of the newly created <tt>jmcTrustStore</tt>
+      file.</p>
+    <blockquote>
+      <p> <tt>pi1$ <b>chmod 600 $HOME/.certs/jmcTrustStore</b></tt></p>
+    </blockquote>
+    <p><b>Putting it All Together</b></p>
+    <p> With key stores and trust stores set up on both sides, we can
+      now start up both components.&nbsp; Our sample application is a
+      very simple one called <a
+        href="https://blogs.oracle.com/jtc/resource/jmc-jfr-ssl/Allocator.java">Allocator.java</a>.
+      Download it onto your remote system and compile it with the <tt>javac</tt>
+      program.&nbsp; When ready, you can start up an SSL-enabled remote
+      JVM instance of the <tt>Allocator</tt> program in continuous
+      flight recorder mode with the following invocation:</p>
+    <blockquote>
+      <p><tt>pi1$ <b>java \<br>
+            -Dcom.sun.management.jmxremote.port=7091\<br>
+            -Dcom.sun.management.jmxremote.ssl=true \<br>
+            -Dcom.sun.management.jmxremote.authenticate=false \<br>
+            -Djavax.net.ssl.keyStore=$HOME/.certs/jfrremoteKeyStore \<br>
+            -Djavax.net.ssl.keyStorePassword=changeit \<br>
+            -Djava.rmi.server.hostname=pi1 \<br>
+            -XX:+UnlockCommercialFeatures \<br>
+            -XX:+FlightRecorder \<br>
+            -XX:FlightRecorderOptions=defaultrecording=true \<br>
+            Allocator</b></tt> </p>
+    </blockquote>
+    <blockquote> </blockquote>
+    <p>On the client side, Java Mission Control is started in the
+      following way:</p>
+    <blockquote>
+      <p><tt>R840$ <b>jmc -vmargs \</b></tt><b><br>
+          <tt>-Djavax.net.ssl.trustStore=$HOME/.certs/jfrremoteTrustStore
+
+
+
+
+
+
+
+            \</tt><br>
+          <tt>-Djavax.net.ssl.trustStorePassword=changeit \</tt><br>
+          <tt>-Djavax.net.ssl.keyStore=$HOME/.certs/jmcKeyStore\</tt><br>
+          <tt> -Djavax.net.ssl.keyStorePassword=changeit</tt></b></p>
+    </blockquote>
+    <p>Once Java Mission Control has started, we connect to the VM
+      instance on host pi1 as shown in the screenshots that
+      follow.&nbsp; First off, we select "Connect..." from the File
+      menu.<br>
+    </p>
+    <img alt="" src="resource/jmc-jfr-ssl/connect.jpg" width="516"
+      height="423">
+    <p> </p>
+    <p> </p>
+    <p> </p>
+    <p>A "New Connection" window appears.&nbsp; Select "Create a new
+      connection" and click the "Next&gt;" button.</p>
+    <p> </p>
+    <img alt="" src="resource/jmc-jfr-ssl/new_connection.jpg"
+      width="613" height="481">
+    <p> </p>
+    <p> </p>
+    <p> </p>
+    <p>In the next window that appears, "pi1" is selected as the host
+      and "7091" as the port.&nbsp; Clicking the "Finish" button
+      continues the process. </p>
+    <p> </p>
+    <img alt="" src="resource/jmc-jfr-ssl/connect_to_pi1.jpg"
+      width="634" height="498">
+    <p> </p>
+    <p> </p>
+    <p> </p>
+    <p>&nbsp;And here's a screenshot of the MBean Server window for the
+      JVM running on host pi1.<br>
+    </p>
+    <img alt="" src="resource/jmc-jfr-ssl/jmc_pi1.jpg" width="810"
+      height="462">
+    <p> </p>
+    <p><b>Conclusion</b></p>
+    <p>To assist in this repetitive and potentially error-prone task, a
+      series of shell scripts have been created which just might be of
+      use.&nbsp; Download <a
+        href="resource/jmc-jfr-ssl/SSL_jfr_jmc.tar.gz">this tarball</a>,
+      and check out the README files found in the two directories, one
+      for the remote side of the equation, the other for the client.</p>
+    <p>For further edification, please check out these links:</p>
+    <p>Marcus Hirt's blog for all things related to Java Flight Recorder
+      and Java Mission Control<br>
+      <a href="http://hirt.se/blog/">http://hirt.se/blog/</a></p>
+    <p>If you run into SSL handshake problems, this link may prove
+      helpful. <br>
+      How to Anazyze Java SSL Errors:<br>
+      <a
+        href="http://java.dzone.com/articles/how-analyze-java-ssl-errors">http://java.dzone.com/articles/how-analyze-java-ssl-errors</a></p>
+    <p>Erik Costlow's article on Self-signed certificates for a known
+      community:<br>
+      <a
+href="https://blogs.oracle.com/java-platform-group/entry/self_signed_certificates_for_a">https://blogs.oracle.com/java-platform-group/entry/self_signed_certificates_for_a</a></p>
+    <br>
+    <div class="footer"><a href="../index.html">Index</a></div>
+    <blockquote> </blockquote>
+    <blockquote> </blockquote>
+    <blockquote> </blockquote>
+    <blockquote> </blockquote>
+    <p> </p>
+    <br>
+  </body>
+</html>

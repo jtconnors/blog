@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Introducing the EJDK</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <b><big>Introducing the EJDK</big></b><br>
+    <small><small>By Jim Connors 10 March 2014</small></small><br>
+    <br>
+    In lock step with the introduction of <a
+      href="a_first_look_at_compact.html">Compact Profiles</a>, Java 8
+    includes a new distribution mechanism for Java SE Embedded called
+    the <i>EJDK</i>.&nbsp; As the potential exists to confuse the EJDK
+    with the standard JDK (Java Development Kit), it makes sense to
+    dedicate a few words towards highlighting how these two packages
+    differ in form and function. <br>
+    <p><b>The JDK</b></p>
+    <p>The venerable Java Development Kit is the mainstay of Java
+      developers.&nbsp; It incorporates not only a standard Java Runtime
+      Environment (JRE), but also includes critical tools required by
+      those same developers.&nbsp; For example, among many others, the
+      JDK comes with a Java compiler (<tt>javac</tt>), a Java console
+      application (<tt>jconsole</tt>), the Java debugger (<tt>jdb</tt>)
+      and the Java archive utility (<tt>jar</tt>).&nbsp; It also serves
+      as the underpinnings for very popular Java Integrated Development
+      Environments (IDEs) such as <a href="https://netbeans.org/">NetBeans</a>,
+      <a href="https://www.eclipse.org/">Eclipse</a>, <a
+href="http://www.oracle.com/technetwork/developer-tools/jdev/overview/index.html">JDeveloper</a>
+      and <a href="http://www.jetbrains.com/idea/">IntelliJ</a> to name
+      a few.</p>
+    <p>Like Java, the Java Development Kit is constantly evolving, and
+      Java 8 brings about its fair share of enhancements to the
+      JDK.&nbsp; For Java 8, <tt>javac</tt> can now be instructed (via
+      the <tt>-profile</tt> command-line option) to insure that your
+      source code is compatible with a specific compact profile.&nbsp;
+      Furthermore, the Java 8 JDK comes with a new useful tool called <tt>jdeps</tt>,
+      providing a means to analyze your compiled class and jar files for
+      dependencies.<br>
+    </p>
+    <p><b>The EJDK</b></p>
+    <p>The EJDK is new to Java 8, and although similar in namesake to
+      the JDK, it serves quite a different purpose.&nbsp; Prior to Java
+      8, supported Java SE-Embedded runtime platforms were provided as
+      binaries by Oracle.&nbsp; With the advent of Compact Profiles, the
+      number of possible binary options per supported platform would
+      simply be too unweildy.&nbsp; Rather than furnishing binaries for
+      each of the possible combinations, an EJDK will be supplied for
+      each supported Java SE-Embedded platform.&nbsp; It contains the
+      tools needed to create the profile you wish to use.</p>
+    <p>The EJDK is designed to be run with either Windows or Linux/Unix
+      platforms alongside a Java runtime environment.&nbsp; It contains
+      a wrapper called <i>jrecreate</i> (<tt>jrecreate.sh</tt> for
+      Unix/Linux and <tt>jrecreate.bat</tt> for Windows) whose function
+      it is to create deployable compact profile instances. In the
+      examples that follow, we'll show two sample invocations.</p>
+    <p>First off, let's briefly take a look at the contents of a typical
+      EJDK. &nbsp; For our first example, we've installed the EJDK on a
+      linux/x86 system. &nbsp; Listing the contents of the <tt>ejdk1.8.0/</tt>
+      directory, we see a subdirectory named <tt>linux_arm_vfp_hflt/</tt>.&nbsp;
+
+
+
+      This tells us what platform this instance of the EJDK
+      supports.&nbsp; For all our examples we'll use an EJDK that
+      creates compact profiles suitable for Linux/Arm Hard Float
+      platform, often times referred to as <i>armhf.</i><br>
+    </p>
+    <blockquote>
+      <p><tt>$ ls ejdk1.8.0<br>
+          bin&nbsp; doc&nbsp; lib&nbsp; <span style="color: #ff0000;"><b>linux_arm_vfp_hflt</b></span></tt></p>
+    </blockquote>
+    <p>Looking one level deeper into the <tt>bin/</tt> directory, we
+      see the <tt>jrecreate.bat</tt> and <tt>jrecreate.sh</tt> files:</p>
+    <blockquote>
+      <p><tt>$ ls ejdk1.8.0/bin<br>
+          <span style="color: #ff0000;"><b>jrecreate.bat</b></span>&nbsp;
+
+
+          jrecreate.config.properties&nbsp; <span style="color:
+            #ff0000;"><b>jrecreate.sh</b></span></tt></p>
+    </blockquote>
+    <p>As we're on a Linux system, let's use the <tt>jrecreate.sh</tt>
+      script to create a compact profile:</p>
+    <blockquote>
+      <p><tt>$ ./ejdk1.8.0/bin/jrecreate.sh --profile compact1 --dest
+          compact1-minimal --vm minimal</tt></p>
+    </blockquote>
+    <p>Briefly reviewing this invocation, the <tt>--profile compact1</tt>
+      option instructs <tt>jrecreate</tt> to use the Compact1
+      profile.&nbsp; The <tt>--profile</tt> option accepts [<tt>compact1
+
+
+        | compact2 | compact3</tt>]&nbsp; as an argument. The <tt>--dest
+
+
+        compact1-minimal</tt> option specifies the name of the
+      destination directory containing the newly generated
+      profile.&nbsp; Note that the directory argument to <tt>--dest</tt>
+      must not exist prior to invocation.&nbsp; Finally, the <tt>--vm
+        minimal</tt> option tells <tt>jrecreate</tt> to use the minimal
+      (i.e. the smallest) virtual machine for this instance.&nbsp; The <tt>--vm</tt>
+      option accepts&nbsp; <tt>[minimal | client | server | all]</tt>
+      as an argument.&nbsp; Running the complete <tt>jrecreate.sh</tt>
+      command, we get the following output:</p>
+    <blockquote>
+      <p><tt>$ ./ejdk1.8.0/bin/jrecreate.sh --profile compact1 --dest
+          compact1-minimal --vm minimal<br>
+          Building JRE using Options {<br>
+          &nbsp;&nbsp; ejdk-home: /home/java8/ejdk1.8.0<br>
+          &nbsp;&nbsp;&nbsp; dest: /home/java8/compact1-minimal<br>
+          &nbsp;&nbsp;&nbsp; target: linux_arm_vfp_hflt<br>
+          &nbsp;&nbsp;&nbsp; vm: minimal<br>
+          &nbsp;&nbsp;&nbsp; runtime: compact1 profile<br>
+          &nbsp;&nbsp;&nbsp; debug: false<br>
+          &nbsp;&nbsp;&nbsp; keep-debug-info: false<br>
+          &nbsp;&nbsp;&nbsp; no-compression: false<br>
+          &nbsp;&nbsp;&nbsp; dry-run: false<br>
+          &nbsp;&nbsp;&nbsp; verbose: false<br>
+          &nbsp;&nbsp;&nbsp; extension: []<br>
+          }<br>
+          <br>
+          Target JRE Size is 10,595 KB (on disk usage may be greater).<br>
+          Embedded JRE created successfully</tt></p>
+    </blockquote>
+    <p>This creates a Compac1 profile distribution of about 10 ½ MB in
+      the <tt>compact-1-minimal/</tt> directory.&nbsp; For our second
+      example, we'll create a profile based on Compact2 and the client
+      VM, this time from a Windows 7/64-bit system:<br>
+    </p>
+    <blockquote>
+      <p><tt>c:\demo&gt;ejdk1.8.0\bin\jrecreate.bat --profile compact2
+          --dest compact2-client --vm client<br>
+          Building JRE using Options {<br>
+          &nbsp;&nbsp;&nbsp; ejdk-home: c:\demo\ejdk1.8.0\bin\..<br>
+          &nbsp;&nbsp;&nbsp; dest: c:\demo\compact2-client<br>
+          &nbsp;&nbsp;&nbsp; target: linux_arm_vfp_hflt<br>
+          &nbsp;&nbsp;&nbsp; vm: client<br>
+          &nbsp;&nbsp;&nbsp; runtime: compact2 profile<br>
+          &nbsp;&nbsp;&nbsp; debug: false<br>
+          &nbsp;&nbsp;&nbsp; keep-debug-info: false<br>
+          &nbsp;&nbsp;&nbsp; no-compression: false<br>
+          &nbsp;&nbsp;&nbsp; dry-run: false<br>
+          &nbsp;&nbsp;&nbsp; verbose: false<br>
+          &nbsp;&nbsp;&nbsp; extension: []<br>
+          }<br>
+          <br>
+          Target JRE Size is 17,552 KB (on disk usage may be greater).<br>
+          Embedded JRE created successfully</tt></p>
+    </blockquote>
+    <p>This Compact2 instance is created in the <tt>compact2-client/</tt>
+      directory and has an approximate footprint of 17 ½ MB.&nbsp;
+      Additional options to <tt>jrecreate</tt> are available for
+      further customization. <br>
+    </p>
+    <p>Finally, lets migrate the generated profiles over to a real
+      device.&nbsp; As a host platform we'll use none other than the
+      ubiquitous <a href="http://www.raspberrypi.org/">Raspberry Pi</a>.&nbsp;
+
+
+      Here's a listing of the two profiles and their size (in 1K blocks)
+      on the filesystem:</p>
+    <blockquote>
+      <p><tt>pi@pi0 ~/java8 $ ls<br>
+          compact1-minimal&nbsp; compact2-client<br>
+          <br>
+          pi@pi0 ~/java8 $ du -sk compact*<br>
+          10616&nbsp;&nbsp; compact1-minimal<br>
+          17660&nbsp;&nbsp; compact2-client</tt></p>
+    </blockquote>
+    <p>And here's what each version outputs when <tt>java -version</tt>
+      is run: <br>
+    </p>
+    <blockquote>
+      <p><tt>pi@pi0 ~/java8 $ ./compact1-minimal/bin/java -version<br>
+          java version "1.8.0"<br>
+          Java(TM) SE Embedded Runtime Environment (build 1.8.0-b127, <span
+            style="color: #ff0000;"><b>profile compact1</b></span>,
+          headless)<br>
+          Java HotSpot(TM) Embedded <span style="color: #ff0000;"><b>Minimal
+
+
+              VM</b></span> (build 25.0-b69, mixed mode)<br>
+          <br>
+          pi@pi0 ~/java8 $ ./compact2-client/bin/java -version<br>
+          java version "1.8.0"<br>
+          Java(TM) SE Embedded Runtime Environment (build 1.8.0-b127, <span
+            style="color: #ff0000;"><b>profile compact2</b></span>,
+          headless)<br>
+          Java HotSpot(TM) Embedded <span style="color: #ff0000;"><b>Client
+
+
+              VM</b></span> (build 25.0-b69, mixed mode)</tt><br>
+      </p>
+    </blockquote>
+    <p> In conclusion, you are encouraged to experiment with the
+      EJDK.&nbsp; It will very quickly give you a feel for the compact
+      profile configuration options available for your device.<br>
+    </p>
+    <div class="footer"><a href="../index.html">Index</a></div>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+ul#subtabs {
+	background: url("/us/assets/subtab-sprite.png") no-repeat top; margin: -15px 0px 0px; padding: 0px; width: 542px; height: 25px; text-align: center;
+}
+ul#subtabs li {
+	list-style: none; margin: 0px; padding: 0px; height: 25px; float: left; background-image: none;
+}
+ul#subtabs li a {
+	background: url("/us/assets/subtab-sprite.png") no-repeat right bottom; padding: 0px 20px; height: 25px; color: rgb(51, 51, 51); line-height: 25px; font-size: 11px; text-decoration: none; display: block; white-space: nowrap;
+}
+ul#subtabs li a:hover {
+	text-decoration: underline;
+}
+ul#subtabs li a.active {
+	background: url("/us/assets/subtab-sprite.png") no-repeat right -25px; padding: 0px 20px; height: 25px; color: rgb(0, 0, 0); line-height: 25px; font-size: 11px; text-decoration: none; display: block;
+}
+ul#subtabs li a.active:hover {
+	text-decoration: underline;
+}
+ul#subtabs li a.first {
+	padding-left: 0px;
+}

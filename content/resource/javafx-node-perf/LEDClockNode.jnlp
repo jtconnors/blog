@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="http://blogs.sun.com/jtc/resource/javafx-node-perf/" href="LEDClockNode.jnlp">
+    <information>
+        <title>Digits</title>
+        <vendor>jimc</vendor>
+        <homepage href="http://blogs.sun.com/jtc/resource/javafx-node-perf/"/>
+        <description>Digits</description>
+        <offline-allowed/>
+        <shortcut>
+            <desktop/>
+        </shortcut>
+    </information>
+    <resources>
+        <j2se version="1.5+"/>
+        <extension name="JavaFX Runtime" href="http://dl.javafx.com/1.1/javafx-rt.jnlp"/>
+        <jar href="Digits.jar" main="true"/>
+    </resources>
+    <application-desc main-class="digits.LEDClockNode">
+    </application-desc>
+</jnlp>

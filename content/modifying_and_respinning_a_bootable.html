@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Modifying and Respinning a Bootable Solaris ISO Image</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <big><b>Modifying and Respinning a Bootable Solaris ISO Image</b></big><br>
+    <small>By Jim Connors 22 April 2008</small><br>
+    <p> As an adjunct to the <a
+        href="enabling_remote_mdb_debugging_of.html">previous blog post</a>,
+      a slightly customized boot environment capable of enabling serial
+      console kernel debugging was required to diagnose Solaris install
+      problems.&nbsp; The post itself mentioned that a nice way to
+      accomplish this was to set up PXE network boot via <a
+href="http://www.oracle.com/technetwork/systems/articles/jumpstart-x86-x64-jsp-138116.html">Solaris
+
+
+        jumpstart</a>.&nbsp; It is indeed flexible and enables one to
+      experiment with modifications and quickly test whether they
+      perform as expected.&nbsp; The one downside to this environment is
+      that an additional DHCP/TFTP boot server has to be
+      configured.&nbsp; To eliminate that service, you could, once the
+      customizations are well understood, simply create a new version of
+      the Solaris install DVD with your customizations.&nbsp; Let's run
+      through the process for a simple example.</p>
+    <p>1. Get a Solaris DVD.&nbsp; For this example, we'll use an
+      interim build of the upcoming Solaris 10 Update 5.</p>
+    <p>2. Extract the the entire contents of the DVD.</p>
+    <pre># <b>lofiadm -a /export/iso/s10x_u5b10_dvd.iso</b><br>/dev/lofi/1<br># <b>mkdir -p /iso</b><br># <b>mount -r -F hsfs /dev/lofi/1 /iso</b><br># <b>cd /iso</b><br># <b>mkdir /export/modified-s10x_u5b10</b><br># <b>find . -depth -print | cpio -pudm /export/modified-s10x_u5b10</b><br>4516208 blocks<br></pre>
+    <p>3. Modify the content contained in <font face="courier
+        new,courier,monospace">/export/modified-s10x_u5b10</font>.&nbsp;
+      In this case, we'll change the <font face="courier
+        new,courier,monospace">boot/grub/menu.lst</font> file found in
+      this directory to look like:</p>
+    <pre>#<br>#pragma ident   "@(#)install_menu       1.1     05/09/01 SMI"<br>#<br>default=0<br>timeout=30<br>serial --unit=0 --speed=9600<br>terminal serial<br>title Solaris Serial Console ttya<br>        kernel /boot/multiboot kernel/unix -B install_media=cdrom,console=ttya<br>        module /boot/x86.miniroot <br></pre>
+    <p>4. Issue the following magic incantation to create a bootable ISO
+      image based on the contents of the <font face="courier
+        new,courier,monospace">/export/modified-s10x_u5b10 </font>directory.</p>
+    <pre># <b>mkisofs -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -R -L -r -D -U \\<br>-joliet-long -max-iso9660-filenames -boot-info-table -o \\<br>/export/iso/modified-s10x_u5b10.iso /export/modified-s10x_u5b10</b><br><p>...</p><p>Size of boot image is 4 sectors -&gt; No emulation<br>  1.80% done, estimate finish Fri Apr 18 15:55:13 2008<br>  2.25% done, estimate finish Fri Apr 18 15:59:07 2008<br>  2.70% done, estimate finish Fri Apr 18 15:58:37 2008<br>  3.15% done, estimate finish Fri Apr 18 15:58:48 2008<br>...</p><p> 98.43% done, estimate finish Fri Apr 18 15:59:37 2008<br> 98.88% done, estimate finish Fri Apr 18 15:59:37 2008<br> 99.33% done, estimate finish Fri Apr 18 15:59:36 2008<br> 99.78% done, estimate finish Fri Apr 18 15:59:36 2008<br>Total translation table size: 2048<br>Total rockridge attributes bytes: 3075577<br>Total directory bytes: 18921472<br>Path table size(bytes): 148014<br>Max brk space used 1b24000<br>1112471 extents written (2172 MB)&nbsp;</p></pre>
+    Voila!&nbsp; Acknowledgements to Tom Haynes and this <a
+      href="https://blogs.oracle.com/tdh/entry/getting_a_solaris_bootable_dvd">blog
+
+      post</a> which served as an excellent guide.<br>
+    <div class="footer"><br>
+      <a href="../index.html">Index</a></div>
+  </body>
+</html>

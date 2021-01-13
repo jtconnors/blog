@@ -1,0 +1,66 @@
+
+
+Enable Watchdog Reset on Raspbian Jessie for Raspberry Pi 3
+
+
+Many processors come equipped with a watchdog timer which simply counts down
+from some set value to zero.  In order to prevent it from reaching zero, 
+the system must periodically reset the watchdog timer.  If the timer reache
+zero, it is assumed the system has hung.  The watchdog daemon detects this
+condition and can be configured to reboot when this occurs, lessening the need
+for manual intervention.
+
+Sources:
+   https://www.raspberrypi.org/forums/viewtopic.php?t=175432
+   https://www.raspberrypi.org/forums/viewtopic.php?f=29&t=147501
+   http://blog.ricardoarturocabral.com/2013/01/auto-reboot-hung-raspberry-pi-using-on.html
+
+Here's possibly the simplest way to enable it:
+
+1. Edit /boot/config.txt and add the following line
+
+   dtparam=watchdog=on
+
+
+2. Create a conf file /etc/modprobe.d/bcm2835-wdt.conf with contents
+
+   options bcm2835_wdt heartbeat=14 nowayout=0
+
+
+3. In /etc/systemd/system.conf change this line
+
+   #RuntimeWatchdogSec=0
+
+to
+
+   RuntimeWatchdogSec=14
+
+
+4. Reboot
+
+
+5. You can look at the kernel ring buffer (message log) to see the
+   status of the watchdog timer
+
+pi@pidev:~$ dmesg | grep watchdog
+[    0.835133] bcm2835-wdt 3f100000.watchdog: Broadcom BCM2835 watchdog timer
+[    3.326624] systemd[1]: Hardware watchdog 'Broadcom BCM2835 Watchdog timer', version 0
+[    3.339998] systemd[1]: Set hardware watchdog to 14s.
+
+
+6. Finally, you can test the watchdog reset by deliberately blowing up
+   the system.  Create the following script, in this case,
+   called forkbomb.sh:
+
+#!/bin/bash
+echo "Starting shell fork bomb"
+# prevent swapping to the SD card!
+sudo systemctl stop dphys-swapfile.service
+# start the bomb
+: (){ :|:& };:
+
+7.  Run this script as root (i.e. sudo ./forkbomb.sh) and wait.  This
+    should ultimately cause the system to hang and result in a watchdog
+    timeout and subsequent reboot.
+
+
