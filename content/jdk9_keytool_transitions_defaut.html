@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>JDK9 keytool Transitions Defaut Keystore to PKCS12</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <big><b>JDK9 keytool Transitions Default Keystore to PKCS12</b></big><br>
+    <small>By Jim Connors 24-Oct-2017</small><br>
+    <br>
+    When it comes to the JDK9 release, <a
+      href="http://openjdk.java.net/projects/jigsaw">project jigsaw</a>
+    garners nearly all the attention, sucking the air out of the room
+    and leaving very little oxygen for many other smaller but
+    interesting enhancements. One such feature addresses the universal
+    quest to modernize overall security and involves an improvement to
+    the <a href="https://docs.oracle.com/javase/9/tools/keytool.htm">keytool</a>
+    utility. For approximately two decades, Java and keytool had relied
+    on the JDK-specific JKS keystore type as its default store. As
+    specified by <a href="http://openjdk.java.net/jeps/229">JEP 229</a>,
+    JDK9 transitions the default keystore to <a
+      href="https://en.wikipedia.org/wiki/PKCS_12">PKCS12</a>.<br>
+    <br>
+    This change means that any new keystores will be created in the
+    PKCS12 format.&nbsp; It should however not affect existing
+    applications that rely upon the original JKS keystore type.&nbsp;
+    Backwards compatibility will be maintained allowing existing
+    applications to continue operating unmodified for the foreseeable
+    future.<br>
+    <br>
+    PKCS12 has a number of advantages:
+    <ol>
+      <li>It is more extensible</li>
+      <li>It supports stronger cryptographic algorithms</li>
+      <li>It is widely adopted.&nbsp; PKCS12 is frequently the format
+        provided by certificate authorities when issuing certificates.</li>
+    </ol>
+    <p>With respect to point (3) above, <a
+        href="installing_trusted_certificates_into_a.html">as mentioned
+        in this previous article</a>, keytool has historically been
+      unable to directly import PKCS12 generated trusted keys and
+      certificates, and instead must rely on external workarounds like
+      the following:</p>
+    <ul>
+      <li>Use openssl to create a keystore containing the certificate
+        chain and private key. Then use keytool to import this keystore
+        into either a new or larger keystore..</li>
+      <li>Platforms like Oracle WebLogic contain a
+        utils.ImportPrivateKey class (with a main method) that is
+        included in weblogic.jar which can accomplish this task</li>
+    </ul>
+    <p>Unfortunately this shortcoming still exists in JDK9.&nbsp;
+      However a request for enhancement has been recently been created
+      and can be found here:&nbsp;</p>
+    <p style="margin-left: 40px;"><em>keytool should be able to import
+        private keys:</em> <a
+        href="https://bugs.openjdk.java.net/browse/JDK-8189321">https://bugs.openjdk.java.net/browse/JDK-8189321</a>&nbsp;</p>
+    <p>Perhaps enough folks can weigh in and vote, increasing its
+      priority.<br>
+    </p>
+    <div class="footer"><a href="../index.html">Index</a></div>
+  </body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Welcome Raspberry Pi 2!</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p> <big><b>Welcome Raspberry Pi 2!</b></big><br>
+      <small><small>By Jim Connors 17 February 2015</small></small><br>
+    </p>
+    <p>Having <a
+href="http://www.zdnet.com/article/raspberry-pi-sales-edge-towards-four-million/">surpassed
+
+
+
+        4 million units shipped</a> and clearly establishing itself as a
+      de facto reference platform, the folks at the Raspberry Pi
+      Foundation are not resting on their laurels.&nbsp; Earlier this
+      month (February 2015), they introduced the <i><b><a
+            href="http://www.raspberrypi.org/products/raspberry-pi-2-model-b/">Raspberry
+
+
+
+            Pi 2 Model B</a></b></i>:<br>
+    </p>
+    <img alt="" src="resource/pi2/pi2.jpg" width="586" height="399"><br>
+    <p>Compared to its predecessor, the <a
+        href="http://www.raspberrypi.org/products/model-b-plus/">Raspberry
+
+
+
+        Pi B+</a>, this newer model is packaged with a Broadcom BCM2836
+      SoC at 900MHz.&nbsp; It is not only superior in performance to the
+      original single core BCM2835 processor on core-by-core basis, it
+      now brings the added benefit of including 4 cores.&nbsp; Add to
+      that a doubling of RAM from 512MB to 1GB and it should be no
+      mystery that this new platform can handle more serious
+      workloads.&nbsp; <a href="#perf">Later on down, a chart compares
+        the SPECjvm2008 benchmark performance</a> of the original
+      Raspberry Pi Model B with the new Raspberry Pi 2 Model B.</p>
+    <p>In addition to the substantial performance bump, major kudos are
+      to be given to the Raspberry Pi Foundation engineers for their
+      focus on hardware and software compatibility:</p>
+    <ul>
+      <li>The Pi2 maintains the same physical form factor as the
+        Raspberry Pi B+, meaning that all of the previous accessories
+        (USB power cable, serial console cable, microSD card ...) all
+        work perfectly well with the new version.&nbsp; That also
+        includes any Raspberry Pi B+ enclosures you may have too.</li>
+      <li>The ARMv7-based BCM2836 processor is backwards-compatible with
+        the original ARMv6 version.&nbsp; In order to maintain binary
+        compatibility, the latest version of the <a
+          href="http://www.raspbian.org/">Raspbian distribution</a> will
+        boot either the new or old versions of the Raspberry Pi.&nbsp;
+        Note that in this mode, applications will not be able to take
+        full advantage of the ARMv7 enhancements.&nbsp; Alternate OS
+        distributions may provide the extra performance boost at the
+        expense of breaking backwards compatibility.</li>
+      <li>Perhaps best of all, the Raspberry Pi maintains its appeal to
+        the masses.&nbsp; At approximately £23/$35, no price increase
+        comes along with this upgrade.</li>
+    </ul>
+    <p><a name="perf"></a><b>A Brief Look at Performance</b></p>
+    <p>The chart that follows examines Raspberry Pi Java performance via
+      the <a href="https://www.spec.org/jvm2008/">SPECjvm2008</a>
+      benchmark.&nbsp; Both original and Raspberry Pi 2 systems ran the
+      latest available Raspbian Image (2015-02-02) and the latest
+      available Java 7 JDK (Java 7 update 72)<sup>1</sup>.&nbsp; The
+      four vertical bars (blue, red, green, purple) represent four
+      separate runs of the benchmark:</p>
+    <ol>
+      <li><b><span style="color: #4f81bd;">Blue</span></b>: <i>Raspberry
+
+
+
+          Pi Model B</i>.&nbsp; Invoked with JVM argument <tt>-Xmx400m</tt>
+        specifying a maximum heap of 400MB.</li>
+      <li><b><span style="color: #c0504d;">Red</span></b>: <i>Raspberry
+          Pi 2, single threaded</i>.&nbsp; Invoked with JVM argument <tt>-Xmx400m
+
+
+
+        </tt>specifying a maximum heap of 400MB, and application
+        argument <tt>-bt 1</tt> instructing the SPECjvm2008 test
+        harness to run the benchmark tests with a single thread.&nbsp;
+        This is meant to approximate an apples-to-apples comparison of
+        single core performance between the two Raspberry Pi systems.<br>
+      </li>
+      <li><b><span style="color: #9bbb59;">Green</span></b>: <i>Raspberry
+
+
+
+          Pi 2, multithreaded (default)</i>.&nbsp; Invoked with JVM
+        argument <tt>-Xmx600m</tt> specifying a maximum heap of 600MB<sup>2</sup>.</li>
+      <li><b><span style="color: #8064a2;">Purple</span></b>: <i>Raspberry
+
+
+
+          Pi 2, multithreaded (default), larger heap</i>.&nbsp; Invoked
+        with JVM argument <tt>-Xmx900m</tt> specifying a maximum heap
+        of 900MB<sup>3</sup>.<br>
+      </li>
+    </ol>
+    <p> </p>
+    <img alt="" src="resource/pi2/SPECjvm2008-composite.jpg" width="588"
+      height="365">
+    <p>The larger the measurement (ops/min), the faster the result, the
+      single core performance of the Raspberry Pi 2 is a big improvement
+      over its predecessor.&nbsp; As the SPECjvm2008 suite does include
+      a healthy dose of mutithreaded code, enabling the test harness to
+      take advantage of the 4 hardware threads available to the Pi 2
+      added another huge jump in performance.&nbsp; And finally
+      utilizing the extra RAM (in the form of a larger heap) provided
+      for by the Raspberry Pi 2 yields only a very modest gain in
+      throughput.&nbsp; In particular, 2 of the 11 component tests
+      (compress, xml) show an improvement with the extra heap.&nbsp; For
+      more detailed results, you can view this <a
+        href="resource/pi2/SPECjvm2008-results.xlsx">spreadsheet</a>.</p>
+    <p>The added horsepower that the Raspberry Pi 2 brings solidifies
+      the Raspberry Pi family as an important reference platform in the
+      present as well as the future for companies like Oracle.&nbsp; As
+      the Internet of Things phenomena plays out and more processing is
+      brought to the edge, the new Raspberry Pi is better suited to
+      handle the increased workload that applications like <a
+href="http://www.oracle.com/us/technologies/java/embedded/event-processing/overview/index.html">Oracle
+
+
+
+        Event Processing for Oracle Java Embedded</a> and others
+      require. <br>
+    </p>
+    <p><b>Notes</b></p>
+    <p><sup>1</sup> The latest Raspbian distro includes a recent version
+      of Oracle's Java 8 JDK.&nbsp; Unfortunately the somewhat dated
+      SPECjvm2008 benchmark has a dependency that requires Java 1.7 or
+      earlier, so for these benchmarks, we needed to use a Java 7
+      JDK.&nbsp; The latest available, 7u72, was used for these tests.<br>
+    </p>
+    <p><sup>2</sup> With 4 cores, the SPECjvm2008 test suite would
+      produce an <tt>OutOfMemoryError</tt> when run with the initial
+      max heap size argument of <tt>-Xmx400m</tt>.&nbsp; Increasing the
+      max heap size to 600MB (<tt>-Xmx600m</tt>) enabled the tests to
+      complete.&nbsp; Evidently SPECjvm2008 requires more heap space as
+      more hardware threads are configured in.<br>
+    </p>
+    <p><sup>3</sup> In order to utilize the full amount of RAM (1GB)
+      available with the Raspberry Pi 2, a firmware upgrade may be
+      required.&nbsp; If necessary, you can invoke '<tt>sudo rpi-update</tt>'&nbsp;
+
+
+
+      from a linux shell on the Raspberry Pi 2 to accomplish this task.<br>
+    </p>
+    <div class="footer"><a href="../index.html">Index</a></div>
+  </body>
+</html>

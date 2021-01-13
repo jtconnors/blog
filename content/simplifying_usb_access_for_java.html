@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>USB Device Access for Java SE and OSGi</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p> <big><b>USB Device Access for Java SE and OSGi</b></big><br>
+      <small><small>By Jim Connors 31 October 2014</small></small><br>
+    </p>
+    <p>One of the challenges in creating the content for the <a
+href="https://oracleus.activeevents.com/2014/connect/sessionDetail.ww?SESSION_ID=2097">Java
+
+
+
+        One 2014 Java SE Embedded Internet of Things Hands-on-Lab</a>
+      concerned interacting, via Java and OSGi, with a USB temperature
+      sensor. &nbsp; Unfortunately a USB communications API is not part
+      of the Java SE standard (as of this post: Halloween 2014).&nbsp;
+      So the question is, how can Java/USB communication be established,
+      and furthermore and how does this work within the OSGi framework?<br>
+      <br>
+    </p>
+    <img alt="" src="resource/Java_USB/setup.jpg" width="247"
+      height="156">
+    <p> </p>
+    <p>In looking around at some of the available options, we chose the
+      <a href="http://code.google.com/p/javahidapi/">javahidapi</a> as
+      the basis for this connectivity.&nbsp; As a Java/JNI wrapper
+      around the <a href="http://www.signal11.us/oss/hidapi/">C/C++ HID
+        API for Linux, MacOS X and Windows</a>, the appeal behind this
+      API is that using it does not require the use of a custom driver
+      for each device on each platform.</p>
+    <p>In order to operate within an OSGi framework (in this case Apache
+      Felix 4.4), javahidapi's open source code has been slightly
+      modified/enhanced. The end result is that an OSGi bundle is
+      available that can be dropped into standard OSGi frameworks to
+      support USB communication for HID devices.&nbsp; It does contain a
+      native component, and for the sake of simplicity, we've decided to
+      include a separate jar file for each supported architecture.&nbsp;
+      For the OSGi enthusiast, here's what the generated <tt>MANIFEST.MF</tt>
+      file looks like for the Linux/armhf (suitable for the Raspberry
+      Pi) architecture: </p>
+    <p><tt>Manifest-Version: 1.0<br>
+        Bnd-LastModified: 1415889978962<br>
+        Build-Jdk: 1.7.0_51<br>
+        Built-By: jtconnor<br>
+        Bundle-Activator: com.codeminders.hidapi.Activator<br>
+        Bundle-ManifestVersion: 2<br>
+        Bundle-Name: hidapi OSGi Bundle for Linux/armhf<br>
+        Bundle-NativeCode: native/linux/armv6l/libhidapi-jni-32.so;
+        osname=Linux; processor=armv6l<br>
+        Bundle-SymbolicName: com.codeminders.hidapi-armhf<br>
+        Bundle-Version: 1.0.0<br>
+        Created-By: Apache Maven Bundle Plugin<br>
+        Export-Package:
+        com.codeminders.hidapi;uses:="org.osgi.framework";version="1.0.0"<br>
+        Import-Package: org.osgi.framework;version="[1.6,2)"<br>
+        Tool: Bnd-1.50.0</tt></p>
+    <p>Here are some pre-built hidapi OSGi bundles for popular Linux
+      platforms:</p>
+    <ul>
+      <li><a
+          href="resource/Java_USB/com.codeminders.hidapi-armhf-1.0.jar.zip">com.codeminders.hidapi-armhf-1.0.jar</a>
+        (ARMv6 hard float - Suitable for Raspberry Pi)</li>
+      <li><a
+          href="resource/Java_USB/com.codeminders.hidapi-armv5tel-1.0.jar.zip">com.codeminders.hidapi-armv5tel-1.0.jar</a>
+        (ARMv5- Suitable for Plug Computers)</li>
+      <li><a
+          href="resource/Java_USB/com.codeminders.hidapi-x86-1.0.jar.zip">com.codeminders.hidapi-x86-1.0.jar</a>
+        (Linux/x86 32-bit)</li>
+      <li><a
+          href="resource/Java_USB/com.codeminders.hidapi-x86_64-1.0.jar.zip">com.codeminders.hidapi-x86_64-1.0.jar</a>
+        (Linux/x86 64-bit)</li>
+      <li><a
+          href="resource/Java_USB/com.codeminders.hidapi-quark-1.0.jar.zip">com.codeminders.hidapi-quark-1.0.jar</a>
+        (Linux/x86 Intel Quark processor)<br>
+      </li>
+    </ul>
+    <p>To get a feel for the changes made to the original source, here's
+      what was done:</p>
+    <ol>
+      <li>A NetBeans project was created under the Maven-&gt;OSGi Bundle
+        category</li>
+      <li>The Java source code for <a
+          href="http://code.google.com/p/javahidapi/">javahidapi</a> was
+        placed in the project's <tt>src/main/java/com/codeminders/hidapi</tt>
+        directory<br>
+      </li>
+      <li>The architecture specific native library was placed in the
+        project's <tt>src/main/resources/native/linux/<em><strong>architecture</strong></em></tt>
+        directory.&nbsp; For example, the Linux/x86 version of the
+        project places the <tt>libhidapi-jni-32.so</tt> file in the <tt>src/main/resources/native/linux/x86</tt>
+        directory.</li>
+      <li>An <a href="resource/Java_USB/Activator.java"><tt>Activator.java</tt></a>
+        class was added in the project's <tt>src/main/java/com/codeminders/hidapi</tt>
+        directory.&nbsp; In OSGi, the <tt>start()</tt> method in this
+        class gets called when this bundle is activated.&nbsp; It is
+        specified in the bundle's <tt>MANIFEST.MF</tt> file.</li>
+      <li>The original <a
+          href="resource/Java_USB/ClassPathLibraryLoader.java">ClassPathLibraryLoader.java</a>
+        file was simplified and is currently only appropriate for Linux
+        deployments.<br>
+      </li>
+      <li>As this is a Maven-based project, the project's <tt>pom.xml</tt>
+        file was edited (<a href="resource/Java_USB/pom.xml">here's what
+          the x86 version looks like</a>), such that at build time it
+        will generate a <tt>MANIFEST.MF</tt> file similar to the one
+        referenced above.<br>
+      </li>
+    </ol>
+    <p>And here are the associated NetBeans Projects which can be used
+      to build the 4 bundles referenced above.</p>
+    <ul>
+      <li><a href="resource/Java_USB/hidapi_armhf.zip">hidapi_armhf</a></li>
+      <li><a
+          href="resource/Java_USB/com.codeminders.hidapi-armv5tel-1.0.jar.zip">hidapi_armv5tel</a></li>
+      <li><a href="resource/Java_USB/hidapi_x86.zip">hidapi_x86</a></li>
+      <li><a href="resource/Java_USB/hidapi_x86_64.zip">hidapi_x86_64</a></li>
+      <li><a href="resource/Java_USB/hidapi_quark.zip">hidapi_quark</a>
+        <br>
+      </li>
+    </ul>
+    If you'd like to extend this template to include OSGi bundles for
+    additional architectures, you can start with one of the projects
+    above, clone it, and make the appropriate changes for your new
+    environment.&nbsp; If the native javahidapi component for your new
+    platform is not available, you'll have to <a
+      href="https://github.com/signal11/hidapi/downloads">pull down the
+      source for hidapi</a> and build it for inclusion into your
+    project.&nbsp; If anyone is interested in going through this
+    exercise, I'd be glad to post the fruits of their labor here.<br>
+    <ul>
+    </ul>
+    <div class="footer"><a href="../index.html">Index</a></div>
+  </body>
+</html>

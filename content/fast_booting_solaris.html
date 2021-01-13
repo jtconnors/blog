@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Fast Booting Solaris</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p> <small><small><b><big><big><big>Fast Booting Solaris</big></big></big></b><br>
+          <big>By Jim Connors 23 July 2008<br>
+            <br>
+          </big></small></small>A veteran Java ONE keynote presenter, <a
+        href="http://www.perronerobotics.com/">Perrone Robotics</a> has
+      developed some real interesting technologies which take the
+      concept of using autonomous (i.e. unmanned) vehicles to a whole
+      new level.&nbsp; One of their key ingredients is the MAX software
+      platform which utilizes common commercially available components
+      to enable Perrone to very quickly and cost-effectively retrofit
+      nearly any vehicle in short order.</p>
+    <p><img alt="" src="resource/fast_boot_solaris/perrone_uav.jpg"
+        width="331" height="255">&nbsp;<br>
+    </p>
+    <p>The MAX robotics platform runs on a (roughly 4" x 6") low-power
+      PC board atop Solaris and <a
+href="http://www.oracle.com/technetwork/java/javase/documentation/fullyconcurrentgarbagecollector-137267.html">Sun's
+
+
+
+        Java Real-Time System (Java RTS)</a>.&nbsp; This combination
+      gives Perrone the ability to leverage the huge Java development
+      community, and assures that their critical software components
+      behave in a predictable and deterministic fashion.</p>
+    <p>During the Java ONE 2007 conference, I was speaking with Paul
+      Perrone about the notion of creating a <a
+        href="framework_to_help_create_small.html">minimized version of
+        Solaris</a> over which his platform might run.&nbsp; The
+      helicopter pictured above, boots from a relatively small
+      (4-8Gb)&nbsp; IDE flash drive, where standard Solaris takes up a
+      substantial chunk.&nbsp; It leaves them precious little space to
+      collect valuable information like telemetry or terrain data.&nbsp;
+      Paul asked to revist this idea for a future project.&nbsp; That's
+      where we left off.</p>
+    <p>Not that we've ignored them since, but it wasn't until a year
+      later that small Solaris reared its head again.&nbsp; In addition
+      to saving space, their main interest in this environment was in
+      seeing <i>how much faster Solaris might boot up</i>.&nbsp; The
+      ability to be fully functional from power-up in as short a time as
+      possible is of critical importance.</p>
+    <p>So before investigating what advantages there might be, let's
+      provide some background information:<br>
+      <br>
+      <b>Hardware<br>
+      </b></p>
+    <p>Two separate systems were used, and for argument's sake,
+      represent two ends of the x86 compute spectrum.&nbsp;</p>
+    <blockquote>
+      <p> </p>
+      <table class="htmtableborders" style="width: 628px; height: 161px;
+        display: table;" border="1" cellspacing="1" cellpadding="1">
+        <tbody>
+          <tr>
+            <td> <br>
+            </td>
+            <td align="center"> <b>Embedded Profile</b><br>
+            </td>
+            <td align="center"><b>Modern Profile&nbsp;</b></td>
+          </tr>
+          <tr>
+            <td> <b>System</b></td>
+            <td><a
+href="http://www.igologic.com/Details.asp?BID=&amp;BCat=&amp;SID=&amp;SCat=&amp;ID=14&amp;Title=i84810">iGologic
+
+
+
+                i84810</a><br>
+            </td>
+            <td><a
+href="http://catalog2.panasonic.com/webapp/wcs/stores/servlet/ModelDetail?displayTab=O&amp;storeId=11201&amp;catalogId=13051&amp;itemId=100537&amp;catGroupId=12871&amp;surfModel=Toughbook-30">Panasonic
+
+
+
+                Toughbook CF-30 (Rev. F)<br>
+              </a></td>
+          </tr>
+          <tr>
+            <td> <b>CPU</b></td>
+            <td>1GHz Celeron M<br>
+            </td>
+            <td>Core 2 Duo L7500 1.60GHz<br>
+            </td>
+          </tr>
+          <tr>
+            <td> <b>RAM</b></td>
+            <td>512MB</td>
+            <td>1GB</td>
+          </tr>
+          <tr>
+            <td> <b>Disk</b></td>
+            <td><a
+href="http://usa.apacer.com/us/products/Embedded_Flash_Solutions_PATA_Flash_Series.htm">4GB
+
+
+
+                Flash IDE Drive</a><br>
+            </td>
+            <td>Solid State SATA Drive<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </blockquote>
+    <p> </p>
+    <p> </p>
+    <p> </p>
+    <p><b>Operating Systems</b></p>
+    <p>Minimal configurations were created for Solaris 10 08/07 (Update
+      4) and OpenSolaris Nevada build 93.&nbsp; These configurations
+      boot entirely into RAM and consume less than 100MB ramdisk
+      space.&nbsp; With a little more effort they can be may
+      significantly smaller.&nbsp; The original blog post describing the
+      environment is <a href="framework_to_help_create_small.html">here</a>.&nbsp;&nbsp;
+
+
+
+      You can download the framework for these hardware/OS combinations
+      <a href="resource/fast_boot_solaris/min_sol_framework.tar">here</a>,
+      and can get a feel for the build environment by taking a look at
+      this <a href="resource/fast_boot_solaris/README.txt">README</a>.<br>
+    </p>
+    <p> </p>
+    <p> </p>
+    <p><b>Definitions</b></p>
+    <p>Within the context of this discussion, here are the key terms
+      along with their meanings.<br>
+    </p>
+    <blockquote>
+      <p><b><i>Total Boot Time</i></b>: This is the time it takes from
+        power-up till a user is prompted to log in.&nbsp; Typically for
+        a full Solaris installation, the windowing system must first
+        start up and present the user with a login screen.&nbsp; In a
+        minimal Solaris environment, there is no windowing system.&nbsp;
+        Instead, the <i>total boot time</i> is defined as the time it
+        takes from power-up till a user is prompted with the <font
+          face="courier new,courier,monospace">console login:</font>
+        prompt.</p>
+      <p><i><b>POST Time</b></i>: POST or <a
+          href="http://en.wikipedia.org/wiki/Power-on_self-test">Power
+          On Self Test</a> is the time taken by the system at pre-boot
+        to handle things like diagnostics,&nbsp; BIOS and device
+        initialization.&nbsp; For this discussion, we'll define <i>POST
+          time</i> as the time it takes from power-up until the user is
+        presented with a <a href="http://www.gnu.org/software/grub/">GRUB</a>
+        boot menu.&nbsp; We call out this segment of the total time
+        because in many cases we are at the mercy of the PC/BIOS
+        manufacturer and can't overly influence how quickly or slowly
+        this proceeds.</p>
+      <p><i><b>Solaris Boot Time</b></i>: The time it takes from being
+        presented with a GRUB boot menu till a Solaris user is prompted
+        to log in.&nbsp; Again, depending upon whether a windowing
+        system is configured or not, this may represent the time it
+        takes to be prompted with a login screen or <font face="courier
+          new,courier,monospace">console login:</font> prompt
+        respectively.&nbsp; This represents the segment of time that we
+        can influence.<br>
+      </p>
+      <p>We can conclude from these definitions that: </p>
+      <p><i>&nbsp;&nbsp; Total Boot Time</i> = <i>POST Time</i> + <i>Solaris
+
+
+
+          Boot Time</i></p>
+    </blockquote>
+    <p> </p>
+    <p><b>Results</b></p>
+    <p align="center"><b>Embedded Profile: iGoLogic i84810 system&nbsp;</b></p>
+    <blockquote> </blockquote>
+    <blockquote>
+      <p> </p>
+      <table style="width: 100%;" border="1" cellspacing="1"
+        cellpadding="1">
+        <tbody>
+          <tr>
+            <td> <b>OS</b><br>
+            </td>
+            <td> <b>Post Time</b><br>
+            </td>
+            <td> <b>Solaris Boot Time</b><br>
+            </td>
+            <td><b>Total Boot Time </b><br>
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;Solaris 10 08/07<br>
+            </td>
+            <td>13 sec<br>
+            </td>
+            <td>26 sec<br>
+            </td>
+            <td>39 sec<br>
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;OpenSolaris Nevada Build 93<br>
+            </td>
+            <td>13 sec<br>
+            </td>
+            <td>18 sec<br>
+            </td>
+            <td>31 sec&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+      <p align="center"> </p>
+      <p align="center"><b>Modern Profile: Panasonic Toughbook CF-30</b><br>
+      </p>
+      <p> </p>
+      <table style="width: 100%;" border="1" cellspacing="1"
+        cellpadding="1">
+        <tbody>
+          <tr>
+            <td> <b>OS</b></td>
+            <td> <b>POST Time</b><br>
+            </td>
+            <td> <b>Solaris Boot Time</b><br>
+            </td>
+            <td><b>&nbsp;Total Boot Time<br>
+              </b></td>
+          </tr>
+          <tr>
+            <td>&nbsp;Solaris 10 08/07<br>
+            </td>
+            <td>&nbsp;6 sec<br>
+            </td>
+            <td>&nbsp;18 sec<br>
+            </td>
+            <td>&nbsp;24 sec<br>
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;OpenSolaris Nevada Build 93<br>
+            </td>
+            <td>&nbsp;6 sec<br>
+            </td>
+            <td>&nbsp;9 sec<br>
+            </td>
+            <td>&nbsp;15 sec<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+    </blockquote>
+    <p><b>Conclusions/Notes</b></p>
+    <p>1. These times were taken by hand with the stopwatch feature on
+      my Timex.&nbsp; If anything, the times might be slightly shorter
+      than actually recorded as there is a human delay in reacting to
+      seeing the necessary prompts.&nbsp; I ran the tests several times,
+      and the same numbers consistently appear.<br>
+    </p>
+    <p>2. The version of the OS appears to matter a lot, as OpenSolaris
+      nvx_93 boots up nearly twice as fast as Solaris 10 U4 on the same
+      hardware.</p>
+    <p>3. The type of I/O device subsystem seems to be a big factor
+      too.&nbsp; For example, by switching out the IDE Flash Drive with
+      a 5400 RPM IDE hard disk, i84810 total boot time decreased by
+      about 6 seconds for both Solaris 10 and OpenSolaris.&nbsp;</p>
+    <p>4. The minimal Solaris environment is currently only available in
+      32-bit mode.<br>
+    </p>
+    <p>5. With relative ease, Solaris can be configured to boot in less
+      that 10 seconds on modern x86 hardware.&nbsp; My unofficial record
+      stands at 9 seconds (or slightly less).&nbsp;&nbsp; No doubt it
+      could boot faster on more robust hardware (eliminating POST
+      time).&nbsp; Any takers?<br>
+    </p>
+    <div class="footer"><a href="../index.html">Index</a></div>
+  </body>
+</html>

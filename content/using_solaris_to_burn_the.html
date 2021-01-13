@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Using Solaris to Burn the OpenSolaris 2008.05 CD Image</title>
+    <link rel="stylesheet" href="resource/css/entry.css">
+  </head>
+  <body>
+    <p> <b><big>Using Solaris to Burn the OpenSolaris 2008.05 CD Image</big></b><br>
+      <small>By Jim Connors 6 May 2008</small><br>
+    </p>
+    <p>If you're using Solaris or OpenSolaris as a platform to download
+      and burn the recently announced OpenSolaris 2008.05 image, the
+      instructions found <a
+        href="http://opensolaris.org/os/project/indiana/resources/getit/">here</a>
+      may need a slight modification.&nbsp; After downloading the <a
+        href="http://dlc.sun.com/osol/opensolaris/latest.iso">Live CD</a>,
+      you are instructed to use the cdrw(1) command as follows to burn
+      the image to CD:</p>
+    <blockquote>
+      <pre id="line721">cdrw -i /path/to/iso/image/os200805.iso<br></pre>
+    </blockquote>
+    <p>Here's what might happen on your system when you attempt to use
+      the '<font face="courier new,courier,monospace">cdrw -i</font>'
+      command:</p>
+    <p><img src="resource/opensolaris/term1.jpg" vspace="0" hspace="0"
+        border="0" align="bottom"><br>
+    </p>
+    <p>The cdrw(1) command fails because it thinks the ISO image is
+      larger than the default capacity of the CD.&nbsp; The solution to
+      this problem is explained in these excerpts from the <a
+        href="http://docs.sun.com/app/docs/doc/819-2239/cdrw-1?a=view">cdrw(1)</a>
+      man page:</p>
+    <blockquote>
+      <p style="direction: ltr;"><i>"Most commercially available drives
+          allow writing beyond 74 minutes as long as the media has the
+          capacity (such as 80–minute media). However, the ability to
+          write beyond 74 minutes might not be supported by the drive in
+          use. If the drive supports this feature, then use the -C o<kbd></kbd>ption
+
+          to indicate that the tool should rely on the capacity
+          indicated by the media.</i></p>
+    </blockquote>
+    <blockquote><i><kbd></kbd></i><i>"-C [option] Uses stated media
+        capacity. Without this option, <kbd>cdrw</kbd> uses a default
+        value for writable CD media, which is 74 minutes for an audio
+        CD, 681984000 bytes for a data CD, or 4.7 Gbytes for a DVD."</i>&nbsp;<br>
+    </blockquote>
+    This time let's invoke 'cdrw' with the -C option.<br>
+    <p><img src="resource/opensolaris/term2.jpg" vspace="0" hspace="0"
+        border="0" align="bottom"><br>
+    </p>
+    <p>Voila.<br>
+    </p>
+    <p><a href="../index.html">Index</a> </p>
+  </body>
+</html>
